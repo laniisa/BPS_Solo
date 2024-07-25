@@ -53,23 +53,9 @@ class Operator extends CI_Controller {
             redirect('login');
         }
 
-        
+            $data['title'] = 'Tambah Surat';
+            $data['surat'] = $this->Surat_Model->get_all_surat();
             $this->load->model('Surat_Model');
-        
-            $data = [
-                'no_surat' => $this->input->post('no_surat'),
-                'tgl_surat' => $this->input->post('tgl_surat'),
-                'tgl_input' => $this->input->post('tgl_input'),
-                'perihal' => $this->input->post('perihal'),
-                'asal' => $this->input->post('asal'),
-                'jenis_surat' => $this->input->post('jenis_surat'),
-                'berkas' => $this->input->post('berkas'),
-            ];
-        
-            $this->Surat_Model->insert_surat($data);
-            $this->session->set_flashdata('message', 'Data berhasil disimpan');
-            redirect('operator/daftar_surat');
-        
         
         $this->load->view('template/navbar', $data);
         $this->load->view('template/sidebar', $data);
@@ -96,7 +82,7 @@ class Operator extends CI_Controller {
     
             if (!$this->upload->do_upload('berkas')) {
                 $this->session->set_flashdata('message', '<div class="alert alert-danger">File upload failed: ' . $this->upload->display_errors() . '</div>');
-                redirect('operator/insert_surat');
+                redirect('operator/index');
             } else {
                 $file_data = $this->upload->data();
                 $data = [

@@ -7,10 +7,10 @@
 <body>
     <div class="container mt-5">
         <h2><?= $title; ?></h2>
-        <form action="<?= site_url('admin/insert_surat'); ?>" method="post" enctype="multipart/form-data">
+        <form action="<?= site_url('admin/save_surat'); ?>" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="no_disposisi">No Disposisi:</label>
-                <input type="text" class="form-control" id="no_disposisi" name="no_disposisi">
+                <input type="text" class="form-control" id="no_disposisi" name="no_disposisi" required>
             </div>
             <div class="form-group">
                 <label for="no_surat">No Surat:</label>
@@ -22,11 +22,11 @@
             </div>
             <div class="form-group">
                 <label for="tgl_disposisi">Tanggal Disposisi:</label>
-                <input type="date" class="form-control" id="tgl_disposisi" name="tgl_disposisi">
+                <input type="date" class="form-control" id="tgl_disposisi" name="tgl_disposisi" required>
             </div>
             <div class="form-group">
                 <label for="tgl_dilaksanakan">Tanggal Dilaksanakan:</label>
-                <input type="date" class="form-control" id="tgl_dilaksanakan" name="tgl_dilaksanakan">
+                <input type="date" class="form-control" id="tgl_dilaksanakan" name="tgl_dilaksanakan" required>
             </div>
             <div class="form-group">
                 <label for="perihal">Perihal:</label>
@@ -53,7 +53,7 @@
                     <option value="selesai">Selesai</option>
                 </select>
             </div>
-            <a href="<?= site_url('admin'); ?>" class="btn btn-secondary">Batal</a>
+            <a href="<?= site_url('admin/surat'); ?>" class="btn btn-secondary">Batal</a>
             <button type="submit" class="btn btn-primary">Tambah Surat</button>
             
         </form>

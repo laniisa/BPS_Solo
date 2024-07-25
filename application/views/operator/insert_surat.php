@@ -9,9 +9,7 @@
     <div class="container mt-5">
         <h2><?= $title; ?></h2>
         <!-- Display flash message -->
-        <?php if ($this->session->flashdata('message')): ?>
-            <?= $this->session->flashdata('message'); ?>
-        <?php endif; ?>
+        
         <form action="<?= site_url('operator/save_surat'); ?>" method="post" enctype="multipart/form-data">
     <div class="form-group">
         <label for="no_surat">No Surat:</label>
@@ -43,12 +41,13 @@
     </div>
     <div class="form-group">
         <label for="tujuan_id">Tujuan:</label>
-        <select class="form-control" id="tujuan_id" name="tujuan_id" required>
+        <select class="form-control" id="tujuan_id" name="tujuan_id" >
             <?php foreach ($users as $user): ?>
                 <option value="<?= $user['id']; ?>"><?= $user['nama']; ?></option>
             <?php endforeach; ?>
         </select>
     </div>
+    <a href="<?= site_url('operator/index'); ?>" class="btn btn-secondary">Batal</a>
     <button type="submit" class="btn btn-primary">Tambah Surat</button>
 </form>
 

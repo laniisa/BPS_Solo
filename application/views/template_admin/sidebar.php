@@ -1,9 +1,9 @@
   <!-- Main Sidebar Container -->
   <aside class="main-sidebar sidebar-light-primary elevation-4" >
     <!-- Brand Logo -->
-    <a href="https://surakartakota.bps.go.id/" class="brand-link" style='background: linear-gradient(#0078C7,#008EC3)'>
-      <img src="../img/BPS.png" alt="bps"  class="brand-image img-circle elevation-3" style="opacity: .9; background-color: white" >
-      <span class="brand-text font-weight-dark" style="color: white; padding-left: 15px;">BPS Surakarta</span>
+    <a href="https://surakartakota.bps.go.id/" class="brand-link" style='background: linear-gradient(to top,#00497d,#0279C8)'>
+      <img src="../img/BPS.png" alt="bps"  class="brand-image img-circle " style="opacity: .9; " >
+      <span class="brand-text font-weight-dark" style="color: white; padding-left: 13px;">BPS Surakarta</span>
     </a>
 
     <!-- Sidebar -->
@@ -22,8 +22,7 @@
         <?php else: ?>
             <a href="#" class="d-block">User not found</a>
         <?php endif; ?>
-    </div>
-
+        </div>
       </div>
 
       <!-- SidebarSearch Form -->
@@ -42,7 +41,7 @@
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <li class="nav-item">
-            <a href="../view/dashboard.php" class="nav-link">
+              <a href="<?= base_url('admin/index') ?>" class="nav-link">
               <i class="nav-icon fas fa-users"></i>
               <p>
                 Users
@@ -50,25 +49,25 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-              <a href="<?= base_url('admin/admin') ?>" class="nav-link">
+                <a href="<?= base_url('admin/admin') ?>" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Admin</p>
                 </a>
               </li>
               <li class="nav-item">
-              <a href="<?= base_url('admin/operator') ?>" class="nav-link">
+                <a href="<?= base_url('admin/operator') ?>" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Operator</p>
                 </a>
               </li>
               <li class="nav-item">
-              <a href="<?= base_url('admin/struktural') ?>" class="nav-link">
+                <a href="<?= base_url('admin/struktural') ?>" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Struktural</p>
                 </a>
               </li>
               <li class="nav-item">
-              <a href="<?= base_url('admin/fungsional') ?>" class="nav-link">
+                <a href="<?= base_url('admin/fungsional') ?>" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Fungsional</p>
                 </a>
@@ -82,7 +81,7 @@
                 </a>
         </li>
         <li class="nav-item">
-              <a href="<?= base_url('admin/berkas') ?>" class="nav-link">
+                <a href="<?= base_url('admin/berkas') ?>" class="nav-link">
                 <i class="nav-icon fas fa-folder-open"></i>
                   <p>Berkas</p>
                 </a>

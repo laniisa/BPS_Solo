@@ -38,57 +38,99 @@ class Admin extends CI_Controller {
 
     public function surat()
     {
-        $data['title'] = 'Daftar Surat';
-        $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
-        $data['surat'] = $this->Surat_Model->get_all_surat();
-
-        $this->load->view('template_admin/navbar', $data);
-        $this->load->view('template_admin/sidebar', $data);
-        $this->load->view('admin/surat', $data);
-        $this->load->view('template_admin/footer');
+    if (!$this->session->userdata('email')) {
+        redirect('login'); 
+    }
+    
+    $this->load->model('Surat_Model'); // Load your model for handling surat data
+    $email = $this->session->userdata('email');
+    
+    // Get user information (add more as needed)
+    $data['user'] = $this->db->get_where('users', ['usr' => $email])->row_array();
+    
+    // Get list of surat (letters) from the Surat_Model
+    $data['surat'] = $this->Surat_Model->get_all_surat(); // Fetch all surat
+    
+    // Load view with the collected data
+    $this->load->view('template_admin/navbar', $data);
+    $this->load->view('template_admin/sidebar', $data);
+    $this->load->view('admin/surat', $data); // Ensure this view is created to display surat
+    $this->load->view('template_admin/footer');
     }
 
-    public function insert_surat()
-    {
+
+    public function insert_surat() {
+        if (!$this->session->userdata('email')) {
+            redirect('login'); 
+        }
+    
+        $data['title'] = 'Tambah Surat';
+        $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+    
+        $this->load->model('Surat_Model');
+        $data['surat'] = $this->Surat_Model->get_all_surat();
+    
+        $this->load->view('template_admin/navbar', $data);
+        $this->load->view('template_admin/sidebar', $data);
+        $this->load->view('admin/insert_surat', $data);
+        $this->load->view('template_admin/footer');
+    }
+    
+
+
+    public function save_surat() {
         $this->form_validation->set_rules('no_surat', 'No Surat', 'required');
         $this->form_validation->set_rules('tgl_surat', 'Tanggal Surat', 'required');
         $this->form_validation->set_rules('perihal', 'Perihal', 'required');
         $this->form_validation->set_rules('asal', 'Asal', 'required');
         $this->form_validation->set_rules('jenis_surat', 'Jenis Surat', 'required');
-        $this->form_validation->set_rules('status', 'Status', 'required');
-
+    
         if ($this->form_validation->run() == FALSE) {
-            $data['title'] = 'Tambah Surat';
+            $data['title'] = 'Tambah Surat - Admin';
+            $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+    
             $this->load->view('template_admin/navbar', $data);
             $this->load->view('template_admin/sidebar', $data);
             $this->load->view('admin/insert_surat', $data);
             $this->load->view('template_admin/footer');
         } else {
-            $file_data = $this->upload->data();
-            $data = [
-                'no_disposisi' => $this->input->post('no_disposisi'),
-                'no_surat' => $this->input->post('no_surat'),
-                'tgl_surat' => $this->input->post('tgl_surat'),
-                'tgl_input' => date('Y-m-d H:i:s'),
-                'tgl_disposisi' => $this->input->post('tgl_disposisi'),
-                'tgl_dilaksanakan' => $this->input->post('tgl_dilaksanakan'),
-                'perihal' => $this->input->post('perihal'),
-                'asal' => $this->input->post('asal'),
-                'jenis_surat' => $this->input->post('jenis_surat'),
-               'berkas' => $file_data['file_name'],
-                'status' => $this->input->post('status')
-            ];
-            // Debugging Log
-            log_message('debug', 'Data to insert: ' . json_encode($data));
-
-            if ($this->Surat_Model->insert_surat($data)) {
-                $this->session->set_flashdata('message', '<div class="alert alert-success">Surat berhasil ditambahkan.</div>');
+            $config['upload_path'] = './uploads/';
+            $config['allowed_types'] = 'pdf';
+            $config['max_size'] = 2048; // 2MB
+    
+            $this->load->library('upload', $config);
+    
+            if (!$this->upload->do_upload('berkas')) {
+                $data['error'] = $this->upload->display_errors();
+                $data['title'] = 'Tambah Surat - Admin';
+                $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+    
+                $this->load->view('template_admin/navbar', $data);
+                $this->load->view('template_admin/sidebar', $data);
+                $this->load->view('admin/insert_surat', $data);
+                $this->load->view('template_admin/footer');
             } else {
-                $this->session->set_flashdata('message', '<div class="alert alert-danger">Surat gagal ditambahkan.</div>');
+                $file_data = $this->upload->data();
+                $data = [
+                    'no_surat' => $this->input->post('no_surat'),
+                    'tgl_surat' => $this->input->post('tgl_surat'),
+                    'tgl_input' => date('Y-m-d H:i:s'),
+                    'perihal' => $this->input->post('perihal'),
+                    'asal' => $this->input->post('asal'),
+                    'jenis_surat' => $this->input->post('jenis_surat'),
+                    'berkas' => $file_data['file_name'],
+                    'status' => $this->input->post('status') // Jika status dibutuhkan
+                ];
+    
+                $this->load->model('Surat_Model');
+                $this->Surat_Model->insert_surat($data);
+                $this->session->set_flashdata('message', '<div class="alert alert-success">Surat berhasil ditambahkan</div>');
+                redirect('admin/surat');
             }
-            redirect('admin/surat');
         }
     }
+    
+    
 
     public function update_surat($id)
     {
@@ -167,6 +209,24 @@ class Admin extends CI_Controller {
         $this->load->view('admin/users', $data);
         $this->load->view('template_admin/footer');
     }
+
+    public function admin()
+    {
+        if (!$this->session->userdata('email')) {
+			redirect('login'); 
+		}
+
+        $email = $this->session->userdata('email');
+		$data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
+        $data['title'] = 'Admin';
+        
+        
+        $this->load->view('template_admin/navbar', $data);
+        $this->load->view('template_admin/sidebar', $data);
+        $this->load->view('admin/admin', $data);
+        $this->load->view('template_admin/footer');
+    }
+
 
     
 
