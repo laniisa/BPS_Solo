@@ -40,5 +40,9 @@ class User_Model extends CI_Model {
               return 0;
           }
       }
+
+      public function get_users_by_role($role) {
+        return $this->db->get_where('users', ['role' => $role])->result_array();
+    }
 }      
 ?>

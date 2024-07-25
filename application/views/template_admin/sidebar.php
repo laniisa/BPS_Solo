@@ -17,8 +17,13 @@
         </svg>
         </div>
         <div class="info">
-          <a href="#" class="d-block"><?=$user['nama'];?></a>
-        </div>
+        <?php if (!empty($user)): ?>
+            <a href="#" class="d-block"><?= $user['nama']; ?></a>
+        <?php else: ?>
+            <a href="#" class="d-block">User not found</a>
+        <?php endif; ?>
+    </div>
+
       </div>
 
       <!-- SidebarSearch Form -->
@@ -45,25 +50,25 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="../index.html" class="nav-link">
+              <a href="<?= base_url('admin/admin') ?>" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Admin</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="../index.html" class="nav-link">
+              <a href="<?= base_url('admin/operator') ?>" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Operator</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="../index2.html" class="nav-link">
+              <a href="<?= base_url('admin/struktural') ?>" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Struktural</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="../index3.html" class="nav-link">
+              <a href="<?= base_url('admin/fungsional') ?>" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Fungsional</p>
                 </a>
@@ -71,13 +76,13 @@
             </ul>
           </li>
         <li class="nav-item">
-                <a href="../view/table.php" class="nav-link">
+                <a href="<?= base_url('admin/surat') ?>" class="nav-link">
                 <i class="nav-icon fas fa-envelope-open-text"></i>
                   <p>Surat</p>
                 </a>
         </li>
         <li class="nav-item">
-                <a href="../view/table.php" class="nav-link">
+              <a href="<?= base_url('admin/berkas') ?>" class="nav-link">
                 <i class="nav-icon fas fa-folder-open"></i>
                   <p>Berkas</p>
                 </a>

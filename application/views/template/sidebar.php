@@ -17,7 +17,11 @@
         </svg>
         </div>
         <div class="info">
-          <a href="#" class="d-block"><?=$users['nama'];?></a>
+        <?php if (!empty($user)): ?>
+            <a href="#" class="d-block"><?= $user['nama']; ?></a>
+        <?php else: ?>
+            <a href="#" class="d-block">User not found</a>
+        <?php endif; ?>
         </div>
       </div>
 

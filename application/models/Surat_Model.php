@@ -1,14 +1,18 @@
 <?php
-class Operator_Model extends CI_Model {
+class Surat_Model extends CI_Model {
 
     public function get_all_surat() {
-        $query = $this->db->get('surat');
-        return $query->result_array();
+        $this->db->from('surat');
+        return $this->db->get()->result_array();
     }
 
     public function insert_surat($data) {
-        $this->db->insert('surat', $data);
-        return $this->db->insert_id();
+        $result = $this->db->insert('surat', $data);
+        
+        // Debugging Log
+        log_message('debug', 'Insert query: ' . $this->db->last_query());
+        
+        return $result;
     }
 
     public function get_surat_by_id($id)
@@ -21,6 +25,12 @@ class Operator_Model extends CI_Model {
     {
     $this->db->where('id', $id);
     $this->db->update('surat', $data);
+    }
+
+    public function delete_surat($id)
+    {
+        $this->db->where('id', $id);
+        $this->db->delete('surat');
     }
 
     public function get_jumlah_surat() {

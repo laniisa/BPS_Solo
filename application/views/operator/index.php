@@ -36,17 +36,14 @@
             <thead style="text-align: center;">
               <tr>
                 <th style="width: 5%;">No</th>
-                <th style="width: 15%;">No Disposisi</th>
                 <th style="width: 15%;">No Surat</th>
                 <th style="width: 10%;">Tgl Surat</th>
                 <th style="width: 10%;">Tgl Input</th>
-                <th style="width: 10%;">Tgl Disposisi</th>
-                <th style="width: 10%;">Tgl Dilaksanakan</th>
                 <th style="width: 10%;">Perihal</th>
                 <th style="width: 10%;">Asal</th>
                 <th style="width: 10%;">Jenis Surat</th>
                 <th style="width: 10%;">Berkas</th>
-                <th style="width: 5%;">Status</th>
+                <th style="width: 5%;">Tujuan</th>
                 <th style="width: 10%; text-align: center;">Aksi</th>
               </tr>
             </thead>
@@ -55,17 +52,15 @@
               <?php foreach ($surat as $row) : ?>
                 <tr>
                   <td><?= $i++; ?></td>
-                  <td><?= $row['no_disposisi'] ?></td>
                   <td><?= $row['no_surat'] ?></td>
                   <td><?= $row['tgl_surat'] ?></td>
                   <td><?= $row['tgl_input'] ?></td>
-                  <td><?= $row['tgl_disposisi'] ?></td>
-                  <td><?= $row['tgl_dilaksanakan'] ?></td>
                   <td><?= $row['perihal'] ?></td>
                   <td><?= $row['asal'] ?></td>
                   <td><?= $row['jenis_surat'] ?></td>
                   <td><?= $row['berkas'] ?></td>
-                  <td><?= $row['status'] ?></td>
+                  <td><?= $tujuan_id ?></td>
+
                   <td>
                     <a href="<?= base_url('operator/update_surat/' . $row['id']) ?>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
                     <a href="<?= base_url('operator/delete_surat/' . $row['id']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus surat ini?')"><i class="fas fa-trash"></i></a>
@@ -76,17 +71,14 @@
               <tfoot style="text-align: center;">
                 <tr>
                   <th>No</th>
-                  <th>No Disposisi</th>
                   <th>No Surat</th>
                   <th>Tgl Surat</th>
                   <th>Tgl Input</th>
-                  <th>Tgl Disposisi</th>
-                  <th>Tgl Dilaksanakan</th>
                   <th>Perihal</th>
                   <th>Asal</th>
                   <th>Jenis Surat</th>
                   <th>Berkas</th>
-                  <th>Status</th>
+                  <th>Tujuan</th>
                   <th>Aksi</th>
                 </tr>
               </tfoot>

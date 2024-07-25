@@ -8,7 +8,9 @@ class Login extends CI_Controller {
         parent::__construct();
         $this->load->library('form_validation');
         $this->load->model('User_Model');
-        $this->load->model('Operator_Model');
+        $this->load->model('Surat_Model');
+        $this->load->model('Admin_Model');
+        $this->load->model('Fungsional_Model');
         $this->load->library('session');
     }
 
@@ -17,7 +19,7 @@ class Login extends CI_Controller {
         if ($this->input->post()) {
             $this->_login();
         } else {
-            $data['title'] = 'Destiny Cafe | Login';
+            $data['title'] = 'Disposisi BPS | Login';
             $data['pesan'] = $this->session->flashdata('pesan');
             $this->load->view('login/index', $data);
         }
@@ -93,7 +95,7 @@ class Login extends CI_Controller {
     
         if ($this->form_validation->run() == false) {
             // Validasi gagal
-            $data['title'] = 'Registrasi Pelanggan';
+            $data['title'] = 'Registrasi Pegawai';
             $this->load->view('login/regis', $data);
         } else {
             $this->aksi_regis();
