@@ -27,10 +27,8 @@ class Surat_Model extends CI_Model {
     $this->db->update('surat', $data);
     }
 
-    public function delete_surat($id)
-    {
-        $this->db->where('id', $id);
-        $this->db->delete('surat');
+    public function delete_surat($id) {
+        return $this->db->delete('surat', array('id' => $id));
     }
 
     public function get_jumlah_surat() {

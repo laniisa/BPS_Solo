@@ -35,19 +35,19 @@
             <table id="example1" class="table table-bordered table-striped" style="text-align: center;">
             <thead style="text-align: center;">
               <tr>
-                <th style="width: 5%;">No</th>
-                <th style="width: 15%;">No Disposisi</th>
-                <th style="width: 15%;">No Surat</th>
-                <th style="width: 10%;">Tgl Surat</th>
-                <th style="width: 10%;">Tgl Input</th>
-                <th style="width: 10%;">Tgl Disposisi</th>
-                <th style="width: 10%;">Tgl Dilaksanakan</th>
-                <th style="width: 10%;">Perihal</th>
-                <th style="width: 10%;">Asal</th>
-                <th style="width: 10%;">Jenis Surat</th>
-                <th style="width: 10%;">Berkas</th>
-                <th style="width: 5%;">Status</th>
-                <th style="width: 10%; text-align: center;">Aksi</th>
+                <th >No</th>
+                <th >No Disposisi</th>
+                <th >No Surat</th>
+                <th >Tgl Surat</th>
+                <th >Tgl Input</th>
+                <th >Tgl Disposisi</th>
+                <th >Tgl Dilaksanakan</th>
+                <th >Perihal</th>
+                <th >Asal</th>
+                <th >Jenis Surat</th>
+                <th >Berkas</th>
+                <th >Status</th>
+                <th style="text-align: center;">Aksi</th>
               </tr>
             </thead>
             <tbody style="text-align: center;">

@@ -9,6 +9,10 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/fontawesome-free/css/all.min.css">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/dist/css/adminlte.min.css">
 </head>
@@ -18,13 +22,13 @@
   <!-- Navbar -->
   <nav class="main-header navbar navbar-expand navbar-light" style='background: linear-gradient(to top,#00497d,#0279C8)'>
     <!-- Left navbar links -->
-    <ul class="navbar-nav">
+    
+      <ul class="navbar-nav">
       <li class="nav-item">
-        <a class="nav-link" data-widget="pushmenu" href="#" role="button">
-          <i class="fas fa-bars" style="color: white"></i>
-        </a>
+        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
     </ul>
+    
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
@@ -59,7 +63,7 @@
 
       <!-- Logout -->
       <li class="nav-item">
-        <a href="function/logout.php" class="nav-link" role="button" title='Logout' style="color: white">
+        <a href="<?= base_url('login'); ?>" class="nav-link" role="button" title='Logout' style="color: white">
           <i class="fa fa-sign-out-alt"></i>
         </a>
       </li>
