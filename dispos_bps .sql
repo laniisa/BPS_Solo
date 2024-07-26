@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 25, 2024 at 03:31 AM
+-- Generation Time: Jul 26, 2024 at 04:08 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -87,12 +87,13 @@ CREATE TABLE `surat` (
 --
 
 INSERT INTO `surat` (`id`, `no_disposisi`, `no_surat`, `tgl_surat`, `tgl_input`, `tgl_disposisi`, `tgl_dilaksanakan`, `perihal`, `asal`, `jenis_surat`, `berkas`, `status`) VALUES
-(1, '2', '3', '2024-07-01', '2024-07-24', '2024-07-03', '2024-07-18', 'Surat pp', 'pt', 'resmi', 'okbjk', 'j'),
-(2, '1233', '44', '2024-07-05', '2024-07-23', '2024-07-12', '2024-07-09', 'ww', 'jj', 'k', 'qe', 'e'),
-(3, '76', '09', '2024-07-10', '2024-07-23', '2024-07-20', '2024-07-22', 'poli', 'prov', 'resmi', 'ko', 'd'),
+(3, '76', '09', '2024-07-10', '2024-07-23', '2024-07-20', '2024-07-22', 'polimila', 'prov', 'resmi', '', 'd'),
 (4, '89', '738', '2024-07-02', '2024-07-24', '2024-07-13', '2024-07-13', 'mila', 'dncjc', 'nsjhd', 'nbkj', 'k'),
 (5, 'kk', '89', '2024-07-09', '2024-07-24', '2024-07-20', '2024-07-06', 'jis', 'nammna', 'ajh', 'ina', 'n'),
-(6, '88', '666', '2024-07-10', '2024-07-25', '2024-07-03', '2024-07-11', 'jn', 'huh', 'ii', 'uu', 'h');
+(6, '88', '666', '2024-07-10', '2024-07-25', '2024-07-03', '2024-07-11', 'jn', 'huh', 'ii', 'uu', 'h'),
+(7, '11', '11', '2024-07-25', '2024-07-25', '2024-07-25', '2024-07-25', 'mad', 'ank', 'na', '1481-4640-1-PB.pdf', 'm'),
+(8, '12390', '33', '2024-07-25', '2024-07-25', '2024-07-25', '2024-07-25', 'amewe', 'a ,', 'ma', '770-Article_Text-2680-2-10-20220701_(1).pdf', 'm'),
+(9, '', '5', '2024-07-25', '2024-07-25', '0000-00-00', '0000-00-00', 'mla', 'mls', 'xa', '125998854.pdf', 'd');
 
 -- --------------------------------------------------------
 
@@ -129,10 +130,13 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id_user`, `nama`, `role`, `status`, `usr`, `email`, `whatsApp`, `password`) VALUES
-(1, 'lani', '0', 'active', 'lanii', 'lan@gmail.com', '0876543', '$2y$10$6qn6OS/HzWmUNgxaROeS1uToDCaLnnexhN8cSONB51IE9S/GOHW/m'),
+(1, 'lani', '1', 'Active', 'laniisa', 'lan@gmail.com', '0876543', '$2y$10$PAN8FquBxZJ5tQjUN9r06uePvj9EFN.d6..WJd.kaUvoB2maJJqJK'),
 (2, 'Mila', '3', 'active', 'mila', 'mila@gmail.com', '0897654', '$2y$10$rcndayKmtvoTzxVvReqnFOq.HXEWVZEcv6q3BDLmvRK4lfhgdO3GW'),
 (3, 'laniiii', '2', 'active', 'sa', 'sa@gmail.com', '09876', 'sa'),
-(4, 'kami', '1', 'active', 'kami', 'kami@gmail.com', '08765', 'kami');
+(4, 'kami', '1', 'active', 'kami', 'kami@gmail.com', '08765', 'kami'),
+(6, 'Lani', 'Operat', 'Active', 'lllll', 'lll@gmail.com', '0765', '$2y$10$ITMBlP5woVeLknzNkRO5j.eCs/av2w12AYb8yGSLggT.evgY0WFoi'),
+(8, 'Lani', 'Operat', 'Active', 'lllll', 'lisaaa@gmail.com', '0765', '$2y$10$de2Ual3gJlQE99AUxwQE3eZ6z5Mbpa1LtNOaJsrFxxjz6t.CFXBFq'),
+(9, 'kamm', '3', 'active', 'kamm', 'kamm@gmail.com', '0785842', '$2y$10$acNJsFhnmUnRnAltjahoUeza7Hc44wuTU7KTstwfjCAU7kNBHrpYq');
 
 -- --------------------------------------------------------
 
@@ -228,13 +232,13 @@ ALTER TABLE `pegawai`
 -- AUTO_INCREMENT for table `surat`
 --
 ALTER TABLE `surat`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
