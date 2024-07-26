@@ -30,15 +30,16 @@
             <div class="card-header">
               <a href="<?= base_url('admin/insert_op') ?>" class="btn btn-primary float-left"><i class="fas fa-plus"></i> Tambah User</a>
               <div class="float-right">
-                <a href="<?= site_url('users?role=all') ?>" class="btn btn-secondary">All</a>
-                <a href="<?= site_url('users?role=admin') ?>" class="btn btn-secondary">Admin</a>
-                <a href="<?= site_url('users?role=struktural') ?>" class="btn btn-secondary">Struktural</a>
-                <a href="<?= site_url('users?role=fungsional') ?>" class="btn btn-secondary">Fungsional</a>
-                <a href="<?= site_url('users?role=operator') ?>" class="btn btn-secondary">Operator</a>
-              </div>
+    <a href="#" id="filter-all" class="btn btn-secondary">All</a>
+    <a href="#" id="filter-admin" class="btn btn-secondary">Admin</a>
+    <a href="#" id="filter-struktural" class="btn btn-secondary">Struktural</a>
+    <a href="#" id="filter-fungsional" class="btn btn-secondary">Fungsional</a>
+    <a href="#" id="filter-operator" class="btn btn-secondary">Operator</a>
+</div>
+
             </div>
             <!-- /.card-header -->
-            <div class="card-body">
+            <div class="card-body" id="user-table-container">
               <table id="example1" class="table table-bordered table-striped" style="text-align: center;">
                 <thead style="text-align: center;">
                   <tr>
@@ -97,3 +98,82 @@
   <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterButtons = document.querySelectorAll('.float-right .btn');
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+            const role = this.id.replace('filter-', '');
+            fetchUsers(role);
+        });
+    });
+
+    // Fetch users function
+    function fetchUsers(role) {
+        fetch(`<?= site_url('admin/filter_users') ?>?role=${role}`)
+            .then(response => response.json())
+            .then(data => {
+                renderTable(data);
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }
+
+    // Render table function
+    function renderTable(users) {
+        let tableContent = `
+            <table id="example1" class="table table-bordered table-striped" style="text-align: center;">
+                <thead style="text-align: center;">
+                    <tr>
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>WhatsApp</th>
+                        <th style="text-align: center;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody style="text-align: center;">`;
+
+        users.forEach((user, index) => {
+            tableContent += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${user.nama}</td>
+                    <td>${user.role}</td>
+                    <td>${user.status}</td>
+                    <td>${user.usr}</td>
+                    <td>${user.email}</td>
+                    <td>${user.whatsApp}</td>
+                    <td>
+                        <a href="<?= base_url('admin/update_op/') ?>${user.id_user}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                        <a href="<?= base_url('admin/delete_op/') ?>${user.id_user}" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus user ini?')"><i class="fas fa-trash"></i></a>
+                    </td>
+                </tr>`;
+        });
+
+        tableContent += `
+                </tbody>
+                <tfoot style="text-align: center;">
+                    <tr>
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>WhatsApp</th>
+                        <th>Aksi</th>
+                    </tr>
+                </tfoot>
+            </table>`;
+
+        document.getElementById('user-table-container').innerHTML = tableContent;
+    }
+
+    // Fetch all users on page load
+    fetchUsers('all');
+});
+</script>

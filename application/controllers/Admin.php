@@ -202,23 +202,37 @@ class Admin extends CI_Controller {
             return $existing_file;
         }
     }
-
     public function users() {
         if (!$this->session->userdata('email')) {
-            redirect('login'); 
+            redirect('login');
         }
-
+    
+        $role = $this->input->get('role'); // Get the role filter from the URL
+        if ($role == 'all' || $role == '') {
+            $data['users'] = $this->User_Model->get_all_users();
+        } else {
+            $data['users'] = $this->User_Model->get_users_by_role($role);
+        }
+    
         $email = $this->session->userdata('email');
         $data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
-
-        $data['title'] = 'Users';
-        $data['users_list'] = $this->User_Model->get_users();
-
+    
         $this->load->view('template_admin/navbar', $data);
         $this->load->view('template_admin/sidebar', $data);
-        $this->load->view('admin/users', $data);
+        $this->load->view('admin/user', $data);
         $this->load->view('template_admin/footer');
     }
+    
+    public function filter_users() {
+        $role = $this->input->get('role');
+        if ($role == 'all') {
+            $users = $this->User_Model->get_all_users();
+        } else {
+            $users = $this->User_Model->get_users_by_role($role);
+        }
+        echo json_encode($users);
+    }
+    
 
     public function admin()
     {
