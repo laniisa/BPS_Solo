@@ -5,6 +5,11 @@ class User_Model extends CI_Model {
         return $this->db->insert('users', $data_user);
     }
 
+    public function get_all_user() {
+        $this->db->from('users');
+        return $this->db->get()->result_array();
+    }
+
     public function get_user_by_email($email)
     {
     $this->db->where('email', $email);
@@ -12,12 +17,34 @@ class User_Model extends CI_Model {
     return $query->row_array(); // Mengembalikan hasil sebagai array
     }
 
+    public function get_users_by_role($role) {
+        $this->db->where('role', $role);
+        $query = $this->db->get('users');
+        return $query->result_array();
+    }    
+
 
     public function get_user($email) {
         $this->db->where('email', $email);
         $query = $this->db->get('users');
         return $query->row_array(); // Menggunakan row_array() karena ingin mengembalikan data sebagai array asosiatif
       }
+
+      public function get_users($id) {
+        $this->db->where('id_user', $id);
+        $query = $this->db->get('users');
+        return $query->row_array();
+    }
+
+    public function update_user($id, $data) {
+        $this->db->where('id_user', $id);
+        return $this->db->update('users', $data);
+    }
+
+    public function delete_user($id) {
+        $this->db->where('id_user', $id);
+        return $this->db->delete('users');
+    }
 
       public function get_jumlah_user($role_id = null)
       {
@@ -41,8 +68,6 @@ class User_Model extends CI_Model {
           }
       }
 
-      public function get_users_by_role($role) {
-        return $this->db->get_where('users', ['role' => $role])->result_array();
-    }
+      
 }      
 ?>

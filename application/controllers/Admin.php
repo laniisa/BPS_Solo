@@ -8,6 +8,7 @@ class Admin extends CI_Controller {
         $this->load->helper('url');
         $this->load->model('Surat_Model');
         $this->load->model('User_Model');
+        $this->load->model('Berkas_Model');
 
         if (!$this->session->userdata('email')) {
             redirect('login');
@@ -28,6 +29,7 @@ class Admin extends CI_Controller {
         
         $data['jumlah_surat'] = $this->Surat_Model->get_jumlah_surat();
         $data['total_users'] = $this->User_Model->get_jumlah_user();
+        $data['total_berkas'] = $this->Berkas_Model->get_jumlah_berkas();
        
         $this->load->view('template_admin/navbar', $data);
         $this->load->view('template_admin/sidebar', $data);
@@ -168,12 +170,20 @@ class Admin extends CI_Controller {
         }
     }
 
-    public function delete_surat($id)
-    {
-        $this->Surat_Model->delete_surat($id);
-        $this->session->set_flashdata('message', '<div class="alert alert-success">Surat berhasil dihapus.</div>');
+    public function delete_surat($id) {
+        if (!$this->session->userdata('email')) {
+            redirect('login');
+        }
+
+        if ($this->Surat_Model->delete_surat($id)) {
+            $this->session->set_flashdata('message', '<div class="alert alert-success">Surat berhasil dihapus</div>');
+        } else {
+            $this->session->set_flashdata('message', '<div class="alert alert-danger">Surat gagal dihapus</div>');
+        }
+        
         redirect('admin/surat');
     }
+
 
     private function _upload_berkas($no_disposisi, $no_surat, $existing_file = null) 
     {
@@ -216,61 +226,16 @@ class Admin extends CI_Controller {
 			redirect('login'); 
 		}
 
-        $email = $this->session->userdata('email');
-		$data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
-        $data['title'] = 'Admin';
-        
-        
-        $this->load->view('template_admin/navbar', $data);
-        $this->load->view('template_admin/sidebar', $data);
-        $this->load->view('admin/admin', $data);
-        $this->load->view('template_admin/footer');
-    }
-    public function operator()
-    {
-        if (!$this->session->userdata('email')) {
-			redirect('login'); 
-		}
+        $data['title'] = 'Daftar Admin';
+        $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
+        $data['admins'] = $this->User_Model->get_users_by_role(0); // Get users with role 0 (Admin)
 
-        $email = $this->session->userdata('email');
-		$data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
-        $data['title'] = 'Operator';
-       
         $this->load->view('template_admin/navbar', $data);
         $this->load->view('template_admin/sidebar', $data);
         $this->load->view('admin/admin', $data);
         $this->load->view('template_admin/footer');
     }
-    public function struktural()
-    {
-        if (!$this->session->userdata('email')) {
-			redirect('login'); 
-		}
 
-        $email = $this->session->userdata('email');
-		$data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
-        $data['title'] = 'Struktural';
-       
-        $this->load->view('template_admin/navbar', $data);
-        $this->load->view('template_admin/sidebar', $data);
-        $this->load->view('admin/admin', $data);
-        $this->load->view('template_admin/footer');
-    }
-    public function fungsional()
-    {
-        if (!$this->session->userdata('email')) {
-			redirect('login'); 
-		}
-
-        $email = $this->session->userdata('email');
-		$data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
-        $data['title'] = 'Fungsional';
-       
-        $this->load->view('template_admin/navbar', $data);
-        $this->load->view('template_admin/sidebar', $data);
-        $this->load->view('admin/admin', $data);
-        $this->load->view('template_admin/footer');
-    }
 
     
 
