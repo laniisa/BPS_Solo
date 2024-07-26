@@ -226,7 +226,51 @@ class Admin extends CI_Controller {
         $this->load->view('admin/admin', $data);
         $this->load->view('template_admin/footer');
     }
+    public function operator()
+    {
+        if (!$this->session->userdata('email')) {
+			redirect('login'); 
+		}
 
+        $email = $this->session->userdata('email');
+		$data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
+        $data['title'] = 'Operator';
+       
+        $this->load->view('template_admin/navbar', $data);
+        $this->load->view('template_admin/sidebar', $data);
+        $this->load->view('admin/admin', $data);
+        $this->load->view('template_admin/footer');
+    }
+    public function struktural()
+    {
+        if (!$this->session->userdata('email')) {
+			redirect('login'); 
+		}
+
+        $email = $this->session->userdata('email');
+		$data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
+        $data['title'] = 'Struktural';
+       
+        $this->load->view('template_admin/navbar', $data);
+        $this->load->view('template_admin/sidebar', $data);
+        $this->load->view('admin/admin', $data);
+        $this->load->view('template_admin/footer');
+    }
+    public function fungsional()
+    {
+        if (!$this->session->userdata('email')) {
+			redirect('login'); 
+		}
+
+        $email = $this->session->userdata('email');
+		$data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
+        $data['title'] = 'Fungsional';
+       
+        $this->load->view('template_admin/navbar', $data);
+        $this->load->view('template_admin/sidebar', $data);
+        $this->load->view('admin/admin', $data);
+        $this->load->view('template_admin/footer');
+    }
 
     
 
