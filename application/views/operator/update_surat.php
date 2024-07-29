@@ -11,7 +11,7 @@
             <?= $this->session->flashdata('message'); ?>
         <?php endif; ?>
         <form action="<?= site_url('operator/update_surat_action'); ?>" method="post" enctype="multipart/form-data">
-            <input type="hidden" name="id" value="<?= $surat['id']; ?>">
+            <input type="hidden" name="id" value="<?= $surat['id_ds_surat']; ?>">
 
             <div class="form-group">
                 <label for="no_surat">No Surat:</label>

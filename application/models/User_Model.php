@@ -23,6 +23,12 @@ class User_Model extends CI_Model {
         return $query->result_array();
     }    
 
+    public function get_user_by_role($role_id) {
+        $this->db->where('role', $role_id);
+        $query = $this->db->get('users');
+        return $query->result_array();
+    }
+
 
     public function get_user($email) {
         $this->db->where('email', $email);
@@ -67,6 +73,17 @@ class User_Model extends CI_Model {
               return 0;
           }
       }
+
+    // Operator_Model.php (Model)
+    public function update_status($id_user, $status) {
+        $this->db->set('status', $status);
+        $this->db->where('id_user', $id_user);
+        $result = $this->db->update('users');
+        error_log("Update result: " . ($result ? 'Success' : 'Failed')); // Logging
+        return $result;
+    }
+    
+
 
       
 }      

@@ -67,8 +67,8 @@
                   <td><?= $row['berkas'] ?></td>
                   <td><?= $row['status'] ?></td>
                   <td>
-                    <a href="<?= base_url('admin/update_surat/' . $row['id']) ?>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
-                    <a href="<?= base_url('admin/delete_surat/' . $row['id']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus surat ini?')"><i class="fas fa-trash"></i></a>
+                    <a href="<?= base_url('admin/update_surat/' . $row['id_ds_surat']) ?>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                    <a href="<?= base_url('admin/delete_surat/' . $row['id_ds_surat']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus surat ini?')"><i class="fas fa-trash"></i></a>
                   </td>
                 </tr>
               <?php endforeach; ?>

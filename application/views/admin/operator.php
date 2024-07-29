@@ -46,10 +46,11 @@
                     <th>No</th>
                     <th>Nama</th>
                     <th>Role</th>
-                    <th>Status</th>
                     <th>Username</th>
                     <th>Email</th>
                     <th>WhatsApp</th>
+                    <th>Status</th>
+                    <th>Konfirmasi</th>
                     <th style="text-align: center;">Aksi</th>
                   </tr>
                 </thead>
@@ -60,10 +61,24 @@
                       <td><?= $i++; ?></td>
                       <td><?= $user['nama'] ?></td>
                       <td><?= $user['role'] ?></td>
-                      <td><?= $user['status'] ?></td>
                       <td><?= $user['usr'] ?></td>
                       <td><?= $user['email'] ?></td>
                       <td><?= $user['whatsApp'] ?></td>
+                      <td>
+                        <form action="<?= base_url('admin/edit_status/' . $user['id_user']); ?>" method="POST">
+                          <select name="status" class="form-control" onchange="this.form.submit()">
+                            <option value="active" <?= $user['status'] == 'active' ? 'selected' : ''; ?>>Active</option>
+                            <option value="inactive" <?= $user['status'] == 'inactive' ? 'selected' : ''; ?>>Inactive</option>
+                          </select>
+                        </form>
+                      </td>
+                      <td>
+                        <?php if ($user['status'] == 'active') : ?>
+                          <button type="button" class="btn btn-success btn-sm">Active</button>
+                        <?php elseif ($user['status'] == 'inactive') : ?>
+                          <button type="button" class="btn btn-danger btn-sm">Inactive</button>
+                        <?php endif; ?>
+                      </td>
                       <td>
                         <a href="<?= base_url('admin/update_op/' . $user['id_user']) ?>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
                         <a href="<?= base_url('admin/delete_op/' . $user['id_user']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus user ini?')"><i class="fas fa-trash"></i></a>
@@ -76,10 +91,11 @@
                     <th>No</th>
                     <th>Nama</th>
                     <th>Role</th>
-                    <th>Status</th>
                     <th>Username</th>
                     <th>Email</th>
                     <th>WhatsApp</th>
+                    <th>Status</th>
+                    <th>Konfirmasi</th>
                     <th>Aksi</th>
                   </tr>
                 </tfoot>
@@ -111,9 +127,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fetch users function
     function fetchUsers(role) {
-        fetch(`<?= site_url('admin/filter_users') ?>?role=${role}`)
+        fetch(`<?= site_url('admin/filter_user') ?>?role=${role}`)
             .then(response => response.json())
             .then(data => {
+                console.log(data); // Tambahkan ini untuk melihat data yang diterima
                 renderTable(data);
             })
             .catch(error => console.error('Error fetching data:', error));
@@ -128,10 +145,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         <th>No</th>
                         <th>Nama</th>
                         <th>Role</th>
-                        <th>Status</th>
                         <th>Username</th>
                         <th>Email</th>
                         <th>WhatsApp</th>
+                        <th>Status</th>
+                        <th>Konfirmasi</th>
                         <th style="text-align: center;">Aksi</th>
                     </tr>
                 </thead>
@@ -143,10 +161,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td>${index + 1}</td>
                     <td>${user.nama}</td>
                     <td>${user.role}</td>
-                    <td>${user.status}</td>
                     <td>${user.usr}</td>
                     <td>${user.email}</td>
                     <td>${user.whatsApp}</td>
+                    <td>
+                        <form action="<?= base_url('admin/edit_status/') ?>${user.id_user}" method="POST">
+                          <select name="status" class="form-control" onchange="this.form.submit()">
+                            <option value="active" ${user.status == 'active' ? 'selected' : ''}>Active</option>
+                            <option value="inactive" ${user.status == 'inactive' ? 'selected' : ''}>Inactive</option>
+                          </select>
+                        </form>
+                    </td>
+                    <td>${user.status == 'active' ? '<button type="button" class="btn btn-success btn-sm">Active</button>' : '<button type="button" class="btn btn-danger btn-sm">Inactive</button>'}</td>
                     <td>
                         <a href="<?= base_url('admin/update_op/') ?>${user.id_user}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
                         <a href="<?= base_url('admin/delete_op/') ?>${user.id_user}" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus user ini?')"><i class="fas fa-trash"></i></a>
@@ -161,10 +187,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         <th>No</th>
                         <th>Nama</th>
                         <th>Role</th>
-                        <th>Status</th>
                         <th>Username</th>
                         <th>Email</th>
                         <th>WhatsApp</th>
+                        <th>Status</th>
+                        <th>Konfirmasi</th>
                         <th>Aksi</th>
                     </tr>
                 </tfoot>

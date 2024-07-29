@@ -21,7 +21,6 @@ class Operator extends CI_Controller {
         redirect('login'); 
     }
     
-    $this->load->model('Surat_Model'); // Load your model for handling surat data
     $email = $this->session->userdata('email');
     
     // Get user information (add more as needed)
@@ -29,6 +28,7 @@ class Operator extends CI_Controller {
     
     // Get list of surat (letters) from the Surat_Model
     $data['surat'] = $this->Surat_Model->get_all_surat(); // Fetch all surat
+    $data['struktural_users'] = $this->User_Model->get_user_by_role(1);
     
     // Load view with the collected data
     $this->load->view('template/navbar', $data);
@@ -47,6 +47,15 @@ class Operator extends CI_Controller {
         $this->load->view('operator/index', $data);
         $this->load->view('template/footer');
     }
+
+    public function update_tujuan()
+{
+    $id = $this->input->post('id_ds_surat');
+    $tujuan = $this->input->post('tujuan');
+    $this->Surat_Model->update_tujuan($id, $tujuan);
+    echo json_encode(['status' => 'success']);
+}
+
 
     public function insert_surat() {
         if (!$this->session->userdata('email')) {
@@ -133,7 +142,7 @@ class Operator extends CI_Controller {
         $this->form_validation->set_rules('tujuan', 'Tujuan', 'required');
 
         if ($this->form_validation->run() == FALSE) {
-            $id = $this->input->post('id');
+            $id = $this->input->post('id_ds_surat');
             $data['title'] = 'Update Surat';
             $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
             $data['surat'] = $this->Surat_Model->get_surat_by_id($id);
@@ -143,7 +152,7 @@ class Operator extends CI_Controller {
             $this->load->view('operator/update_surat', $data);
             $this->load->view('template/footer');
         } else {
-            $id = $this->input->post('id');
+            $id = $this->input->post('id_ds_surat');
 
             $this->load->library('upload');
             $config['upload_path'] = './uploads/';

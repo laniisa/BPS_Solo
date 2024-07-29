@@ -10,7 +10,9 @@ class Login extends CI_Controller {
         $this->load->model('User_Model');
         $this->load->model('Surat_Model');
         $this->load->model('Admin_Model');
+        $this->load->model('Struktural_Model');
         $this->load->model('Fungsional_Model');
+        $this->load->model('Operator_Model');
         $this->load->library('session');
     }
 
@@ -59,10 +61,10 @@ class Login extends CI_Controller {
                             redirect('admin'); // Admin
                             break;
                         case 1:
-                            redirect('fungsional'); // Fungsional
+                            redirect('struktural'); // Fungsional
                             break;
                         case 2:
-                            redirect('struktural'); // Struktural
+                            redirect('fungsional'); // Struktural
                             break;
                         case 3:
                             redirect('operator'); // Operator
@@ -108,13 +110,13 @@ class Login extends CI_Controller {
         $email = htmlspecialchars($this->input->post('email', true));
         $domain = substr(strrchr($email, "@"), 1); // Ambil domain dari email
 
-        $role = 3; // Default ke Operator
+        $role = 2; // Default ke Fungsional
         if ($domain === 'admin.com') {
             $role = 0; // Admin
-        } elseif ($domain === 'fungsional.com') {
-            $role = 1; // Fungsional
         } elseif ($domain === 'struktural.com') {
-            $role = 2; // Struktural
+            $role = 1; // Struktural
+        } elseif ($domain === 'operator.com') {
+            $role = 3; // Operator
         }
 
         $data_user = array(

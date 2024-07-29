@@ -41,36 +41,10 @@
     <nav class="mt-2">
       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
         <li class="nav-item">
-          <a href="<?= base_url('admin/index') ?>" class="nav-link">
-            <i class="nav-icon fas fa-users"></i>
+          <a href="<?= base_url('admin/operator') ?>" class="nav-link">
+            <i class="nav-icon fas fa-envelope-open-text"></i>
             <p>Users</p>
           </a>
-          <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a href="<?= base_url('admin/admin') ?>" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Admin</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="<?= base_url('admin/operator') ?>" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Operator</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="<?= base_url('admin/struktural') ?>" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Struktural</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="<?= base_url('admin/fungsional') ?>" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Fungsional</p>
-              </a>
-            </li>
-          </ul>
         </li>
         <li class="nav-item">
           <a href="<?= base_url('admin/surat') ?>" class="nav-link">

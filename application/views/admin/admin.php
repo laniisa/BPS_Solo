@@ -10,7 +10,7 @@
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="<?= site_url('admin/index') ?>">Dashboard</a></li>
-            <li class="breadcrumb-item active" style="color: lightgrey;">Daftar Admin</li>
+            <li class="breadcrumb-item active" style="color: lightgrey;"><a href="<?= site_url('admin/admin') ?>">Daftar Admin</a></li>
           </ol>
         </div>
       </div>
@@ -22,7 +22,6 @@
   <?php endif; ?>
   <!-- Main content -->
   <section class="content">
-
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
@@ -32,28 +31,49 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body">
+              <?php if ($this->session->flashdata('success')) : ?>
+                <div class="alert alert-success" role="alert">
+                    <?= $this->session->flashdata('success'); ?>
+                </div>
+              <?php endif; ?>
+
               <table id="example1" class="table table-bordered table-striped" style="text-align: center;">
                 <thead style="text-align: center;">
                   <tr>
                     <th>No</th>
                     <th>Nama</th>
-                    <th>Status</th>
                     <th>Username</th>
                     <th>Email</th>
                     <th>WhatsApp</th>
+                    <th>Status</th>
+                    <th>Konfirmasi</th>
                     <th style="text-align: center;">Aksi</th>
                   </tr>
                 </thead>
                 <tbody style="text-align: center;">
                   <?php $i = 1; ?>
-                  <?php foreach ($admins as $admin) : ?>
+                  <?php foreach ($users as $admin) : ?>
                     <tr>
                       <td><?= $i++; ?></td>
                       <td><?= $admin['nama'] ?></td>
-                      <td><?= $admin['status'] ?></td>
                       <td><?= $admin['usr'] ?></td>
                       <td><?= $admin['email'] ?></td>
                       <td><?= $admin['whatsApp'] ?></td>
+                      <td>
+                        <form action="<?= base_url('admin/edit_status/' . $admin['id_user']); ?>" method="POST">
+                          <select name="status" class="form-control" onchange="this.form.submit()">
+                            <option value="active" <?= $admin['status'] == 'active' ? 'selected' : ''; ?>>Active</option>
+                            <option value="inactive" <?= $admin['status'] == 'inactive' ? 'selected' : ''; ?>>Inactive</option>
+                          </select>
+                        </form>
+                      </td>
+                      <td>
+                        <?php if ($admin['status'] == 'active') : ?>
+                          <button type="button" class="btn btn-success btn-sm">Active</button>
+                        <?php elseif ($admin['status'] == 'inactive') : ?>
+                          <button type="button" class="btn btn-danger btn-sm">Inactive</button>
+                        <?php endif; ?>
+                      </td>
                       <td>
                         <a href="<?= base_url('admin/update_op/' . $admin['id_user']) ?>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
                         <a href="<?= base_url('admin/delete_op/' . $admin['id_user']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus admin ini?')"><i class="fas fa-trash"></i></a>
@@ -65,10 +85,11 @@
                   <tr>
                     <th>No</th>
                     <th>Nama</th>
-                    <th>Status</th>
                     <th>Username</th>
                     <th>Email</th>
                     <th>WhatsApp</th>
+                    <th>Status</th>
+                    <th>Konfirmasi</th>
                     <th>Aksi</th>
                   </tr>
                 </tfoot>

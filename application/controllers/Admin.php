@@ -8,7 +8,6 @@ class Admin extends CI_Controller {
         $this->load->helper('url');
         $this->load->model('Surat_Model');
         $this->load->model('User_Model');
-        $this->load->model('Berkas_Model');
 
         if (!$this->session->userdata('email')) {
             redirect('login');
@@ -29,7 +28,6 @@ class Admin extends CI_Controller {
         
         $data['jumlah_surat'] = $this->Surat_Model->get_jumlah_surat();
         $data['total_users'] = $this->User_Model->get_jumlah_user();
-        $data['total_berkas'] = $this->Berkas_Model->get_jumlah_berkas();
        
         $this->load->view('template_admin/navbar', $data);
         $this->load->view('template_admin/sidebar', $data);
@@ -242,13 +240,39 @@ class Admin extends CI_Controller {
 
         $data['title'] = 'Daftar Admin';
         $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
-        $data['admins'] = $this->User_Model->get_users_by_role(0); // Get users with role 0 (Admin)
+        $data['users'] = $this->User_Model->get_users_by_role(0); // Get users with role 0 (Admin)
 
         $this->load->view('template_admin/navbar', $data);
         $this->load->view('template_admin/sidebar', $data);
         $this->load->view('admin/admin', $data);
         $this->load->view('template_admin/footer');
     }
+
+    // Admin.php (Controller)
+
+// Admin.php (Controller)
+public function edit_status($id_user) {
+    $status = $this->input->post('status');
+    
+    // Debugging: periksa apakah ID dan status diterima dengan benar
+    error_log("ID: $id_user, Status: $status"); // Logging
+    
+    if ($id_user && $status !== null) {
+        // Update status berdasarkan id_user
+        if ($this->User_Model->update_status($id_user, $status)) {
+            $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Status berhasil diupdate!</div>');
+        } else {
+            $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Gagal mengupdate status!</div>');
+        }
+    } else {
+        $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Status harus diisi!</div>');
+    }
+    
+    // Redirect ke halaman daftar admin
+    redirect('admin/operator');
+}
+
+
 
     public function struktural()
     {
@@ -344,21 +368,59 @@ public function insert_berkas()
 	}
     
     public function operator() {
-        // Pastikan hanya pengguna yang sudah login yang bisa mengakses halaman ini
-        if (!$this->session->userdata('email')) {
-            redirect('login');
-        }
+        // Load library pagination
+        $this->load->library('pagination');
 
-        $data['title'] = 'Daftar Users';
-        $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
-        $data['users'] = $this->User_Model->get_all_user();
+        // Konfigurasi pagination
+        $config['base_url'] = site_url('admin/operator');
+        $config['total_rows'] = $this->db->count_all('users'); // Jumlah total data
+        $config['per_page'] = 10; // Jumlah data per halaman
+        $config['uri_segment'] = 3; // Uri segment untuk pagination
 
+        // Inisialisasi pagination
+        $this->pagination->initialize($config);
+
+        // Ambil data sesuai halaman yang sedang diakses
+        $page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
+        $data['users'] = $this->db->get('users', $config['per_page'], $page)->result_array();
+        $data['pagination'] = $this->pagination->create_links();
+
+        // Tampilkan view dengan data
         $this->load->view('template_admin/navbar', $data);
         $this->load->view('template_admin/sidebar', $data);
-        $this->load->view('admin/operator', $data);
+       $this->load->view('admin/operator', $data);
         $this->load->view('template_admin/footer');
     }
-	
+
+    public function filter_user() {
+        $role = $this->input->get('role');
+        if ($role == 'all') {
+            $users = $this->User_Model->get_all_user();
+        } else {
+            $role_id = null;
+            switch ($role) {
+                case 'admin':
+                    $role_id = 0;
+                    break;
+                case 'struktural':
+                    $role_id = 1;
+                    break;
+                case 'fungsional':
+                    $role_id = 2;
+                    break;
+                case 'operator':
+                    $role_id = 3;
+                    break;
+            }
+            if ($role_id !== null) {
+                $users = $this->User_Model->get_user_by_role($role_id);
+            } else {
+                $users = [];
+            }
+        }
+        echo json_encode($users);
+    }
+    
     public function insert_op() {
         // Pastikan hanya pengguna yang sudah login yang bisa mengakses halaman ini
         if (!$this->session->userdata('email')) {
@@ -370,7 +432,6 @@ public function insert_berkas()
 
         $this->form_validation->set_rules('nama', 'Nama', 'required|trim');
         $this->form_validation->set_rules('role', 'Role', 'required|trim');
-        $this->form_validation->set_rules('status', 'Status', 'required|trim');
         $this->form_validation->set_rules('usr', 'Username', 'required|trim');
         $this->form_validation->set_rules('email', 'Email', 'required|trim|valid_email');
         $this->form_validation->set_rules('whatsApp', 'WhatsApp', 'required|trim');
@@ -397,7 +458,7 @@ public function insert_berkas()
         $data = [
             'nama' => htmlspecialchars($this->input->post('nama', true)),
             'role' => htmlspecialchars($this->input->post('role', true)),
-            'status' => htmlspecialchars($this->input->post('status', true)),
+            'status' => 'active',
             'usr' => htmlspecialchars($this->input->post('usr', true)),
             'email' => htmlspecialchars($this->input->post('email', true)),
             'whatsApp' => htmlspecialchars($this->input->post('whatsApp', true)),
