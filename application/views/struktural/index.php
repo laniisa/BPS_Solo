@@ -38,7 +38,6 @@
                     <th style="width: 5%;">No</th>
                     <th style="width: 15%;">No Surat</th>
                     <th style="width: 10%;">Tgl Surat</th>
-                    <th style="width: 10%;">Tgl Input</th>
                     <th style="width: 10%;">Perihal</th>
                     <th style="width: 10%;">Asal</th>
                     <th style="width: 10%;">Jenis Surat</th>
@@ -58,7 +57,7 @@
                       <td><?= $row['perihal'] ?></td>
                       <td><?= $row['asal'] ?></td>
                       <td><?= $row['jenis_surat'] ?></td>
-                      <td><?= $row['no_disposisi'] . ' - ' . date('Y', strtotime($row['tgl_surat'])) ?></td>
+                      <td><?= $row['no_disposisi'] . ' - ' . $row['tgl_surat'] ?></td>
                       <td>
                         <select name="tujuan" class="form-control" onchange="updateTujuan(<?= $row['id_ds_surat'] ?>, this.value)">
                           <option value="">Pilih Tujuan</option>
