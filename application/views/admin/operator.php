@@ -1,16 +1,16 @@
 <!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper" style="background-color: #454d55;">
+<div class="content-wrapper" style="background-color: #ffffff;">
   <!-- Content Header (Page header) -->
   <section class="content-header">
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 style="color: white;">Daftar Users</h1>
+          <h1 style="color: black;">Daftar Users</h1> <!-- Ganti warna teks menjadi hitam -->
         </div>
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="<?= site_url('admin/index') ?>">Dashboard</a></li>
-            <li class="breadcrumb-item active" style="color: lightgrey;"><a href="<?= site_url('admin') ?>">Daftar Users</a></li>
+            <li class="breadcrumb-item active"><a href="<?= site_url('admin') ?>">Daftar Users</a></li> <!-- Hilangkan style color dari breadcrumb -->
           </ol>
         </div>
       </div>
@@ -26,17 +26,16 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
-          <div class="card" style="background-color: #343a40; color: white;">
+          <div class="card" style="background-color: #ffffff; color: black;"> <!-- Ganti warna background card dan teks -->
             <div class="card-header">
               <a href="<?= base_url('admin/insert_op') ?>" class="btn btn-primary float-left"><i class="fas fa-plus"></i> Tambah User</a>
               <div class="float-right">
-    <a href="#" id="filter-all" class="btn btn-secondary">All</a>
-    <a href="#" id="filter-admin" class="btn btn-secondary">Admin</a>
-    <a href="#" id="filter-struktural" class="btn btn-secondary">Struktural</a>
-    <a href="#" id="filter-fungsional" class="btn btn-secondary">Fungsional</a>
-    <a href="#" id="filter-operator" class="btn btn-secondary">Operator</a>
-</div>
-
+                <a href="#" id="filter-all" class="btn btn-secondary">All</a>
+                <a href="#" id="filter-admin" class="btn btn-secondary">Admin</a>
+                <a href="#" id="filter-struktural" class="btn btn-secondary">Struktural</a>
+                <a href="#" id="filter-fungsional" class="btn btn-secondary">Fungsional</a>
+                <a href="#" id="filter-operator" class="btn btn-secondary">Operator</a>
+              </div>
             </div>
             <!-- /.card-header -->
             <div class="card-body" id="user-table-container">

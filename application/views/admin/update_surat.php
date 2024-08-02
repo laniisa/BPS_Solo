@@ -7,7 +7,7 @@
 <body>
     <div class="container mt-5">
         <h2><?= $title; ?></h2>
-        <form action="<?= site_url('admin/update_surat/' . $surat['id']); ?>" method="post" enctype="multipart/form-data">
+        <form action="<?= site_url('admin/update_surat/' . $surat['id_ds_surat']); ?>" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="no_disposisi">No Disposisi:</label>
                 <input type="text" class="form-control" id="no_disposisi" name="no_disposisi" value="<?= $surat['no_disposisi']; ?>">

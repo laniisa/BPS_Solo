@@ -1,45 +1,32 @@
 <?php
 class User_Model extends CI_Model {
-    public function insert_user($data_user)
-    {
+
+    public function insert_user($data_user) {
         return $this->db->insert('users', $data_user);
     }
 
     public function get_all_user() {
-        $this->db->from('users');
-        return $this->db->get()->result_array();
+        return $this->db->get('users')->result_array();
     }
 
-    public function get_user_by_email($email)
-    {
-    $this->db->where('email', $email);
-    $query = $this->db->get('users');
-    return $query->row_array(); // Mengembalikan hasil sebagai array
+    public function get_user_by_email($email) {
+        $this->db->where('email', $email);
+        return $this->db->get('users')->row_array();
     }
 
     public function get_users_by_role($role) {
-        $this->db->where('role', $role);
-        $query = $this->db->get('users');
-        return $query->result_array();
-    }    
-
-    public function get_user_by_role($role_id) {
-        $this->db->where('role', $role_id);
-        $query = $this->db->get('users');
-        return $query->result_array();
+        $this->db->where('role', $role); // Pastikan kolom ini benar
+        return $this->db->get('users')->result_array();
     }
-
 
     public function get_user($email) {
         $this->db->where('email', $email);
-        $query = $this->db->get('users');
-        return $query->row_array(); // Menggunakan row_array() karena ingin mengembalikan data sebagai array asosiatif
-      }
+        return $this->db->get('users')->row_array();
+    }
 
-      public function get_users($id) {
-        $this->db->where('id_user', $id);
-        $query = $this->db->get('users');
-        return $query->row_array();
+    public function get_users($id) {
+        $this->db->where('id_user', $id); // Pastikan 'id_user' adalah kolom yang benar
+        return $this->db->get('users')->row_array();
     }
 
     public function update_user($id, $data) {
@@ -52,29 +39,20 @@ class User_Model extends CI_Model {
         return $this->db->delete('users');
     }
 
-      public function get_jumlah_user($role_id = null)
-      {
-          $this->db->select('COUNT(*) AS total_users');
-          $this->db->from('users');
-          
-          // Jika ada ID role yang ditentukan, gunakan filter
-          if ($role_id !== null) {
-              $this->db->where('id_role', $role_id);
-          }
-          
-          // Pastikan 'active' adalah string atau definisikan konstanta jika diperlukan
-          $this->db->where('status', 'active'); // Ganti dengan nilai yang sesuai jika perlu
-          
-          $query = $this->db->get();
-      
-          if ($query->num_rows() > 0) {
-              return $query->row()->total_users;
-          } else {
-              return 0;
-          }
-      }
+    public function get_jumlah_user($role_id = null) {
+        $this->db->select('COUNT(*) AS total_users');
+        $this->db->from('users');
+        
+        if ($role_id !== null) {
+            $this->db->where('id_role', $role_id); // Pastikan 'id_role' adalah kolom yang benar
+        }
 
-    // Operator_Model.php (Model)
+        $this->db->where('status', 'active'); // Ganti dengan nilai yang sesuai jika perlu
+        
+        $query = $this->db->get();
+        return ($query->num_rows() > 0) ? $query->row()->total_users : 0;
+    }
+
     public function update_status($id_user, $status) {
         $this->db->set('status', $status);
         $this->db->where('id_user', $id_user);
@@ -82,9 +60,5 @@ class User_Model extends CI_Model {
         error_log("Update result: " . ($result ? 'Success' : 'Failed')); // Logging
         return $result;
     }
-    
-
-
-      
-}      
+}
 ?>

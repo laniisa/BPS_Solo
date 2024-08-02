@@ -65,7 +65,7 @@ class Admin extends CI_Controller {
         }
     
         $data['title'] = 'Tambah Surat';
-        $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+        $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
     
         $this->load->model('Surat_Model');
         $data['surat'] = $this->Surat_Model->get_all_surat();
@@ -87,7 +87,7 @@ class Admin extends CI_Controller {
     
         if ($this->form_validation->run() == FALSE) {
             $data['title'] = 'Tambah Surat - Admin';
-            $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+            $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
     
             $this->load->view('template_admin/navbar', $data);
             $this->load->view('template_admin/sidebar', $data);
@@ -103,7 +103,7 @@ class Admin extends CI_Controller {
             if (!$this->upload->do_upload('berkas')) {
                 $data['error'] = $this->upload->display_errors();
                 $data['title'] = 'Tambah Surat - Admin';
-                $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+                $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
     
                 $this->load->view('template_admin/navbar', $data);
                 $this->load->view('template_admin/sidebar', $data);
@@ -305,24 +305,6 @@ public function edit_status($id_user) {
         $this->load->view('admin/fungsional', $data);
         $this->load->view('template_admin/footer');
     }
-
-
-
-    public function berkas()
-	{
-		if (!$this->session->userdata('email')) {
-			redirect('login'); 
-		}
-
-		$email = $this->session->userdata('email');
-		$data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
-        $data['users'] = $this->Berkas_Model->get_all_berkas();
-
-        $this->load->view('template_admin/navbar', $data);
-        $this->load->view('template_admin/sidebar', $data);
-        $this->load->view('admin/berkas', $data);
-        $this->load->view('template_admin/footer');
-	}
 
 public function insert_berkas()
 {
@@ -539,5 +521,25 @@ public function insert_berkas()
         $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">User berhasil dihapus.</div>');
         redirect('users');
     }
+
+    
+    public function berkas() {
+        // Ambil data bulan dan tahun dari URL atau gunakan bulan dan tahun saat ini sebagai default
+        $bulan = $this->input->get('bulan', TRUE) ?: date('m');
+        $tahun = $this->input->get('tahun', TRUE) ?: date('Y');
+        
+        // Ambil data rekapitulasi dari model
+        $data['rekap'] = $this->Surat_Model->get_rekapitulasi($bulan, $tahun);
+        $data['bulan'] = $bulan;
+        $data['tahun'] = $tahun;
+        
+        // Muat view dengan data yang diambi
+        $this->load->view('template_admin/navbar', $data);
+        $this->load->view('template_admin/sidebar', $data);
+        $this->load->view('admin/berkas', $data);
+        $this->load->view('template_admin/footer');
+    }
 }
+
+
 ?>

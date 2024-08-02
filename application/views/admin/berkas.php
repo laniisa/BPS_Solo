@@ -1,83 +1,59 @@
-<!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper" style="background-color: #454d55;">
-  <!-- Content Header (Page header) -->
-  <section class="content-header">
-    <div class="container-fluid">
-      <div class="row mb-2">
-        <div class="col-sm-6">
-          <h1 style="color: white;">Daftar Berkas</h1>
-        </div>
-        <div class="col-sm-6">
-          <ol class="breadcrumb float-sm-right">
-            <li class="breadcrumb-item"><a href="<?= site_url('admin/index') ?>">Dashboard</a></li>
-            <li class="breadcrumb-item active" style="color: lightgrey;"><a href="<?= site_url('admin/berkas') ?>">Daftar Berkas</a></li>
-          </ol>
-        </div>
-      </div>
-    </div><!-- /.container-fluid -->
-  </section>
-
-  <?php if ($this->session->flashdata('message')) : ?>
-    <?= $this->session->flashdata('message'); ?>
-  <?php endif; ?>
-  <!-- Main content -->
-  <section class="content">
-
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-12">
-          <div class="card" style="background-color: #343a40; color: white;">
-            <div class="card-header">
-            <a href="<?= base_url('admin/insert_berkas') ?>" class="btn btn-primary float-left"><i class="fas fa-plus"></i> Tambah  Berkas</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rekapitulasi Lembar Disposisi</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Rekapitulasi Lembar Disposisi</h2>
+        <form method="get" action="">
+            <div class="form-group row">
+                <label for="bulan" class="col-sm-1 col-form-label">Bulan:</label>
+                <div class="col-sm-2">
+                    <input type="number" class="form-control" id="bulan" name="bulan" value="<?= $bulan ?>" min="1" max="12">
+                </div>
+                <label for="tahun" class="col-sm-1 col-form-label">Tahun:</label>
+                <div class="col-sm-2">
+                    <input type="number" class="form-control" id="tahun" name="tahun" value="<?= $tahun ?>" min="2000" max="<?= date('Y') ?>">
+                </div>
+                <div class="col-sm-2">
+                    <button type="submit" class="btn btn-primary">Tampilkan</button>
+                </div>
             </div>
-            <!-- /.card-header -->
-            <div class="card-body">
-            <table id="example1" class="table table-bordered table-striped" style="text-align: center;">
-            <thead style="text-align: center;">
-              <tr>
-                <th >No</th>
-                <th >Id Surat</th>
-                <th >Author</th>
-                <th >Berkas</th>
-                <th style="text-align: center;">Aksi</th>
-              </tr>
+        </form>
+        
+        <h4>Rekap Lembar Disposisi KF <?= $bulan ?> <?= $tahun ?></h4>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Nama</th>
+                    <th>Masuk</th>
+                    <th>Dilaksanakan</th>
+                    <th>Didisposisi</th>
+                </tr>
             </thead>
-            <tbody style="text-align: center;">
-              <?php $i = 1; ?>
-              <?php foreach ($surat as $row) : ?>
-                <tr>
-                  <td><?= $i++; ?></td>
-                  <td><?= $row['id_surat'] ?></td>
-                  <td><?= $row['author'] ?></td>
-                  <td><?= $row['berkas'] ?></td>
-                  <td>
-                    <a href="<?= base_url('admin/input_berkas/' . $row['id']) ?>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
-                    <a href="<?= base_url('admin/delete_berkas/' . $row['id']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus surat ini?')"><i class="fas fa-trash"></i></a>
-                  </td>
-                </tr>
-              <?php endforeach; ?>
-              </tbody>
-              <tfoot style="text-align: center;">
-                <tr>
-                    <th >No</th>
-                    <th >Id Surat</th>
-                    <th >Author</th>
-                    <th >Berkas</th>
-                    <th>Aksi</th>
-                </tr>
-              </tfoot>
-            </table>
-            </div>
-            <!-- /.card-body -->
-          </div>
-          <!-- /.card -->
-        </div>
-        <!-- /.col -->
-      </div>
-      <!-- /.row -->
+            <tbody>
+                <?php if (count($rekap) > 0): ?>
+                    <?php foreach ($rekap as $index => $item): ?>
+                        <tr>
+                            <td><?= $index + 1 ?></td>
+                            <td><?= $item['nama'] ?></td>
+                            <td><?= $item['masuk'] ?></td>
+                            <td><?= $item['dilaksanakan'] ?></td>
+                            <td><?= $item['didisposisi'] ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="6" class="text-center">Tidak ada data</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
     </div>
-    <!-- /.container-fluid -->
-  </section>
-  <!-- /.content -->
-</div>
-<!-- /.content-wrapper -->
+</body>
+</html>

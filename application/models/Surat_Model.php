@@ -52,5 +52,21 @@ class Surat_Model extends CI_Model {
     }
 }
 
+    public function get_rekapitulasi($bulan, $tahun) {
+        // Select data nama dari tabel users dan status dari tabel surat
+        $this->db->select('users.nama, 
+                        SUM(CASE WHEN surat.status = "belum_cek" THEN 1 ELSE 0 END) as belum_cek, 
+                        SUM(CASE WHEN surat.status = "sudah_dicek" THEN 1 ELSE 0 END) as sudah_dicek, 
+                        SUM(CASE WHEN surat.status = "dilaksanakan" THEN 1 ELSE 0 END) as dilaksanakan, 
+                        SUM(CASE WHEN surat.status = "diteruskan" THEN 1 ELSE 0 END) as diteruskan');
+        $this->db->from('surat');
+        $this->db->join('users', 'surat.id_ds_surat = users.id_user');
+        $this->db->where('MONTH(surat.tgl_surat)', $bulan);
+        $this->db->where('YEAR(surat.tgl_surat)', $tahun);
+        $this->db->group_by('users.nama');
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
 }
 ?>

@@ -6,5 +6,6 @@ class Admin_Model extends CI_Model {
         parent::__construct();
     }
 
+
     // Tambahkan metode lainnya sesuai kebutuhan
 }
