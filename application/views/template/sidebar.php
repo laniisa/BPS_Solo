@@ -1,5 +1,5 @@
   <!-- Main Sidebar Container -->
-  <aside class="main-sidebar sidebar-light-primary elevation-4" style="posiition: fixed; heu=ight:100%; overflow-y: auto">
+  <aside class="main-sidebar sidebar-light-primary elevation-4" style="position: fixed; height:100%; overflow-y: auto">
     <!-- Brand Logo -->
     <a href="https://surakartakota.bps.go.id/" class="brand-link" style='background: linear-gradient(#0078C7,#008EC3)'>
       <img src="assets/admin/img/BPS.png" alt="bps"  class="brand-image img-circle elevation-3" style="opacity: .9; background-color: white" >
