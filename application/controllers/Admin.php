@@ -38,10 +38,13 @@ class Admin extends CI_Controller {
 
     public function surat()
     {
-    if (!$this->session->userdata('email')) {
-        redirect('login'); 
-    }
-    
+        if (!$this->session->userdata('email')) {
+            log_message('error', 'Email session not found');
+            redirect('login');
+        }
+        
+        $email = $this->session->userdata('email');
+		$data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
     $this->load->model('Surat_Model'); // Load your model for handling surat data
     $email = $this->session->userdata('email');
     
@@ -350,6 +353,10 @@ public function insert_berkas()
 	}
     
     public function operator() {
+        
+        $email = $this->session->userdata('email');
+		$data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
+       
         // Load library pagination
         $this->load->library('pagination');
 
@@ -524,6 +531,8 @@ public function insert_berkas()
 
     
     public function berkas() {
+        $email = $this->session->userdata('email');
+		$data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
         // Ambil data bulan dan tahun dari URL atau gunakan bulan dan tahun saat ini sebagai default
         $bulan = $this->input->get('bulan', TRUE) ?: date('m');
         $tahun = $this->input->get('tahun', TRUE) ?: date('Y');

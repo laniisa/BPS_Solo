@@ -1,3 +1,4 @@
+
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper" style="background-color: #ffffff;">
   <!-- Content Header (Page header) -->
@@ -9,7 +10,7 @@
         </div>
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
-            <li class="breadcrumb-item"><a href="<?= site_url('admin/index') ?>">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="<?= site_url('admin') ?>">Dashboard</a></li>
             <li class="breadcrumb-item active"><a href="<?= site_url('admin') ?>">Daftar Users</a></li> <!-- Hilangkan style color dari breadcrumb -->
           </ol>
         </div>

@@ -1,8 +1,9 @@
 <!-- Main Sidebar Container -->
-<aside class="main-sidebar sidebar-light-primary elevation-4" style="position: fixed; height: 100%; overflow-y: auto;">
+<aside class="main-sidebar sidebar-light-primary elevation-4" >
     <!-- Brand Logo -->
     <a href="https://surakartakota.bps.go.id/" class="brand-link" style='background: linear-gradient(to top,#00497d,#0279C8)'>
-        <img src="assets/img/BPS.png" alt="bps" class="brand-image img-circle" style="opacity: .9;">
+        <img src="<?= base_url('assets/admin/img/BPS.png') ?>" alt="bps" class="brand-image img-circle" style="opacity: .9;">
+
         <span class="brand-text font-weight-dark" style="color: white; padding-left: 13px;">BPS Surakarta</span>
     </a>
 
