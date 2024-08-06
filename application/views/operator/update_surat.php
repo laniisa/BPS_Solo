@@ -54,6 +54,7 @@
                     <?php endforeach; ?>
                 </select>
             </div>
+            <a href="<?= site_url('operator/index'); ?>" class="btn btn-secondary">Batal</a>
             <button type="submit" class="btn btn-primary">Update Surat</button>
         </form>
     </div>

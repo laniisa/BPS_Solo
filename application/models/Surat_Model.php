@@ -6,15 +6,16 @@ class Surat_Model extends CI_Model {
         return $this->db->get()->result_array();
     }
 
-    public function insert_surat($data) {
-        $result = $this->db->insert('surat', $data);
-        
-        // Debugging Log
-        log_message('debug', 'Insert query: ' . $this->db->last_query());
-        
-        return $result;
+    public function get_kepala() {
+        $query = $this->db->get('kepala'); // Sesuaikan nama tabel jika perlu
+        return $query->result_array();
     }
 
+    // Fungsi untuk memasukkan data surat ke database
+    public function insert_surat($data) {
+        return $this->db->insert('surat', $data);
+    }
+    
     public function get_surat_by_id($id)
     {
     $query = $this->db->get_where('surat', array('id_ds_surat' => $id));

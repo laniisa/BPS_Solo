@@ -1,4 +1,3 @@
-
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper" style="background-color: #ffffff;">
   <!-- Content Header (Page header) -->
@@ -6,11 +5,11 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 style="color: black;">Daftar Users</h1> <!-- Ganti warna teks menjadi hitam -->
+          <h1 style="color: black;">Daftar User</h1> <!-- Ganti warna teks menjadi hitam -->
         </div>
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
-            <li class="breadcrumb-item"><a href="<?= site_url('admin') ?>">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="<?= site_url('admin/index') ?>">Dashboard</a></li>
             <li class="breadcrumb-item active"><a href="<?= site_url('admin') ?>">Daftar Users</a></li> <!-- Hilangkan style color dari breadcrumb -->
           </ol>
         </div>
@@ -125,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Fetch users function
+    // Fungsi untuk mendapatkan data pengguna
     function fetchUsers(role) {
         fetch(`<?= site_url('admin/filter_user') ?>?role=${role}`)
             .then(response => response.json())
@@ -136,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => console.error('Error fetching data:', error));
     }
 
-    // Render table function
+    // Fungsi untuk memperbarui tabel
     function renderTable(users) {
         let tableContent = `
             <table id="example1" class="table table-bordered table-striped" style="text-align: center;">
@@ -200,7 +199,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('user-table-container').innerHTML = tableContent;
     }
 
-    // Fetch all users on page load
+    // Dapatkan semua pengguna saat halaman dimuat
     fetchUsers('all');
 });
 </script>

@@ -28,7 +28,7 @@ class Operator extends CI_Controller {
     
     // Get list of surat (letters) from the Surat_Model
     $data['surat'] = $this->Surat_Model->get_all_surat(); // Fetch all surat
-    $data['struktural_users'] = $this->User_Model->get_user_by_role(1);
+    $data['struktural_users'] = $this->User_Model->get_users_by_role(1);
     
     // Load view with the collected data
     $this->load->view('template/navbar', $data);
@@ -73,45 +73,51 @@ class Operator extends CI_Controller {
     }
 
     public function save_surat() {
-        $this->form_validation->set_rules('no_surat', 'No Surat', 'required');
-        $this->form_validation->set_rules('tgl_surat', 'Tanggal Surat', 'required');
-        $this->form_validation->set_rules('perihal', 'Perihal', 'required');
-        $this->form_validation->set_rules('asal', 'Asal', 'required');
-        $this->form_validation->set_rules('jenis_surat', 'Jenis Surat', 'required');
-        $this->form_validation->set_rules('tujuan_id', 'Tujuan', 'required');
+        $this->load->library('upload');
     
-        if ($this->form_validation->run() == FALSE) {
-            $this->insert_surat();
+        // Konfigurasi upload file
+        $config['upload_path'] = './uploads/';
+        $config['allowed_types'] = 'pdf';
+        $config['max_size'] = 2048;
+    
+        // Mengambil tanggal surat dari inputan form
+        $tgl_surat = $this->input->post('tgl_surat');
+        $tahun = date('Y', strtotime($tgl_surat));
+        $tanggal = date('Y-m-d', strtotime($tgl_surat));
+    
+        // Mengambil ekstensi file asli
+        $file_ext = pathinfo($_FILES['berkas']['name'], PATHINFO_EXTENSION);
+        $new_file_name = $tahun . '-' . $tanggal . '.' . $file_ext;
+    
+        // Set nama file yang akan diupload
+        $config['file_name'] = $new_file_name;
+    
+        $this->upload->initialize($config);
+    
+        if (!$this->upload->do_upload('berkas')) {
+            // Menampilkan error upload
+            echo $this->upload->display_errors();
         } else {
-            $config['upload_path'] = './uploads/';
-            $config['allowed_types'] = 'pdf';
-            $config['max_size'] = 2048; // 2MB
+            // Mengambil data file yang diupload
+            $file_data = $this->upload->data();
     
-            $this->load->library('upload', $config);
+            // Data surat yang akan disimpan
+            $data = array(
+                'no_surat' => $this->input->post('no_surat'),
+                'tgl_surat' => $tgl_surat,
+                'tgl_input' => $this->input->post('tgl_input'),
+                'perihal' => $this->input->post('perihal'),
+                'asal' => $this->input->post('asal'),
+                'jenis_surat' => $this->input->post('jenis_surat'),
+                'berkas' => $file_data['file_name'],
+                'id_ds_kepala' => $this->input->post('tujuan_id')
+            );
     
-            if (!$this->upload->do_upload('berkas')) {
-                $this->session->set_flashdata('message', '<div class="alert alert-danger">File upload failed: ' . $this->upload->display_errors() . '</div>');
-                redirect('operator/index');
-            } else {
-                $file_data = $this->upload->data();
-                $data = [
-                    'no_surat' => $this->input->post('no_surat'),
-                    'tgl_surat' => $this->input->post('tgl_surat'),
-                    'tgl_input' => $this->input->post('tgl_input'),
-                    'perihal' => $this->input->post('perihal'),
-                    'asal' => $this->input->post('asal'),
-                    'jenis_surat' => $this->input->post('jenis_surat'),
-                    'berkas' => $file_data['file_name'],
-                    'tujuan_id' => $this->input->post('tujuan_id') // Pastikan ini tidak null
-                ];
+            // Menyimpan data ke database
+            $this->Surat_model->insert_surat($data);
     
-                // Debugging Log
-                log_message('debug', 'Save Surat Data: ' . print_r($data, true));
-                
-                $this->Surat_Model->insert_surat($data);
-                $this->session->set_flashdata('message', '<div class="alert alert-success">Surat berhasil ditambahkan</div>');
-                redirect('operator/index');
-            }
+            // Redirect ke halaman daftar surat
+            redirect('surat/index');
         }
     }
     

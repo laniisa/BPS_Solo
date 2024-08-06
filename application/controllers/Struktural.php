@@ -26,12 +26,12 @@ class Struktural extends CI_Controller {
     
     // Get list of surat (letters) from the Surat_Model
     $data['surat'] = $this->Surat_Model->get_all_surat(); // Fetch all surat
-    $data['struktural_users'] = $this->User_Model->get_user_by_role(1);
+    $data['struktural_users'] = $this->User_Model->get_users_by_role(1);
     
     // Load view with the collected data
-    $this->load->view('template/navbar', $data);
-    $this->load->view('struktural/index', $data); 
-    $this->load->view('template/footer');
+    $this->load->view('template_struk/header', $data);
+        $this->load->view('struktural/index', $data);
+        $this->load->view('template_struk/footer');
     }
 
 
@@ -39,9 +39,9 @@ class Struktural extends CI_Controller {
         $data['title'] = 'Daftar Surat';
         $data['surat'] = $this->Surat_Model->get_all_surat();
 
-        $this->load->view('template/navbar', $data);
+        $this->load->view('template_struk/header', $data);
         $this->load->view('struktural/index', $data);
-        $this->load->view('template/footer');
+        $this->load->view('template_struk/footer');
     }
     public function edit_tindak_lanjut($id_user) {
         $tindak_lanjut = $this->input->post('tindak_lanjut');

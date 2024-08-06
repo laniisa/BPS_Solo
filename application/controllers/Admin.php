@@ -276,87 +276,10 @@ public function edit_status($id_user) {
 }
 
 
-
-    public function struktural()
-    {
-        if (!$this->session->userdata('email')) {
-			redirect('login'); 
-		}
-
-        $data['title'] = 'Daftar Admin';
-        $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
-        $data['admins'] = $this->User_Model->get_users_by_role(1); // Get users with role 0 (Admin)
-
-        $this->load->view('template_admin/navbar', $data);
-        $this->load->view('template_admin/sidebar', $data);
-        $this->load->view('admin/struktural', $data);
-        $this->load->view('template_admin/footer');
-    }
-
-    public function fungsional()
-    {
-        if (!$this->session->userdata('email')) {
-			redirect('login'); 
-		}
-
-        $data['title'] = 'Daftar Admin';
-        $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
-        $data['admins'] = $this->User_Model->get_users_by_role(2); // Get users with role 0 (Admin)
-
-        $this->load->view('template_admin/navbar', $data);
-        $this->load->view('template_admin/sidebar', $data);
-        $this->load->view('admin/fungsional', $data);
-        $this->load->view('template_admin/footer');
-    }
-
-public function insert_berkas()
-{
-    // Pastikan hanya pengguna yang sudah login yang bisa mengakses halaman ini
-    if (!$this->session->userdata('email')) {
-        redirect('login');
-    }
-
-    $data['title'] = 'Tambah berkas';
-    $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
-
-    $this->form_validation->set_rules('id_surat', 'Id Surat', 'required|trim');
-    $this->form_validation->set_rules('author', 'Autor', 'required|trim');
-    $this->form_validation->set_rules('berkas', 'Berkas', 'required|trim');
-
-    if ($this->form_validation->run() == false) {
-        // Validasi form gagal, tampilkan kembali halaman ulasan dengan pesan error
-        $this->load->view('template_admin/navbar', $data);
-        $this->load->view('template_admin/sidebar', $data);
-        $this->load->view('admin/berkas', $data);
-        $this->load->view('template_admin/footer');
-    } else {
-        // Validasi form berhasil, lanjutkan ke proses aksi ulasan
-        $this->save_berkas();
-    }
-}
-
-	
-	public function save_berkas()
-	{
-		$username = $this->session->userdata('username');
-	
-		$ulasan = array(
-			'username' => $username,
-			'pesan' => htmlspecialchars($this->input->post('pesan', true)),
-			'rating' => htmlspecialchars($this->input->post('rating', true)),
-		);
-	
-		$this->Pelanggan_Model->insert_ulasan($ulasan);
-	
-		$this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Ulasan Berhasil Dikirim.</div>');
-		redirect('pelanggan/ulasan');
-	}
-    
     public function operator() {
-        
         $email = $this->session->userdata('email');
-		$data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
-       
+        $data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
+
         // Load library pagination
         $this->load->library('pagination');
 
@@ -377,17 +300,17 @@ public function insert_berkas()
         // Tampilkan view dengan data
         $this->load->view('template_admin/navbar', $data);
         $this->load->view('template_admin/sidebar', $data);
-       $this->load->view('admin/operator', $data);
+        $this->load->view('admin/operator', $data);
         $this->load->view('template_admin/footer');
     }
 
     public function filter_user() {
         $role = $this->input->get('role');
-        if ($role == 'all') {
+        if (strtolower($role) == 'all') {
             $users = $this->User_Model->get_all_user();
         } else {
             $role_id = null;
-            switch ($role) {
+            switch (strtolower($role)) {
                 case 'admin':
                     $role_id = 0;
                     break;
@@ -402,13 +325,15 @@ public function insert_berkas()
                     break;
             }
             if ($role_id !== null) {
-                $users = $this->User_Model->get_user_by_role($role_id);
+                $users = $this->User_Model->get_users_by_role($role_id);
             } else {
                 $users = [];
             }
         }
         echo json_encode($users);
     }
+
+
     
     public function insert_op() {
         // Pastikan hanya pengguna yang sudah login yang bisa mengakses halaman ini
@@ -461,33 +386,53 @@ public function insert_berkas()
     }
 
     public function update_op($id) {
-        // Pastikan hanya pengguna yang sudah login yang bisa mengakses halaman ini
-        if (!$this->session->userdata('email')) {
-            redirect('login');
+        // Ambil data pengguna dari model
+        $data['user'] = $this->User_Model->get_user_by_id($id);
+        
+        if (empty($data['user'])) {
+            show_404(); // Jika pengguna tidak ditemukan
         }
 
-        $data['title'] = 'Edit User';
-        $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
-        $data['user_edit'] = $this->User_Model->get_users($id);
+        // Atur aturan validasi
+        $this->form_validation->set_rules('nama', 'Nama', 'required');
+        $this->form_validation->set_rules('role', 'Role', 'required|in_list[0,1,2,3]');
+        $this->form_validation->set_rules('status', 'Status', 'required|in_list[active,inactive]');
+        $this->form_validation->set_rules('usr', 'Username', 'required');
+        $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
+        $this->form_validation->set_rules('whatsApp', 'WhatsApp', 'required');
+        $this->form_validation->set_rules('password', 'Password', 'min_length[6]');
 
-        $this->form_validation->set_rules('nama', 'Nama', 'required|trim');
-        $this->form_validation->set_rules('role', 'Role', 'required|trim');
-        $this->form_validation->set_rules('status', 'Status', 'required|trim');
-        $this->form_validation->set_rules('usr', 'Username', 'required|trim');
-        $this->form_validation->set_rules('email', 'Email', 'required|trim|valid_email');
-        $this->form_validation->set_rules('whatsApp', 'WhatsApp', 'required|trim');
-        // Password tidak wajib diubah, hanya jika diisi
-        $this->form_validation->set_rules('password', 'Password', 'trim|min_length[6]');
-
-        if ($this->form_validation->run() == false) {
-            // Validasi form gagal, tampilkan kembali halaman edit user dengan pesan error
-            $this->load->view('template_admin/navbar', $data);
-            $this->load->view('template_admin/sidebar', $data);
+        if ($this->form_validation->run() === FALSE) {
+            // Jika validasi gagal, tampilkan form edit dengan pesan error
+            $this->load->view('template_admin/navbar');
+            $this->load->view('template_admin/sidebar');
             $this->load->view('admin/update_op', $data);
             $this->load->view('template_admin/footer');
         } else {
-            // Validasi form berhasil, lanjutkan ke proses update user
-            $this->update_user($id);
+            // Ambil data dari form
+            $update_data = [
+                'nama' => $this->input->post('nama'),
+                'role' => $this->input->post('role'),
+                'status' => $this->input->post('status'),
+                'usr' => $this->input->post('usr'),
+                'email' => $this->input->post('email'),
+                'whatsApp' => $this->input->post('whatsApp')
+            ];
+
+            // Periksa apakah password diisi, jika ya tambahkan ke data update
+            $password = $this->input->post('password');
+            if (!empty($password)) {
+                $update_data['password'] = password_hash($password, PASSWORD_DEFAULT);
+            }
+
+            // Update data pengguna
+            if ($this->User_Model->update_user($id, $update_data)) {
+                $this->session->set_flashdata('message', 'User updated successfully.');
+                redirect('admin/operator');
+            } else {
+                $this->session->set_flashdata('message', 'Failed to update user.');
+                redirect('admin/update_op/' . $id);
+            }
         }
     }
 

@@ -36,10 +36,10 @@
                 <div class="form-group">
                   <label for="role">Role</label>
                   <select class="form-control" id="role" name="role" required>
-                    <option value="Admin" <?= $user['role'] == 'Admin' ? 'selected' : '' ?>>Admin</option>
-                    <option value="Fungsional" <?= $user['role'] == 'Fungsional' ? 'selected' : '' ?>>Fungsional</option>
-                    <option value="Struktural" <?= $user['role'] == 'Struktural' ? 'selected' : '' ?>>Struktural</option>
-                    <option value="Operator" <?= $user['role'] == 'Operator' ? 'selected' : '' ?>>Operator</option>
+                    <option value="Admin" <?= $user['role'] == '0' ? 'selected' : '' ?>>Admin</option>
+                    <option value="Fungsional" <?= $user['role'] == '1' ? 'selected' : '' ?>>Fungsional</option>
+                    <option value="Struktural" <?= $user['role'] == '2' ? 'selected' : '' ?>>Struktural</option>
+                    <option value="Operator" <?= $user['role'] == '3' ? 'selected' : '' ?>>Operator</option>
                   </select>
                 </div>
                 <div class="form-group">

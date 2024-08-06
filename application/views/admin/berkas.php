@@ -5,8 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rekapitulasi Lembar Disposisi</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        .content-wrapper {
+            flex: 1;
+            background-color: #ffffff;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            padding: 10px 0;
+            text-align: center;
+            color: #6c757d;
+            position: relative;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .info-box {
+            background-color: #ffffff; /* Mengubah background color info-box menjadi putih */
+            box-shadow: 0px 0px 30px rgba(127, 137, 161, 0.25);
+            color: #333; /* Mengubah warna teks menjadi lebih gelap agar kontras dengan latar belakang putih */
+            border-radius: 10px;
+            padding: 15px;
+        }
+        .breadcrumb-item a {
+            color: #007bff; /* Warna link breadcrumb */
+        }
+        .breadcrumb-item.active {
+            color: #6c757d; /* Warna breadcrumb aktif */
+        }
+    </style>
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
     <div class="container mt-5">
         <h2>Rekapitulasi Lembar Disposisi</h2>
         <form method="get" action="">
@@ -55,5 +89,7 @@
             </tbody>
         </table>
     </div>
+
+    
 </body>
 </html>
