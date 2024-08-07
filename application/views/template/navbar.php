@@ -86,7 +86,6 @@
     });
   });
   document.addEventListener('DOMContentLoaded', function() {
-    // Fungsi untuk menutup sidebar jika terbuka
     function closeSidebar() {
         if (document.body.classList.contains('sidebar-open')) {
             document.body.classList.remove('sidebar-open');
@@ -94,15 +93,12 @@
         }
     }
 
-    // Event listener untuk mendeteksi klik di luar sidebar
     document.addEventListener('click', function(event) {
-        // Cek jika klik terjadi di luar sidebar dan tombol toggle
         if (!event.target.closest('.main-sidebar') && !event.target.closest('[data-widget="pushmenu"]')) {
             closeSidebar();
         }
     });
 
-    // Event listener untuk menutup sidebar ketika mengklik tombol toggle
     document.querySelector('[data-widget="pushmenu"]').addEventListener('click', function(event) {
         if (document.body.classList.contains('sidebar-open')) {
             closeSidebar();

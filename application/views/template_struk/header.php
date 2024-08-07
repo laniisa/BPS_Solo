@@ -1,131 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-
-  <title>Disposisi Surat</title>
-  <meta content="" name="description">
-  <meta content="" name="keywords">
-
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Poppins:300,300i,400,400i,600,600i,700,700i|Satisfy|Comic+Neue:300,300i,400,400i,700,700i" rel="stylesheet">
-
-  <!-- Vendor CSS Files -->
-  <link href="<?= base_url('assets/assets/vendor/animate.css/animate.min.css') ?>" rel="stylesheet">
-  <link href="<?= base_url('assets/assets/vendor/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet">
-  <link href="<?= base_url('assets/assets/vendor/bootstrap-icons/bootstrap-icons.css') ?>" rel="stylesheet">
-  <link href="<?= base_url('assets/assets/vendor/boxicons/css/boxicons.min.css') ?>" rel="stylesheet">
-  <link href="<?= base_url('assets/assets/vendor/glightbox/css/glightbox.min.css') ?>" rel="stylesheet">
-  <link href="<?= base_url('assets/assets/vendor/swiper/swiper-bundle.min.css') ?>" rel="stylesheet">
-
-  <!-- Template Main CSS File -->
-  <link rel="stylesheet" href="<?= base_url('assets/assets/css/style.css') ?>">
+    <title>Struktural | <?= $title; ?></title>
+    <!-- Other head elements -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="<?php echo base_url() ?>application/views/template_struk/css/header.css">
 </head>
+<body class="hold-transition sidebar-mini layout-fixed">
 
-<body>
-
-  <!-- Header section -->
-  <header id="header" class="fixed-top d-flex align-items-center header-transparent">
-    <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
-      <div class="logo me-auto">
-        <h1><a href="<?= site_url('struktural') ?>">Disposisi</a></h1>
-      </div>
-
-      <!-- Navbar -->
-      <nav id="navbar" class="navbar order-last order-lg-0 navbar-expand-lg">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item"><a class="nav-link scrollto" href="<?= site_url('pelanggan') ?>">Home</a></li>
-          <li class="nav-item"><a class="nav-link scrollto" href="<?= site_url('pelanggan#why-us') ?>">About</a></li>
-          <li class="nav-item"><a class="nav-link scrollto" href="<?= site_url('pelanggan#events') ?>">Event</a></li>
-          <li class="nav-item"><a class="nav-link scrollto" href="<?= site_url('pelanggan#gallery') ?>">Gallery</a></li>
-          <li class="nav-item"><a class="nav-link scrollto" href="<?= site_url('pelanggan#testimonials') ?>">Ulasan</a></li>
-          <li class="nav-item"><a class="nav-link scrollto" href="<?= site_url('pelanggan/makanan') ?>">Menu</a></li>
-          <li class="nav-item"><a class="nav-link scrollto" href="<?= site_url('pelanggan/kontak') ?>">Kontak</a></li>
-          
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <?= $user['username']; ?>
+<!-- Navbar -->
+<nav class="main-header navbar navbar-expand navbar-light">
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" href="https://surakartakota.bps.go.id/" role="button">
+                <img src="<?= base_url('assets/admin/img/BPS.png') ?>" alt="bps" class="brand-image img-circle navbar-logo">
+                <span class="brand-text font-weight-dark" style="color: white; padding-left: 13px;">BPS Surakarta</span>
             </a>
-            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item" href="<?= site_url('pelanggan/profil') ?>">Profil</a></li>
-              <li><a class="dropdown-item" href="<?= site_url('pelanggan/pesan') ?>">Reservasi</a></li>
-              <li><a class="dropdown-item" href="<?= site_url('pelanggan/ulasan') ?>">Buat Ulasan</a></li>
-              <li><a class="dropdown-item" href="<?= base_url('login/logout'); ?>">Log Out</a></li>
+        </li>
+    </ul>
+    <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+            <a class="nav-link" href="#" id="darkModeToggle" role="button" title="Dark Mode" style="color: white">
+                <i class="fa fa-moon"></i>
+            </a>
+        </li>
+        <li class="nav-item dropdown">
+            <a href="#" class="nav-link" id="userDropdown" role="button" title="User" style="color: white">
+                <i class="fa fa-user"></i>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                <li class="dropdown-item">
+                    <?php if (!empty($user)): ?>
+                        <a href="#" class="d-block"><?= $user['nama']; ?></a>
+                    <?php else: ?>
+                        <a href="#" class="d-block">User not found</a>
+                    <?php endif; ?>
+                </li>
+                <li class="dropdown-item">
+                    <a href="<?= base_url('login/logout'); ?>">Log Out</a>
+                </li>
             </ul>
-          </li>
-        </ul>
-        <i class="bi bi-list mobile-nav-toggle"></i>
-      </nav>
-    </div>
-  </header>
+        </li>
+    </ul>
+</nav>
 
-  <!-- Your content goes here -->
+<!-- /.navbar -->
 
-  <!-- Vendor JS Files -->
-  <script src="<?= base_url('assets/assets/vendor/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
-  <script src="<?= base_url('assets/assets/vendor/glightbox/js/glightbox.min.js') ?>"></script>
-  <script src="<?= base_url('assets/assets/vendor/swiper/swiper-bundle.min.js') ?>"></script>
-  <script src="<?= base_url('assets/assets/vendor/php-email-form/validate.js') ?>"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<!-- Dark Mode Toggle Script -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      const darkModeToggle = document.getElementById('darkModeToggle');
+      const navbar = document.querySelector('.main-header.navbar');
+      const icon = darkModeToggle.querySelector('i');
 
-  <!-- Template Main JS File -->
-  <script src="<?= base_url('assets/assets/js/main.js') ?>"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      const currentPath = window.location.pathname;
-      const links = document.querySelectorAll('.nav-link.scrollto');
-      const mobileNavToggle = document.querySelector('.mobile-nav-toggle');
-      const navbar = document.querySelector('#navbar');
-      
-      // Toggle mobile nav
-      mobileNavToggle.addEventListener('click', function() {
-        navbar.classList.toggle('navbar-mobile');
-        this.classList.toggle('bi-list');
-        this.classList.toggle('bi-x');
-      });
-
-      // Smooth scroll
-      links.forEach(link => {
-        link.addEventListener('click', function(event) {
-          const href = link.getAttribute('href');
-          const isHomeLink = href.startsWith('<?= site_url('pelanggan') ?>#');
-          const targetId = href.split('#')[1];
-          const targetElement = document.getElementById(targetId);
-
-          if (isHomeLink && currentPath !== '<?= site_url('pelanggan') ?>') {
-            event.preventDefault();
-            window.location.href = href;
-          } else if (targetElement) {
-            event.preventDefault();
-            window.scrollTo({
-              top: targetElement.offsetTop - document.querySelector('#header').offsetHeight,
-              behavior: 'smooth'
-            });
-
-            // Close mobile nav on click
-            if (navbar.classList.contains('navbar-mobile')) {
-              navbar.classList.remove('navbar-mobile');
-              mobileNavToggle.classList.toggle('bi-list');
-              mobileNavToggle.classList.toggle('bi-x');
-            }
-          }
-        });
-      });
-
-      // Active link
-      const setActiveLink = () => {
-        links.forEach(link => {
-          if (link.href === window.location.href) {
-            link.classList.add('active');
+      function updateDarkMode() {
+          if (document.body.classList.contains('dark-mode')) {
+              navbar.classList.remove('navbar-light');
+              navbar.classList.add('navbar-dark');
+              icon.classList.remove('fa-moon');
+              icon.classList.add('fa-sun');
+              icon.classList.add('rotate');
+              setTimeout(() => icon.classList.remove('rotate'), 800);
+              darkModeToggle.setAttribute('title', 'Light Mode');
+              navbar.removeAttribute('style');
           } else {
-            link.classList.remove('active');
+              navbar.classList.remove('navbar-dark');
+              navbar.classList.add('navbar-light');
+              icon.classList.remove('fa-sun');
+              icon.classList.add('fa-moon');
+              icon.classList.add('rotate');
+              setTimeout(() => icon.classList.remove('rotate'), 800);
+              darkModeToggle.setAttribute('title', 'Dark Mode');
+              navbar.setAttribute('style', 'background: linear-gradient(to top,#00497d,#0279C8); transition: background 0.5s;');
           }
-        });
-      };
-      setActiveLink();
-      window.addEventListener('scroll', setActiveLink);
-    });
-  </script>
+      }
+
+      if (localStorage.getItem('darkMode') === 'enabled') {
+          document.body.classList.add('dark-mode');
+          updateDarkMode();
+      }
+
+      darkModeToggle.addEventListener('click', function() {
+          document.body.classList.toggle('dark-mode');
+          updateDarkMode();
+
+          if (document.body.classList.contains('dark-mode')) {
+              localStorage.setItem('darkMode', 'enabled');
+          } else {
+              localStorage.setItem('darkMode', 'disabled');
+          }
+      });
+
+      // Dropdown toggle
+      const userDropdown = document.getElementById('userDropdown');
+      const dropdownMenu = userDropdown.nextElementSibling;
+
+      userDropdown.addEventListener('click', function(event) {
+          event.preventDefault();
+          dropdownMenu.classList.toggle('show');
+      });
+
+      document.addEventListener('click', function(event) {
+          if (!userDropdown.contains(event.target) && !dropdownMenu.contains(event.target)) {
+              dropdownMenu.classList.remove('show');
+          }
+      });
+
+      // Function to close sidebar if open
+      function closeSidebar() {
+          if (document.body.classList.contains('sidebar-open')) {
+              document.body.classList.remove('sidebar-open');
+              document.body.classList.add('sidebar-collapse');
+          }
+      }
+
+      // Event listener to detect clicks outside the sidebar
+      document.addEventListener('click', function(event) {
+          // Check if the click happened outside the sidebar and toggle button
+          if (!event.target.closest('.main-sidebar') && !event.target.closest('[data-widget="pushmenu"]')) {
+              closeSidebar();
+          }
+      });
+
+      // Event listener to toggle sidebar when clicking the toggle button
+      document.querySelector('[data-widget="pushmenu"]').addEventListener('click', function(event) {
+          if (document.body.classList.contains('sidebar-open')) {
+              closeSidebar();
+          } else {
+              document.body.classList.add('sidebar-open');
+          }
+      });
+  });
+</script>
 </body>
 </html>
