@@ -47,10 +47,12 @@
                 <?php endif; ?>
             </div>
             <div class="form-group">
-                <label for="tujuan">Tujuan:</label>
-                <select class="form-control" id="tujuan" name="tujuan" required>
-                    <?php foreach ($users as $user): ?>
-                        <option value="<?= $user->id; ?>" <?= $surat['tujuan'] == $user->id ? 'selected' : ''; ?>><?= $user->name; ?></option>
+                <label for="user_id">Tujuan:</label>
+                <select class="form-control" id="user_id" name="user_id">
+                    <?php foreach ($kepala as $user): ?>
+                        <option value="<?= $user['id_user']; ?>" <?= $user['id_user'] == $surat['user_id'] ? 'selected' : ''; ?>>
+                            <?= $user['nama']; ?>
+                        </option>
                     <?php endforeach; ?>
                 </select>
             </div>

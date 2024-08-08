@@ -55,7 +55,7 @@
                   <?php foreach ($surat as $row) : ?>
                     <tr>
                       <td><?= $i++; ?></td>
-                      <td><?= $row['no_disposisi'] ?></td>
+                      <td><?= $row['no_disposisi'] . ' - ' . date('Y', strtotime($row['tgl_surat'])) ?></td>
                       <td><?= $row['no_surat'] ?></td>
                       <td><?= $row['tgl_surat'] ?></td>
                       <td><?= $row['tgl_input'] ?></td>

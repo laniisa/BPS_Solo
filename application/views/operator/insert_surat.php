@@ -7,7 +7,7 @@
 <body>
     <div class="container mt-5">
         <h2><?= $title; ?></h2>
-        <form action="<?= site_url('surat/save_surat'); ?>" method="post" enctype="multipart/form-data">
+        <form action="<?= site_url('operator/save_surat'); ?>" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="no_surat">No Surat:</label>
                 <input type="text" class="form-control" id="no_surat" name="no_surat" required>
@@ -37,10 +37,10 @@
                 <input type="file" class="form-control" id="berkas" name="berkas" accept=".pdf" required>
             </div>
             <div class="form-group">
-                <label for="tujuan_id">Tujuan:</label>
-                <select class="form-control" id="tujuan_id" name="tujuan_id">
-                    <?php foreach ($kepala as $k): ?>
-                        <option value="<?= $k['id_ds_kepala']; ?>"><?= $k['nama']; ?></option>
+                <label for="user_id">Tujuan:</label>
+                <select class="form-control" id="user_id" name="user_id">
+                    <?php foreach ($kepala as $user): ?>
+                        <option value="<?= $user['id_user']; ?>"><?= $user['nama']; ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>

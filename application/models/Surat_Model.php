@@ -16,8 +16,7 @@ class Surat_Model extends CI_Model {
         return $this->db->insert('surat', $data);
     }
     
-    public function get_surat_by_id($id)
-    {
+    public function get_surat_by_id($id){
     $query = $this->db->get_where('surat', array('id_ds_surat' => $id));
     return $query->row_array();
     }
@@ -37,8 +36,14 @@ class Surat_Model extends CI_Model {
         return $this->db->count_all_results();
     }
 
+    public function get_surat_by_user_id($user_id) {
+        $this->db->where('user_id', $user_id);
+        $query = $this->db->get('surat');
+        return $query->result_array();
+    }
+
     public function insert_or_update_tujuan($surat_id, $user_id)
-{
+    {
     // Cek apakah sudah ada tujuan untuk surat ini
     $this->db->where('id_ds_surat', $surat_id);
     $query = $this->db->get('surat_tujuan');
@@ -51,7 +56,7 @@ class Surat_Model extends CI_Model {
         // Insert tujuan baru
         $this->db->insert('surat_tujuan', ['id_ds_surat' => $surat_id, 'id_ds_surat' => $user_id]);
     }
-}
+    }
 
     public function get_rekapitulasi($bulan, $tahun) {
         // Select data nama dari tabel users dan status dari tabel surat

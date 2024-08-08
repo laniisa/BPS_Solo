@@ -17,25 +17,26 @@ class Struktural extends CI_Controller {
 
     public function index()
     {
-        if (!$this->session->userdata('email')) {
-			redirect('login'); 
-		}
-
-        $email = $this->session->userdata('email');
-		$data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
-        // Get list of surat (letters) from the Surat_Model
-
-        $data['surat'] = $this->Surat_Model->get_all_surat(); // Fetch all surat
-        $data['struktural_users'] = $this->User_Model->get_users_by_role(1);
-        $data['title'] = 'Daftar Admin';
-        $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
-        $data['users'] = $this->User_Model->get_users_by_role(0); // Get users with role 0 (Admin)
-
-        // Load view with the collected data
-        $this->load->view('template_struk/header', $data);
-        $this->load->view('struktural/index', $data);
-        $this->load->view('template_struk/footer');
+    if (!$this->session->userdata('email')) {
+        redirect('login');
     }
+
+    $email = $this->session->userdata('email');
+    $user = $this->db->get_where('users', ['email' => $email])->row_array();
+    $user_id = $user['id_user']; // Dapatkan user_id dari pengguna yang sedang login
+
+    // Ambil data surat yang ditujukan kepada user yang sedang login
+    $data['surat'] = $this->Surat_Model->get_surat_by_user_id($user_id); 
+
+    $data['title'] = 'Daftar Surat';
+    $data['user'] = $user;
+
+    // Load view dengan data yang sudah dikumpulkan
+    $this->load->view('template_struk/header', $data);
+    $this->load->view('struktural/index', $data);
+    $this->load->view('template_struk/footer');
+    }
+
     public function edit_status($id_user) {
         $tindak_lanjut = $this->input->post('tindak_lanjut');
         

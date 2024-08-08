@@ -48,13 +48,18 @@ class Operator extends CI_Controller {
         $this->load->view('template/footer');
     }
 
-    public function update_tujuan()
-{
-    $id = $this->input->post('id_ds_surat');
-    $tujuan = $this->input->post('tujuan');
-    $this->Surat_Model->update_tujuan($id, $tujuan);
-    echo json_encode(['status' => 'success']);
-}
+    public function update_tujuan() {
+        $id_ds_surat = $this->input->post('id_ds_surat');
+        $user_id = $this->input->post('tujuan');
+        
+        $data = array(
+            'user_id' => $user_id
+        );
+
+        $this->Surat_Model->update_surat($id_ds_surat, $data);
+
+        echo json_encode(array('status' => 'success'));
+    }
 
 
     public function insert_surat() {
@@ -64,6 +69,7 @@ class Operator extends CI_Controller {
 
             $data['title'] = 'Tambah Surat';
             $data['surat'] = $this->Surat_Model->get_all_surat();
+            $data['kepala'] = $this->User_Model->get_users_by_role(1);
             $this->load->model('Surat_Model');
         
         $this->load->view('template/navbar', $data);
@@ -104,68 +110,52 @@ class Operator extends CI_Controller {
             // Data surat yang akan disimpan
             $data = array(
                 'no_surat' => $this->input->post('no_surat'),
-                'tgl_surat' => $tgl_surat,
+                'tgl_surat' => $this->input->post('tgl_surat'),
                 'tgl_input' => $this->input->post('tgl_input'),
                 'perihal' => $this->input->post('perihal'),
                 'asal' => $this->input->post('asal'),
                 'jenis_surat' => $this->input->post('jenis_surat'),
                 'berkas' => $file_data['file_name'],
-                'id_ds_kepala' => $this->input->post('tujuan_id')
+                'user_id' => $this->input->post('user_id')
+                
             );
     
             // Menyimpan data ke database
-            $this->Surat_model->insert_surat($data);
+            $this->Surat_Model->insert_surat($data);
     
             // Redirect ke halaman daftar surat
-            redirect('surat/index');
+            redirect('operator/index');
         }
     }
     
-    public function Update_surat($id) {
+    public function update_surat($id) {
         if (!$this->session->userdata('email')) {
             redirect('login');
         }
 
-        $data['title'] = "Edit Surat";
+        $data['title'] = 'Update Surat';
         $data['surat'] = $this->Surat_Model->get_surat_by_id($id);
-        $data['users'] = $this->User_Model->get_users_by_role(2);
+        $data['kepala'] = $this->User_Model->get_users_by_role(1); // Mengambil user dengan role 1
 
         $this->load->view('template/navbar', $data);
         $this->load->view('template/sidebar', $data);
         $this->load->view('operator/update_surat', $data);
         $this->load->view('template/footer');
-        
     }
 
-    public function update_surat_action()
-    {
+    public function update_surat_action() {
         $this->form_validation->set_rules('no_surat', 'No Surat', 'required');
         $this->form_validation->set_rules('tgl_surat', 'Tanggal Surat', 'required');
-        $this->form_validation->set_rules('tgl_input', 'Tanggal Input', 'required');
         $this->form_validation->set_rules('perihal', 'Perihal', 'required');
         $this->form_validation->set_rules('asal', 'Asal', 'required');
         $this->form_validation->set_rules('jenis_surat', 'Jenis Surat', 'required');
-        $this->form_validation->set_rules('tujuan', 'Tujuan', 'required');
+        $this->form_validation->set_rules('user_id', 'Tujuan', 'required');
 
         if ($this->form_validation->run() == FALSE) {
-            $id = $this->input->post('id_ds_surat');
-            $data['title'] = 'Update Surat';
-            $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
-            $data['surat'] = $this->Surat_Model->get_surat_by_id($id);
-
-            $this->load->view('template/navbar', $data);
-            $this->load->view('template/sidebar', $data);
-            $this->load->view('operator/update_surat', $data);
-            $this->load->view('template/footer');
+            $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Data tidak lengkap!</div>');
+            redirect('operator/update_surat/' . $this->input->post('id'));
         } else {
-            $id = $this->input->post('id_ds_surat');
-
-            $this->load->library('upload');
-            $config['upload_path'] = './uploads/';
-            $config['allowed_types'] = 'pdf';
-            $config['max_size'] = 2048; // 2MB
-            $this->upload->initialize($config);
-
+            $id = $this->input->post('id');
             $data = [
                 'no_surat' => $this->input->post('no_surat'),
                 'tgl_surat' => $this->input->post('tgl_surat'),
@@ -173,21 +163,34 @@ class Operator extends CI_Controller {
                 'perihal' => $this->input->post('perihal'),
                 'asal' => $this->input->post('asal'),
                 'jenis_surat' => $this->input->post('jenis_surat'),
-                'tujuan' => $this->input->post('tujuan_id')
+                'user_id' => $this->input->post('user_id'),
+                'berkas' => $this->upload_berkas()
             ];
 
-            if (!empty($_FILES['berkas']['name'])) {
-                if ($this->upload->do_upload('berkas')) {
-                    $file_data = $this->upload->data();
-                    $data['berkas'] = $file_data['file_name'];
-                }
+            if (empty($data['berkas'])) {
+                unset($data['berkas']);
             }
 
             $this->Surat_Model->update_surat($id, $data);
-            $this->session->set_flashdata('message', '<div class="alert alert-success">Surat berhasil diperbarui</div>');
+            $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Surat berhasil diperbarui!</div>');
             redirect('operator/index');
         }
     }
+
+    private function upload_berkas() {
+        $config['upload_path'] = './uploads/';
+        $config['allowed_types'] = 'pdf';
+        $config['max_size'] = 2048;
+
+        $this->load->library('upload', $config);
+
+        if ($this->upload->do_upload('berkas')) {
+            return $this->upload->data('file_name');
+        } else {
+            return $this->input->post('berkas_lama');
+        }
+    }
+    
 
     public function delete_surat($id) {
         $this->Surat_Model->delete_surat($id);
