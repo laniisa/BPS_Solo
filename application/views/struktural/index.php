@@ -68,35 +68,39 @@
                                             <td><?= $i++; ?></td>
                                             <td><?= $row['no_surat'] ?></td>
                                             <td><?= $row['tgl_surat'] ?></td>
-                                            <td><?php if (!empty($row['berkas'])) : ?>
+                                            <td>
+                                                <?php if (!empty($row['berkas'])) : ?>
                                                 <a href="<?= base_url('uploads/' . $row['berkas']) ?>" class="btn btn-info btn-sm" download>Unduh</a>
-                                            <?php else : ?>
+                                                <?php else : ?>
                                                 <span class="text-muted">Tidak ada berkas</span>
-                                            <?php endif; ?>
+                                                <?php endif; ?>
+                                            </td>
+                                            <!-- Make sure to include a form action and method -->
+                                            <td>
+                                                <form action="<?= base_url('controller/insert_kepala') ?>" method="post">
+                                                    <input type="hidden" name="id_surat" value="<?= $row['id_surat'] ?>">
+                                                    <input type="hidden" name="user_id" value="<?= $this->session->userdata('id_user') ?>">
+                                                    <select name="tindak_lanjut" class="form-control" onchange="this.form.submit()">
+                                                        <option value="">Pilih Tindak Lanjut</option>
+                                                        <option value="dilaksanakan">Dilaksanakan</option>
+                                                        <option value="diteruskan">Diteruskan</option>
+                                                    </select>
+                                                </form>
                                             </td>
                                             <td>
-                                            <form action="<?= base_url('struktural/edit_tindakan/' . $row['id_ds_surat']); ?>" method="POST">
-                                            <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
-                                            <select name="tindak_lanjut" class="form-control" onchange="this.form.submit()">
-                                                <option value="dilaksanakan" <?= isset($row['tindak_lanjut']) && $row['tindak_lanjut'] == 'dilaksanakan' ? 'selected' : ''; ?>>Dilaksanakan</option>
-                                                <option value="diteruskan" <?= isset($row['tindak_lanjut']) && $row['tindak_lanjut'] == 'diteruskan' ? 'selected' : ''; ?>>Diteruskan</option>
-                                            </select>
-                                        </form>
-
-                                            </td>
-                                            <td>
-                                            <?php if (isset($row['tindak_lanjut'])): ?>
+                                                <?php if (isset($row['tindak_lanjut'])): ?>
                                                     <?php if ($row['tindak_lanjut'] == 'dilaksanakan') : ?>
                                                         <button type="button" class="btn btn-success btn-sm">Dilaksanakan</button>
                                                     <?php elseif ($row['tindak_lanjut'] == 'diteruskan') : ?>
                                                         <button type="button" class="btn btn-danger btn-sm">Diteruskan</button>
                                                     <?php endif; ?>
                                                 <?php else : ?>
-                                                    <span class="text-muted">Status tidak tersedia</span>
+                                                    <span class="text-muted">Belum ada tindakan</span>
                                                 <?php endif; ?>
                                             </td>
                                         </tr>
-                                    <?php endforeach; ?>
+                                        <?php endforeach; ?>
+
                                 </tbody>
                                 <tfoot style="text-align: center;">
                                     <tr>

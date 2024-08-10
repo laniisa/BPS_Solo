@@ -45,20 +45,20 @@ class Admin extends CI_Controller {
         
         $email = $this->session->userdata('email');
 		$data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
-    $this->load->model('Surat_Model'); // Load your model for handling surat data
-    $email = $this->session->userdata('email');
-    
-    // Get user information (add more as needed)
-    $data['user'] = $this->db->get_where('users', ['usr' => $email])->row_array();
-    
-    // Get list of surat (letters) from the Surat_Model
-    $data['surat'] = $this->Surat_Model->get_all_surat(); // Fetch all surat
-    
-    // Load view with the collected data
-    $this->load->view('template_admin/navbar', $data);
-    $this->load->view('template_admin/sidebar', $data);
-    $this->load->view('admin/surat', $data); // Ensure this view is created to display surat
-    $this->load->view('template_admin/footer');
+        $this->load->model('Surat_Model'); // Load your model for handling surat data
+        $email = $this->session->userdata('email');
+        
+        // Get user information (add more as needed)
+        $data['user'] = $this->db->get_where('users', ['usr' => $email])->row_array();
+        
+        // Get list of surat (letters) from the Surat_Model
+        $data['surat'] = $this->Surat_Model->get_all_surat(); // Fetch all surat
+        
+        // Load view with the collected data
+        $this->load->view('template_admin/navbar', $data);
+        $this->load->view('template_admin/sidebar', $data);
+        $this->load->view('admin/surat', $data); // Ensure this view is created to display surat
+        $this->load->view('template_admin/footer');
     }
 
 

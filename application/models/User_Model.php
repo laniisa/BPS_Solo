@@ -65,34 +65,11 @@ class User_Model extends CI_Model {
         error_log("Update result: " . ($result ? 'Success' : 'Failed')); // Logging
         return $result;
     }
-    public function update_tindakan($id_ds_kepala, $tindak_lanjut) {
-        $data = array(
-            'tindak_lanjut' => $tindak_lanjut,
-        );
-
-        // Cek apakah baris dengan id_ds_kepala sudah ada
-        $this->db->where('id_ds_kepala', $id_ds_kepala);
-        $query = $this->db->get('kepala');
-
-        if ($query->num_rows() > 0) {
-            // Jika ada, update tindak_lanjut dan catatan_kepala jika diperlukan
-            if ($tindak_lanjut == 'dilaksanakan') {
-                $data['catatan_kepala'] = 'sukses';
-            }
-
-            $this->db->where('id_ds_kepala', $id_ds_kepala);
-            $this->db->update('kepala', $data);
-        } else {
-            // Jika tidak ada, tambahkan baris baru
-            if ($tindak_lanjut == 'dilaksanakan') {
-                $data['catatan_kepala'] = 'sukses';
-            }
-            
-            $this->db->insert('kepala', $data);
-        }
-
-        return $this->db->affected_rows() > 0;
+    public function update_tindakan($user_id, $tindak_lanjut) {
+       
     }
+    
+
     
 }
 ?>

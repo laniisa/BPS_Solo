@@ -26,7 +26,9 @@ class Struktural extends CI_Controller {
     
         // Retrieve data
         $data['surat'] = $this->Surat_Model->get_surat_by_user_id($user_id); 
-        
+        $data['kepala'] = $this->Kepala_Model->get_kepala_by_user_id($user_id); 
+
+
         // Log the data to check for 'id_ds_kepala'
         error_log(print_r($data['surat'], true));
     
@@ -38,33 +40,61 @@ class Struktural extends CI_Controller {
         $this->load->view('struktural/index', $data);
         $this->load->view('template_struk/footer');
     }
-    
-    
-    public function edit_tindakan($id_user) {
-        // Load model jika belum dimuat di constructor
-        $this->load->model('User_Model');
-    
-        $csrf_token_name = $this->security->get_csrf_token_name();
-        $csrf_hash = $this->security->get_csrf_hash();
-    
+
+    public function struktural() {
+        // Role ID for 'struktural' is 1
+        $role_id = 1;
+        
+        // Get users with 'struktural' role
+        $users = $this->Kepala_Model->get_users_by_role($role_id);
+        
+        // Output the result as JSON
+        echo json_encode($users);
+    }
+
+    public function insert_kepala() {
+        // Load the model
+        $this->load->model('Kepala_Model');
+        
+        // Retrieve form data
         $tindak_lanjut = $this->input->post('tindak_lanjut');
-        error_log("ID: $id_user, Aksi: $tindak_lanjut"); // Logging
+        $user_id = $this->input->post('user_id');
+        
+        if ($tindak_lanjut) {
+            if ($tindak_lanjut == 'dilaksanakan') {
+                // Prepare data to insert into kepala table
+                $data = [
+                    'tindak_lanjut' => $tindak_lanjut,
+                    'catatan_kepala' => 'sukses',
+                    'user_id' => $user_id
+                ];
+                
+                // Insert data into the kepala table
+                $insert_result = $this->Kepala_Model->insert_kepala($data);
     
-        if ($id_user && $tindak_lanjut !== null) {
-            // Panggil metode model untuk menambah atau memperbarui data di tabel kepala
-            $result = $this->User_Model->update_tindakan($id_user, $tindak_lanjut);
-            
-            if ($result) {
-                $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Aksi berhasil diupdate!</div>');
-            } else {
-                $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Gagal mengupdate aksi!</div>');
+                if ($insert_result) {
+                    // Return a JSON response indicating success
+                    echo json_encode(['status' => 'success', 'message' => 'Data successfully inserted.']);
+                } else {
+                    // Return a JSON response indicating failure
+                    echo json_encode(['status' => 'error', 'message' => 'Failed to insert data.']);
+                }
+            } elseif ($tindak_lanjut == 'diteruskan') {
+                // Return a JSON response indicating a redirect
+                echo json_encode(['status' => 'redirect', 'url' => base_url('controller/surat')]);
             }
         } else {
-            $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Aksi harus diisi!</div>');
+            // Return a JSON response indicating an error
+            echo json_encode(['status' => 'error', 'message' => 'No action selected.']);
         }
     
+    }
+    public function edit_tindakan($user_id) {
+       
+
         redirect('struktural');
     }
+
     
     }
 ?>
