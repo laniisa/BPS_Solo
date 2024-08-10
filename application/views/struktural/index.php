@@ -75,18 +75,24 @@
                                             <?php endif; ?>
                                             </td>
                                             <td>
-                                                <form action="<?= base_url('admin/edit_status/' . $row['id_ds_surat']); ?>" method="POST">
-                                                    <select name="status" class="form-control" onchange="this.form.submit()">
-                                                        <option value="active" <?= $row['status'] == 'active' ? 'selected' : ''; ?>>Dilaksanakan</option>
-                                                        <option value="inactive" <?= $row['status'] == 'inactive' ? 'selected' : ''; ?>>Diteruskan</option>
-                                                    </select>
-                                                </form>
+                                            <form action="<?= base_url('struktural/edit_tindakan/' . $row['id_ds_surat']); ?>" method="POST">
+                                            <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
+                                            <select name="tindak_lanjut" class="form-control" onchange="this.form.submit()">
+                                                <option value="dilaksanakan" <?= isset($row['tindak_lanjut']) && $row['tindak_lanjut'] == 'dilaksanakan' ? 'selected' : ''; ?>>Dilaksanakan</option>
+                                                <option value="diteruskan" <?= isset($row['tindak_lanjut']) && $row['tindak_lanjut'] == 'diteruskan' ? 'selected' : ''; ?>>Diteruskan</option>
+                                            </select>
+                                        </form>
+
                                             </td>
                                             <td>
-                                                <?php if ($row['status'] == 'active') : ?>
-                                                    <button type="button" class="btn btn-success btn-sm">Dilaksanakan</button>
-                                                <?php elseif ($row['status'] == 'inactive') : ?>
-                                                    <button type="button" class="btn btn-danger btn-sm">Diteruskan</button>
+                                            <?php if (isset($row['tindak_lanjut'])): ?>
+                                                    <?php if ($row['tindak_lanjut'] == 'dilaksanakan') : ?>
+                                                        <button type="button" class="btn btn-success btn-sm">Dilaksanakan</button>
+                                                    <?php elseif ($row['tindak_lanjut'] == 'diteruskan') : ?>
+                                                        <button type="button" class="btn btn-danger btn-sm">Diteruskan</button>
+                                                    <?php endif; ?>
+                                                <?php else : ?>
+                                                    <span class="text-muted">Status tidak tersedia</span>
                                                 <?php endif; ?>
                                             </td>
                                         </tr>

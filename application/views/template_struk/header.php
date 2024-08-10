@@ -17,7 +17,7 @@
             </a>
         </li>
         <li class="nav-item" style="display: flex; align-items: center;"> 
-            <a class="nav-link" href="<?= base_url('struktura/index') ?>" role="button">
+            <a class="nav-link" href="<?= base_url('struktural/index') ?>" role="button">
                 <span class="brand-text smaller-text" style="font-family: 'Arial'; font-size: 0.80rem; color: white;">Home</span>
             </a>
         </li>
