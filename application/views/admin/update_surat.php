@@ -52,6 +52,7 @@
                 <label for="status">Status:</label>
                 <input type="text" class="form-control" id="status" name="status" value="<?= $surat['status']; ?>" required>
             </div>
+            <a href="<?= site_url('admin/surat'); ?>" class="btn btn-secondary">Batal</a>
             <button type="submit" class="btn btn-primary">Update Surat</button>
         </form>
     </div>

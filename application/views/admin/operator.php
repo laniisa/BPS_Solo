@@ -1,5 +1,12 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= $title; ?></title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    
+</head>
 <!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper" style="background-color: #ffffff;">
+<div class="content-wrapper">
   <!-- Content Header (Page header) -->
   <section class="content-header">
     <div class="container-fluid">
@@ -26,7 +33,7 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
-          <div class="card" style="background-color: #ffffff; color: black;"> <!-- Ganti warna background card dan teks -->
+          <div class="card" > <!-- Ganti warna background card dan teks -->
             <div class="card-header">
               <a href="<?= base_url('admin/insert_op') ?>" class="btn btn-primary float-left"><i class="fas fa-plus"></i> Tambah User</a>
               <div class="float-right">

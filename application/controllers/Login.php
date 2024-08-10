@@ -26,27 +26,27 @@ class Login extends CI_Controller {
             $this->load->view('login/index', $data);
         }
     }
-
+    
     private function _login()
     {
         // Aturan validasi formulir
         $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email');
         $this->form_validation->set_rules('password', 'Password', 'trim|required');
-
+    
         if ($this->form_validation->run() == FALSE) {
             // Validasi gagal
-            $this->session->set_flashdata('pesan', '<div class="alert alert-danger" role="alert">Email dan Password harus diisi.</div>');
+            $this->session->set_flashdata('pesan', '<div class="alert alert-danger" role="alert">Email dan Password harus diisi dengan benar.</div>');
             redirect('login');
         } else {
             // Validasi berhasil, coba login
             $email = $this->input->post('email');
             $password = $this->input->post('password');
-
+    
             // Ambil data pengguna dari database
             $user = $this->User_Model->get_user_by_email($email);
-
+    
             if ($user) {
-                // Pengguna ada, verifikasi password
+                // Pengguna ditemukan, verifikasi password
                 if (password_verify($password, $user['password'])) {
                     // Password benar, buat data sesi
                     $data = [
@@ -54,17 +54,17 @@ class Login extends CI_Controller {
                         'id_role' => $user['role']
                     ];
                     $this->session->set_userdata($data);
-
+    
                     // Redirect berdasarkan peran pengguna
                     switch ($user['role']) {
                         case 0:
                             redirect('admin'); // Admin
                             break;
                         case 1:
-                            redirect('struktural'); // Fungsional
+                            redirect('struktural'); // Struktural
                             break;
                         case 2:
-                            redirect('fungsional'); // Struktural
+                            redirect('fungsional'); // Fungsional
                             break;
                         case 3:
                             redirect('operator'); // Operator
@@ -75,7 +75,7 @@ class Login extends CI_Controller {
                     }
                 } else {
                     // Password salah
-                    $this->session->set_flashdata('pesan', '<div class="alert alert-danger" role="alert">Password Salah!</div>');
+                    $this->session->set_flashdata('pesan', '<div class="alert alert-danger" role="alert">Password salah!</div>');
                     redirect('login');
                 }
             } else {
@@ -85,6 +85,7 @@ class Login extends CI_Controller {
             }
         }
     }
+    
 
     public function regis()
     {

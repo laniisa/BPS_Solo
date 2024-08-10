@@ -10,7 +10,7 @@
 <body class="hold-transition sidebar-mini layout-fixed">
 
 <!-- Navbar -->
-<nav class="main-header navbar navbar-expand navbar-light" style='background: linear-gradient(to top,#00497d,#0279C8); transition: background 0.5s;'>
+<nav class="main-header navbar navbar-expand navbar-light fixed-top" style='background: linear-gradient(to top,#00497d,#0279C8); transition: background 0.5s;'>
     <!-- Left navbar links -->
     <ul class="navbar-nav">
       <li class="nav-item">
@@ -65,7 +65,7 @@
         setTimeout(() => icon.classList.remove('rotate'), 800);
         darkModeToggle.setAttribute('title', 'Dark Mode'); 
         navbar.setAttribute('style', 'background: linear-gradient(to top,#00497d,#0279C8); transition: background 0.5s;'); 
-        sidebar.querySelector('.brand-link').setAttribute('style', 'background: linear-gradient(to top,#00497d,#0279C8); transition: background 0.5s;'); // Add the linear gradient style back
+        sidebar.querySelector('.brand-link').setAttribute('style', 'background: linear-gradient(to top,#00497d,#0279C8); transition: background 0.5s;'); 
       }
     }
 
@@ -86,7 +86,6 @@
     });
   });
   document.addEventListener('DOMContentLoaded', function() {
-    // Fungsi untuk menutup sidebar jika terbuka
     function closeSidebar() {
         if (document.body.classList.contains('sidebar-open')) {
             document.body.classList.remove('sidebar-open');
@@ -94,15 +93,12 @@
         }
     }
 
-    // Event listener untuk mendeteksi klik di luar sidebar
     document.addEventListener('click', function(event) {
-        // Cek jika klik terjadi di luar sidebar dan tombol toggle
         if (!event.target.closest('.main-sidebar') && !event.target.closest('[data-widget="pushmenu"]')) {
             closeSidebar();
         }
     });
 
-    // Event listener untuk menutup sidebar ketika mengklik tombol toggle
     document.querySelector('[data-widget="pushmenu"]').addEventListener('click', function(event) {
         if (document.body.classList.contains('sidebar-open')) {
             closeSidebar();
@@ -111,7 +107,6 @@
         }
     });
 });
-
 </script>
 </body>
 </html>
