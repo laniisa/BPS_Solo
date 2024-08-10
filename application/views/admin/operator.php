@@ -1,19 +1,16 @@
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $title; ?></title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    
-</head>
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
-  <!-- Content Header (Page header) -->
-  <section class="content-header">
+
+  <?php if ($this->session->flashdata('message')) : ?>
+    <?= $this->session->flashdata('message'); ?>
+  <?php endif; ?>
+  <!-- Main content -->
+  <section class="content">
     <div class="container-fluid">
-      <div class="row mb-2">
-        <div class="col-sm-6">
-          <h1 style="color: black;">Daftar User</h1> <!-- Ganti warna teks menjadi hitam -->
-        </div>
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 >Daftar User</h1> <!-- Ganti warna teks menjadi hitam -->
+          </div>
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="<?= site_url('admin/index') ?>">Dashboard</a></li>
@@ -22,18 +19,25 @@
         </div>
       </div>
     </div><!-- /.container-fluid -->
-  </section>
-
-  <?php if ($this->session->flashdata('message')) : ?>
-    <?= $this->session->flashdata('message'); ?>
-  <?php endif; ?>
-  <!-- Main content -->
-  <section class="content">
+    
 
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
           <div class="card" > <!-- Ganti warna background card dan teks -->
+            <div class="card-header">
+              <div class="row mb-2">
+                <div class="col-sm-6">
+                  <h1 >Daftar User</h1> <!-- Ganti warna teks menjadi hitam -->
+                </div>
+                <div class="col-sm-6">
+                  <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="<?= site_url('admin/index') ?>">Dashboard</a></li>
+                    <li class="breadcrumb-item active"><a href="<?= site_url('admin') ?>">Daftar Users</a></li> <!-- Hilangkan style color dari breadcrumb -->
+                  </ol>
+                </div>
+              </div>
+            </div>
             <div class="card-header">
               <a href="<?= base_url('admin/insert_op') ?>" class="btn btn-primary float-left"><i class="fas fa-plus"></i> Tambah User</a>
               <div class="float-right">

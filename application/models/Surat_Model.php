@@ -21,6 +21,11 @@ class Surat_Model extends CI_Model {
     return $query->row_array();
     }
 
+    public function get_surat_by_no($no_surat) {
+        $query = $this->db->get_where('surat', array('no_surat' => $no_surat));
+        return $query->row_array();
+    }
+
     public function update_surat($id, $data)
     {
     $this->db->where('id_ds_surat', $id);

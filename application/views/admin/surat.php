@@ -15,7 +15,7 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 style="color: black;">Daftar Surat</h1>
+          <h1>Daftar Surat</h1>
         </div>
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
@@ -35,7 +35,7 @@
   <section class="content">
     <div class="container-fluid">
       <div class="row">
-      <div class="col-md-8">
+      <div class="col-md-6">
           <div class="card">
             <div class="card-header">
               <h2>Rekapitulasi Surat</h2>
@@ -73,7 +73,20 @@
         <div class="col-12">
           <div class="card">
             <div class="card-header">
-              <h2 >Daftar Surat</h2>
+              <div class="row mb-2">
+                <div class="col-sm-6">
+                  <h1>Daftar Surat</h1>
+                </div>
+                <div class="col-sm-6">
+                  <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="<?= site_url('admin/index') ?>">Dashboard</a></li>
+                    <li class="breadcrumb-item active"><a href="<?= site_url('admin/daftar_surat') ?>">Daftar Surat</a></li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+           <div class="card-header">
+              <a href="<?= base_url('admin/insert_surat') ?>" class="btn btn-primary float-left"><i class="fas fa-plus"></i> Tambah Surat</a>
             </div>
             <div class="card-body">
               <div class="row">
@@ -82,8 +95,8 @@
                     <thead style="text-align: center;">
                       <tr>
                         <th>No</th>
-                        <th>No Disposisi</th>
                         <th>No Surat</th>
+                        <th>No Disposisi</th>
                         <th>Tgl Surat</th>
                         <th>Tgl Input</th>
                         <th>Tgl Disposisi</th>
@@ -157,8 +170,8 @@ document.addEventListener('DOMContentLoaded', function() {
             tableContent += `
                 <tr>
                     <td>${index + 1}</td>
+                    <td><a href="<?= base_url('admin/detail_surat/') ?>${item.id_surat}">${item.no_surat}</a></td>
                     <td>${item.no_disposisi}</td>
-                    <td>${item.no_surat}</td>
                     <td>${item.tgl_surat}</td>
                     <td>${item.tgl_input}</td>
                     <td>${item.tgl_disposisi}</td>

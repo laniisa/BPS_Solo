@@ -508,7 +508,22 @@ public function edit_status($id_user) {
     
         echo json_encode($data);
     }
+
+    public function detail_surat($no_surat) {
+        // Fetch surat by no_surat
+        $data['surat'] = $this->Surat_Model->get_surat_by_no($no_surat);
     
+        // Check if surat exists
+        if (empty($data['surat'])) {
+            show_404();
+        }
+    
+        // Load the view with surat data
+        $this->load->view('template_admin/navbar', $data);
+        $this->load->view('template_admin/sidebar', $data);
+        $this->load->view('admin/detail_surat', $data);
+        $this->load->view('template_admin/footer');
+    }
 
 }
 
