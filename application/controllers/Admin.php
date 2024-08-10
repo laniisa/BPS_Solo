@@ -493,6 +493,23 @@ public function edit_status($id_user) {
         $this->load->view('admin/berkas', $data);
         $this->load->view('template_admin/footer');
     }
+
+    public function filter_surat() {
+        $tanggal_awal = $this->input->get('tanggal_awal');
+        $tanggal_akhir = $this->input->get('tanggal_akhir');
+    
+        if (!empty($tanggal_awal) && !empty($tanggal_akhir)) {
+            $this->db->where('tgl_surat >=', $tanggal_awal);
+            $this->db->where('tgl_surat <=', $tanggal_akhir);
+        }
+    
+        $query = $this->db->get('surat');
+        $data = $query->result_array();
+    
+        echo json_encode($data);
+    }
+    
+
 }
 
 

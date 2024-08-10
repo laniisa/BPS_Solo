@@ -61,7 +61,7 @@
                 <li class="nav-item">
                     <a href="<?= base_url('admin/berkas') ?>" class="nav-link">
                         <i class="nav-icon fas fa-folder-open"></i>
-                        <p>Berkas</p>
+                        <p>Rekap</p>
                     </a>
                 </li>
             </ul>
