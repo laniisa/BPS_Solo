@@ -50,6 +50,7 @@ class Login extends CI_Controller {
                 if (password_verify($password, $user['password'])) {
                     // Password benar, buat data sesi
                     $data = [
+                        'id_user' => $user['id_user'],
                         'email' => $user['email'],
                         'id_role' => $user['role']
                     ];

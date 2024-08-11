@@ -75,12 +75,10 @@
                                                 <span class="text-muted">Tidak ada berkas</span>
                                                 <?php endif; ?>
                                             </td>
-                                            <!-- Make sure to include a form action and method -->
                                             <td>
-                                                <form action="<?= base_url('controller/insert_kepala') ?>" method="post">
-                                                    <input type="hidden" name="id_surat" value="<?= $row['id_surat'] ?>">
-                                                    <input type="hidden" name="user_id" value="<?= $this->session->userdata('id_user') ?>">
-                                                    <select name="tindak_lanjut" class="form-control" onchange="this.form.submit()">
+                                                <form action="<?= base_url('struktural/insert_kepala') ?>" method="post">
+                                                <input type="hidden" name="user_id" value="<?= $user['id_user']; ?>">
+                                                <select name="tindak_lanjut" class="form-control" onchange="this.form.submit()">
                                                         <option value="">Pilih Tindak Lanjut</option>
                                                         <option value="dilaksanakan">Dilaksanakan</option>
                                                         <option value="diteruskan">Diteruskan</option>
@@ -99,7 +97,8 @@
                                                 <?php endif; ?>
                                             </td>
                                         </tr>
-                                        <?php endforeach; ?>
+                                    <?php endforeach; ?>
+
 
                                 </tbody>
                                 <tfoot style="text-align: center;">

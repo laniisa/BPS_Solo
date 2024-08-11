@@ -65,9 +65,7 @@ class User_Model extends CI_Model {
         error_log("Update result: " . ($result ? 'Success' : 'Failed')); // Logging
         return $result;
     }
-    public function update_tindakan($user_id, $tindak_lanjut) {
-       
-    }
+    
     
 
     
