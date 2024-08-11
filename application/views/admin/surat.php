@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded', function() {
             tableContent += `
                 <tr>
                     <td>${index + 1}</td>
-                    <td><a href="<?= base_url('admin/detail_surat/') ?>${item.id_surat}">${item.no_surat}</a></td>
+                    <td><a href="<?= base_url('admin/detail_surat/') ?>${item.id_ds_surat}">${item.no_surat}</a></td>
                     <td>${item.no_disposisi}</td>
                     <td>${item.tgl_surat}</td>
                     <td>${item.tgl_input}</td>
@@ -182,8 +182,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td>${item.berkas ? `<a href="${item.berkas}" class="btn btn-info btn-sm">Unduh</a>` : 'Tidak ada berkas'}</td>
                     <td>${item.status}</td>
                     <td>
-                        <a href="<?= base_url('admin/update_surat/') ?>${item.id_surat}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
-                        <a href="<?= base_url('admin/delete_surat/') ?>${item.id_surat}" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus surat ini?')"><i class="fas fa-trash"></i></a>
+                        <a href="<?= base_url('admin/update_surat/') ?>${item.id_ds_surat}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                        <a href="<?= base_url('admin/delete_surat/') ?>${item.id_ds_surat}" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus surat ini?')"><i class="fas fa-trash"></i></a>
                     </td>
                 </tr>`;
         });

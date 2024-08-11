@@ -16,9 +16,16 @@ class Surat_Model extends CI_Model {
         return $this->db->insert('surat', $data);
     }
     
-    public function get_surat_by_id($id){
-    $query = $this->db->get_where('surat', array('id_ds_surat' => $id));
-    return $query->row_array();
+    public function get_surat_by_id($id) {
+        $query = $this->db->get_where('surat', ['id_ds_surat' => $id]);
+        $result = $query->row_array();
+        
+        // Debugging: Lihat hasil query
+        if (!$result) {
+            log_message('error', 'Surat dengan ID ' . $id . ' tidak ditemukan.');
+        }
+    
+        return $result;
     }
 
     public function get_surat_by_no($no_surat) {
@@ -90,6 +97,5 @@ class Surat_Model extends CI_Model {
         return $query->result_array();
     }
     
-
 }
 ?>

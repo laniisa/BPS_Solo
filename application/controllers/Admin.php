@@ -8,6 +8,8 @@ class Admin extends CI_Controller {
         $this->load->helper('url');
         $this->load->model('Surat_Model');
         $this->load->model('User_Model');
+        $this->load->model('Kepala_Model');
+        $this->load->model('Pegawai_Model');
 
         if (!$this->session->userdata('email')) {
             redirect('login');
@@ -133,45 +135,87 @@ class Admin extends CI_Controller {
         }
     }
     
+    public function update_surat($id) {
+        if (!$this->session->userdata('email')) {
+            redirect('login');
+        }
     
-
-    public function update_surat($id)
-    {
+        $data['title'] = 'Update Surat';
+        $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
+    
+        // Debugging: Lihat ID yang diterima
+        echo "ID yang diterima: " . $id;
+    
+        // Mengambil data surat berdasarkan ID
+        $this->load->model('Surat_Model');
+        $data['surat'] = $this->Surat_Model->get_surat_by_id($id);
+    
+        if (!$data['surat']) {
+            $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Surat tidak ditemukan!</div>');
+            redirect('admin/surat');
+        }
+    
+        // Memuat view
+        $this->load->view('template_admin/navbar', $data);
+        $this->load->view('template_admin/sidebar', $data);
+        $this->load->view('admin/update_surat', $data);
+        $this->load->view('template_admin/footer');
+    }
+    
+    
+    
+    public function update_surat_action() {
         $this->form_validation->set_rules('no_surat', 'No Surat', 'required');
         $this->form_validation->set_rules('tgl_surat', 'Tanggal Surat', 'required');
         $this->form_validation->set_rules('perihal', 'Perihal', 'required');
         $this->form_validation->set_rules('asal', 'Asal', 'required');
         $this->form_validation->set_rules('jenis_surat', 'Jenis Surat', 'required');
-        $this->form_validation->set_rules('status', 'Status', 'required');
-
+    
         if ($this->form_validation->run() == FALSE) {
-            $data['title'] = 'Update Surat';
-            $data['surat'] = (array)$this->Surat_Model->get_surat_by_id($id);
-            $this->load->view('template_admin/navbar', $data);
-            $this->load->view('template_admin/sidebar', $data);
-            $this->load->view('admin/update_surat', $data);
-            $this->load->view('template_admin/footer');
+            $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Data tidak lengkap!</div>');
+            redirect('admin/update_surat/' . $this->input->post('id_ds_surat'));
         } else {
-            $berkas = $this->_upload_berkas($this->input->post('no_disposisi'), $this->input->post('no_surat'), $this->input->post('berkas_lama'));
+            $id = $this->input->post('id_ds_surat');
             $data = [
-                'no_disposisi' => $this->input->post('no_disposisi'),
                 'no_surat' => $this->input->post('no_surat'),
                 'tgl_surat' => $this->input->post('tgl_surat'),
+                'tgl_input' => $this->input->post('tgl_input'),
                 'tgl_disposisi' => $this->input->post('tgl_disposisi'),
                 'tgl_dilaksanakan' => $this->input->post('tgl_dilaksanakan'),
                 'perihal' => $this->input->post('perihal'),
                 'asal' => $this->input->post('asal'),
                 'jenis_surat' => $this->input->post('jenis_surat'),
-                'berkas' => $this->$berkas,
-                'status' => $this->input->post('status')
+                'status' => $this->input->post('status'),
+                'user_id' => $this->input->post('user_id'),
+                'berkas' => $this->upload_berkas()
             ];
+    
+            if (empty($data['berkas'])) {
+                unset($data['berkas']);
+            }
+    
+            // Update data surat
             $this->Surat_Model->update_surat($id, $data);
-            $this->session->set_flashdata('message', '<div class="alert alert-success">Surat berhasil diperbarui.</div>');
+            $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Surat berhasil diperbarui!</div>');
             redirect('admin/surat');
         }
     }
-
-    public function delete_surat($id) {
+    
+    private function upload_berkas() {
+        $config['upload_path'] = './uploads/';
+        $config['allowed_types'] = 'pdf';
+        $config['max_size'] = 2048;
+    
+        $this->load->library('upload', $config);
+    
+        if ($this->upload->do_upload('berkas')) {
+            return $this->upload->data('file_name');
+        } else {
+            return $this->input->post('berkas_lama');
+        }
+    }
+    
+        public function delete_surat($id) {
         if (!$this->session->userdata('email')) {
             redirect('login');
         }
@@ -509,22 +553,14 @@ public function edit_status($id_user) {
         echo json_encode($data);
     }
 
-    public function detail_surat($no_surat) {
-        // Fetch surat by no_surat
-        $data['surat'] = $this->Surat_Model->get_surat_by_no($no_surat);
-    
-        // Check if surat exists
-        if (empty($data['surat'])) {
-            show_404();
-        }
-    
-        // Load the view with surat data
+    public function detail_surat($id) {
+        $data['surat'] = $this->Surat_Model->get_surat_by_id($id);
+
         $this->load->view('template_admin/navbar', $data);
         $this->load->view('template_admin/sidebar', $data);
         $this->load->view('admin/detail_surat', $data);
         $this->load->view('template_admin/footer');
     }
-
 }
 
 
