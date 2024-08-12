@@ -80,18 +80,18 @@ class Struktural extends CI_Controller {
         // Load the model
         $this->load->model('Struktural_model');
         
-        // Get user_id and other form data
+        // Get form data
         $id_user = $this->input->post('user_id');
         $tindak_lanjut = $this->input->post('tindak_lanjut');
-        $no_surat = $this->input->post('no_surat'); // Add this if you need to pass no_surat or other data
-        
+        $no_surat = $this->input->post('no_surat');
+    
         // Check if 'tindak_lanjut' is 'diteruskan'
         if ($tindak_lanjut == 'diteruskan') {
             // Store data temporarily in session
             $this->session->set_userdata('temp_data', [
                 'user_id' => $id_user,
                 'tindak_lanjut' => $tindak_lanjut,
-                'no_surat' => $no_surat // Add this if needed
+                'no_surat' => $no_surat
             ]);
     
             // Redirect to surat.php
@@ -103,14 +103,18 @@ class Struktural extends CI_Controller {
                 'tindak_lanjut' => $tindak_lanjut,
                 'catatan_kepala' => 'sukses'
             ];
-        
+            
             // Insert data into kepala table
             $this->Struktural_model->insert_kepala($data);
+    
+            // Mark this no_surat as processed
+            $this->session->set_userdata('processed_' . $no_surat, true);
     
             // Redirect to a success page or back to the form
             redirect('struktural');
         }
     }
+    
     
     public function edit_aksi($id_ds_kepala) {
         $status = $this->input->post('tindak_lanjut');

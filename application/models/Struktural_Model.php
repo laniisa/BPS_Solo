@@ -17,10 +17,11 @@ class Struktural_model extends CI_Model {
 
     public function get_entry_by_user_id_and_no_surat($user_id, $no_surat) {
         $this->db->where('user_id', $user_id);
-        $this->db->where('id_ds_surat', $no_surat);
+        $this->db->where('no_surat', $no_surat); // Adjust according to your table schema if needed
         $query = $this->db->get('kepala');
         return $query->row_array();
     }
 }
+
 
     
