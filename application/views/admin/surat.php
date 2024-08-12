@@ -10,8 +10,13 @@
 <body>
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
+
+  <?php if ($this->session->flashdata('message')) : ?>
+    <?= $this->session->flashdata('message'); ?>
+  <?php endif; ?>
+  
   <!-- Content Header (Page header) -->
-  <section class="content-header">
+  <section class="content">
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
@@ -27,15 +32,11 @@
     </div><!-- /.container-fluid -->
   </section>
 
-  <?php if ($this->session->flashdata('message')) : ?>
-    <?= $this->session->flashdata('message'); ?>
-  <?php endif; ?>
-  
   <!-- Main content -->
   <section class="content">
     <div class="container-fluid">
       <div class="row">
-      <div class="col-md-6">
+        <div class="col-md-6">
           <div class="card">
             <div class="card-header">
               <h2>Rekapitulasi Surat</h2>
@@ -44,21 +45,20 @@
             <div class="card-body">
               <div class="row">
                 <div class="col-12">
-                <form id="filter-form" class="form">
-                  <div class="form-group mb-2">
-                    <label for="tanggal_awal">Tanggal Awal</label>
-                    <input type="date" id="tanggal_awal" name="tanggal_awal" class="form-control">
-                  </div>
-                  <div class="form-group mb-2">
-                    <label for="tanggal_akhir">Tanggal Akhir</label>
-                    <input type="date" id="tanggal_akhir" name="tanggal_akhir" class="form-control">
-                  </div>
-                  <div class="form-group mb-2">
-                    <button type="submit" class="btn btn-primary">Tampilkan</button>
-                    <button type="reset" class="btn btn-secondary ml-2" id="reset-button">Reset</button>
-                  </div>
-                </form>
-
+                  <form id="filter-form" class="form">
+                    <div class="form-group mb-2">
+                      <label for="tanggal_awal">Tanggal Awal</label>
+                      <input type="date" id="tanggal_awal" name="tanggal_awal" class="form-control">
+                    </div>
+                    <div class="form-group mb-2">
+                      <label for="tanggal_akhir">Tanggal Akhir</label>
+                      <input type="date" id="tanggal_akhir" name="tanggal_akhir" class="form-control">
+                    </div>
+                    <div class="form-group mb-2">
+                      <button type="submit" class="btn btn-primary">Tampilkan</button>
+                      <button type="reset" class="btn btn-secondary ml-2" id="reset-button">Reset</button>
+                    </div>
+                  </form>
                 </div>
               </div>
             </div>
@@ -66,7 +66,6 @@
         </div>
       </div>
     </div>
-
 
     <div class="container-fluid">
       <div class="row">
@@ -85,7 +84,7 @@
                 </div>
               </div>
             </div>
-           <div class="card-header">
+            <div class="card-header">
               <a href="<?= base_url('admin/insert_surat') ?>" class="btn btn-primary float-left"><i class="fas fa-plus"></i> Tambah Surat</a>
             </div>
             <div class="card-body">
@@ -110,8 +109,45 @@
                       </tr>
                     </thead>
                     <tbody style="text-align: center;">
-                      <!-- Data surat akan dimuat ulang di sini -->
+                      <?php $i = 1; ?>
+                      <?php foreach ($surat as $item) : ?>
+                        <tr>
+                          <td><?= $i++; ?></td>
+                          <td><a href="<?= base_url('admin/detail_surat/') . $item['id_ds_surat'] ?>"><?= $item['no_surat']; ?></a></td>
+                          <td><?= $item['no_disposisi']; ?></td>
+                          <td><?= $item['tgl_surat']; ?></td>
+                          <td><?= $item['tgl_input']; ?></td>
+                          <td><?= $item['tgl_disposisi']; ?></td>
+                          <td><?= $item['tgl_dilaksanakan']; ?></td>
+                          <td><?= $item['perihal']; ?></td>
+                          <td><?= $item['asal']; ?></td>
+                          <td><?= $item['jenis_surat']; ?></td>
+                          <td><?= $item['berkas'] ? '<a href="' . $item['berkas'] . '" class="btn btn-info btn-sm">Unduh</a>' : 'Tidak ada berkas'; ?></td>
+                          <td><?= $item['status']; ?></td>
+                          <td>
+                            <a href="<?= base_url('admin/update_surat/' . $item['id_ds_surat']) ?>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                            <a href="<?= base_url('admin/delete_surat/' . $item['id_ds_surat']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus surat ini?')"><i class="fas fa-trash"></i></a>
+                          </td>
+                        </tr>
+                      <?php endforeach; ?>
                     </tbody>
+                    <tfoot style="text-align: center;">
+                      <tr>
+                        <th>No</th>
+                        <th>No Surat</th>
+                        <th>No Disposisi</th>
+                        <th>Tgl Surat</th>
+                        <th>Tgl Input</th>
+                        <th>Tgl Disposisi</th>
+                        <th>Tgl Dilaksanakan</th>
+                        <th>Perihal</th>
+                        <th>Asal</th>
+                        <th>Jenis Surat</th>
+                        <th>Berkas</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                      </tr>
+                    </tfoot>
                   </table>
                 </div>
               </div>
@@ -164,7 +200,30 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fungsi untuk memperbarui tabel surat
     function renderTable(surat) {
-        let tableContent = '';
+        if ($.fn.DataTable.isDataTable('#example1')) {
+            $('#example1').DataTable().destroy();
+        }
+
+        let tableContent = `
+            <table id="example1" class="table table-bordered table-striped" style="text-align: center;">
+                <thead style="text-align: center;">
+                    <tr>
+                      <th>No</th>
+                        <th>No Surat</th>
+                        <th>No Disposisi</th>
+                        <th>Tgl Surat</th>
+                        <th>Tgl Input</th>
+                        <th>Tgl Disposisi</th>
+                        <th>Tgl Dilaksanakan</th>
+                        <th>Perihal</th>
+                        <th>Asal</th>
+                        <th>Jenis Surat</th>
+                        <th>Berkas</th>
+                        <th>Status</th>
+                        <th style="text-align: center;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody style="text-align: center;">`;
 
         surat.forEach((item, index) => {
             tableContent += `
@@ -188,7 +247,38 @@ document.addEventListener('DOMContentLoaded', function() {
                 </tr>`;
         });
 
-        document.querySelector('#surat-table-container tbody').innerHTML = tableContent;
+        tableContent += `
+                </tbody>
+                <tfoot style="text-align: center;">
+                    <tr>
+                        <th>No</th>
+                        <th>No Surat</th>
+                        <th>No Disposisi</th>
+                        <th>Tgl Surat</th>
+                        <th>Tgl Input</th>
+                        <th>Tgl Disposisi</th>
+                        <th>Tgl Dilaksanakan</th>
+                        <th>Perihal</th>
+                        <th>Asal</th>
+                        <th>Jenis Surat</th>
+                        <th>Berkas</th>
+                        <th>Status</th>
+                        <th style="text-align: center;">Aksi</th>
+                    </tr>
+                </tfoot>
+              </table>`;
+
+        document.querySelector('#surat-table-container').innerHTML = tableContent;
+        $('#example1').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'copy', 'csv', 'excel', 'pdf', 'print'
+                {
+                extend: 'colvis',
+                text: 'Column visibility'
+            }
+            ]
+        });
     }
 
     // Dapatkan semua surat saat halaman dimuat

@@ -72,11 +72,30 @@ class Surat_Model extends CI_Model {
     }
     }
 
+    public function get_filtered_surat($tanggal_awal = null, $tanggal_akhir = null) {
+        // Seleksi kolom yang akan diambil
+        $this->db->select('*');
+        $this->db->from('surat');
+
+        // Terapkan filter jika tanggal diberikan
+        if ($tanggal_awal) {
+            $this->db->where('tgl_surat >=', $tanggal_awal);
+        }
+        if ($tanggal_akhir) {
+            $this->db->where('tgl_surat <=', $tanggal_akhir);
+        }
+
+        // Eksekusi query
+        $query = $this->db->get();
+
+        // Kembalikan hasil query sebagai array
+        return $query->result_array();
+    }
+
     public function get_rekapitulasi($bulan, $tahun) {
         // Select data nama dari tabel users dan status dari tabel surat
-        $this->db->select('users.nama, 
-                        SUM(CASE WHEN surat.status = "belum_cek" THEN 1 ELSE 0 END) as belum_cek, 
-                        SUM(CASE WHEN surat.status = "sudah_dicek" THEN 1 ELSE 0 END) as sudah_dicek, 
+        $this->db->select('users.nama,  
+                        SUM(CASE WHEN surat.status = "masuk" THEN 1 ELSE 0 END) as masuk, 
                         SUM(CASE WHEN surat.status = "dilaksanakan" THEN 1 ELSE 0 END) as dilaksanakan, 
                         SUM(CASE WHEN surat.status = "diteruskan" THEN 1 ELSE 0 END) as diteruskan');
         $this->db->from('surat');

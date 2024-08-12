@@ -39,29 +39,30 @@ class Admin extends CI_Controller {
 
 
     public function surat()
-    {
-        if (!$this->session->userdata('email')) {
-            log_message('error', 'Email session not found');
-            redirect('login');
-        }
-        
-        $email = $this->session->userdata('email');
-		$data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
-        $this->load->model('Surat_Model'); // Load your model for handling surat data
-        $email = $this->session->userdata('email');
-        
-        // Get user information (add more as needed)
-        $data['user'] = $this->db->get_where('users', ['usr' => $email])->row_array();
-        
-        // Get list of surat (letters) from the Surat_Model
-        $data['surat'] = $this->Surat_Model->get_all_surat(); // Fetch all surat
-        
-        // Load view with the collected data
-        $this->load->view('template_admin/navbar', $data);
-        $this->load->view('template_admin/sidebar', $data);
-        $this->load->view('admin/surat', $data); // Ensure this view is created to display surat
-        $this->load->view('template_admin/footer');
+{
+    if (!$this->session->userdata('email')) {
+        log_message('error', 'Email session not found');
+        redirect('login');
     }
+
+    $email = $this->session->userdata('email');
+
+    // Load model
+    $this->load->model('Surat_Model');
+
+    // Get user information
+    $data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
+
+    // Get list of surat
+    $data['surat'] = $this->Surat_Model->get_all_surat();
+
+    // Load views with collected data
+    $this->load->view('template_admin/navbar', $data);
+    $this->load->view('template_admin/sidebar', $data);
+    $this->load->view('admin/surat', $data); // Ensure this view exists
+    $this->load->view('template_admin/footer');
+}
+
 
 
     public function insert_surat() {
@@ -539,18 +540,22 @@ public function edit_status($id_user) {
     }
 
     public function filter_surat() {
-        $tanggal_awal = $this->input->get('tanggal_awal');
-        $tanggal_akhir = $this->input->get('tanggal_akhir');
+        // Ambil parameter tanggal dari query string dengan XSS filtering
+        $tanggal_awal = $this->input->get('tanggal_awal', true); 
+        $tanggal_akhir = $this->input->get('tanggal_akhir', true);
     
-        if (!empty($tanggal_awal) && !empty($tanggal_akhir)) {
-            $this->db->where('tgl_surat >=', $tanggal_awal);
-            $this->db->where('tgl_surat <=', $tanggal_akhir);
-        }
+        // Validasi input tanggal
+        $tanggal_awal = !empty($tanggal_awal) ? $tanggal_awal : null;
+        $tanggal_akhir = !empty($tanggal_akhir) ? $tanggal_akhir : null;
     
-        $query = $this->db->get('surat');
-        $data = $query->result_array();
+        // Ambil data surat yang sudah difilter menggunakan model
+        $this->load->model('Surat_Model'); // Pastikan model di-load
+        $data['surat'] = $this->Surat_Model->get_filtered_surat($tanggal_awal, $tanggal_akhir);
     
-        echo json_encode($data);
+        // Kirim data dalam format JSON
+        $this->output
+            ->set_content_type('application/json')
+            ->set_output(json_encode($data['surat']));
     }
 
     public function detail_surat($id) {

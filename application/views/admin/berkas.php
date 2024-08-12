@@ -61,7 +61,7 @@
                                         <td><?= $item['nama'] ?></td>
                                         <td><?= $item['masuk'] ?></td>
                                         <td><?= $item['dilaksanakan'] ?></td>
-                                        <td><?= $item['didisposisi'] ?></td>
+                                        <td><?= $item['diteruskan'] ?></td>
                                     </tr>
                                 <?php endforeach; ?>
                             <?php else: ?>

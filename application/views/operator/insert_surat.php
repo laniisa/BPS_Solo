@@ -44,6 +44,7 @@
                     <?php endforeach; ?>
                 </select>
             </div>
+            <input type="hidden" name="status" value="masuk">
             <a href="<?= site_url('operator/index'); ?>" class="btn btn-secondary">Batal</a>
             <button type="submit" class="btn btn-primary">Tambah Surat</button>
         </form>

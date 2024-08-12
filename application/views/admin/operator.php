@@ -4,13 +4,14 @@
   <?php if ($this->session->flashdata('message')) : ?>
     <?= $this->session->flashdata('message'); ?>
   <?php endif; ?>
+
   <!-- Main content -->
   <section class="content">
     <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1 >Daftar User</h1> <!-- Ganti warna teks menjadi hitam -->
-          </div>
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Daftar User</h1> <!-- Ganti warna teks menjadi hitam -->
+        </div>
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="<?= site_url('admin/index') ?>">Dashboard</a></li>
@@ -19,16 +20,15 @@
         </div>
       </div>
     </div><!-- /.container-fluid -->
-    
 
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
-          <div class="card" > <!-- Ganti warna background card dan teks -->
+          <div class="card"> <!-- Ganti warna background card dan teks -->
             <div class="card-header">
               <div class="row mb-2">
                 <div class="col-sm-6">
-                  <h1 >Daftar User</h1> <!-- Ganti warna teks menjadi hitam -->
+                  <h1>Daftar User</h1> <!-- Ganti warna teks menjadi hitam -->
                 </div>
                 <div class="col-sm-6">
                   <ol class="breadcrumb float-sm-right">
@@ -49,67 +49,71 @@
               </div>
             </div>
             <!-- /.card-header -->
-            <div class="card-body" id="user-table-container">
-              <table id="example1" class="table table-bordered table-striped" style="text-align: center;">
-                <thead style="text-align: center;">
-                  <tr>
-                    <th>No</th>
-                    <th>Nama</th>
-                    <th>Role</th>
-                    <th>Username</th>
-                    <th>Email</th>
-                    <th>WhatsApp</th>
-                    <th>Status</th>
-                    <th>Konfirmasi</th>
-                    <th style="text-align: center;">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody style="text-align: center;">
-                  <?php $i = 1; ?>
-                  <?php foreach ($users as $user) : ?>
-                    <tr>
-                      <td><?= $i++; ?></td>
-                      <td><?= $user['nama'] ?></td>
-                      <td><?= $user['role'] ?></td>
-                      <td><?= $user['usr'] ?></td>
-                      <td><?= $user['email'] ?></td>
-                      <td><?= $user['whatsApp'] ?></td>
-                      <td>
-                        <form action="<?= base_url('admin/edit_status/' . $user['id_user']); ?>" method="POST">
-                          <select name="status" class="form-control" onchange="this.form.submit()">
-                            <option value="active" <?= $user['status'] == 'active' ? 'selected' : ''; ?>>Active</option>
-                            <option value="inactive" <?= $user['status'] == 'inactive' ? 'selected' : ''; ?>>Inactive</option>
-                          </select>
-                        </form>
-                      </td>
-                      <td>
-                        <?php if ($user['status'] == 'active') : ?>
-                          <button type="button" class="btn btn-success btn-sm">Active</button>
-                        <?php elseif ($user['status'] == 'inactive') : ?>
-                          <button type="button" class="btn btn-danger btn-sm">Inactive</button>
-                        <?php endif; ?>
-                      </td>
-                      <td>
-                        <a href="<?= base_url('admin/update_op/' . $user['id_user']) ?>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
-                        <a href="<?= base_url('admin/delete_op/' . $user['id_user']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus user ini?')"><i class="fas fa-trash"></i></a>
-                      </td>
-                    </tr>
-                  <?php endforeach; ?>
-                </tbody>
-                <tfoot style="text-align: center;">
-                  <tr>
-                    <th>No</th>
-                    <th>Nama</th>
-                    <th>Role</th>
-                    <th>Username</th>
-                    <th>Email</th>
-                    <th>WhatsApp</th>
-                    <th>Status</th>
-                    <th>Konfirmasi</th>
-                    <th>Aksi</th>
-                  </tr>
-                </tfoot>
-              </table>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-12" id="user-table-container">
+                  <table id="example1" class="table table-bordered table-striped" style="text-align: center;">
+                    <thead style="text-align: center;">
+                      <tr>
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>Role</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>WhatsApp</th>
+                        <th>Status</th>
+                        <th>Konfirmasi</th>
+                        <th style="text-align: center;">Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody style="text-align: center;">
+                      <?php $i = 1; ?>
+                      <?php foreach ($users as $user) : ?>
+                        <tr>
+                          <td><?= $i++; ?></td>
+                          <td><?= $user['nama'] ?></td>
+                          <td><?= $user['role'] ?></td>
+                          <td><?= $user['usr'] ?></td>
+                          <td><?= $user['email'] ?></td>
+                          <td><?= $user['whatsApp'] ?></td>
+                          <td>
+                            <form action="<?= base_url('admin/edit_status/' . $user['id_user']); ?>" method="POST">
+                              <select name="status" class="form-control" onchange="this.form.submit()">
+                                <option value="active" <?= $user['status'] == 'active' ? 'selected' : ''; ?>>Active</option>
+                                <option value="inactive" <?= $user['status'] == 'inactive' ? 'selected' : ''; ?>>Inactive</option>
+                              </select>
+                            </form>
+                          </td>
+                          <td>
+                            <?php if ($user['status'] == 'active') : ?>
+                              <button type="button" class="btn btn-success btn-sm">Active</button>
+                            <?php elseif ($user['status'] == 'inactive') : ?>
+                              <button type="button" class="btn btn-danger btn-sm">Inactive</button>
+                            <?php endif; ?>
+                          </td>
+                          <td>
+                            <a href="<?= base_url('admin/update_op/' . $user['id_user']) ?>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                            <a href="<?= base_url('admin/delete_op/' . $user['id_user']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus user ini?')"><i class="fas fa-trash"></i></a>
+                          </td>
+                        </tr>
+                      <?php endforeach; ?>
+                    </tbody>
+                    <tfoot style="text-align: center;">
+                      <tr>
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>Role</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>WhatsApp</th>
+                        <th>Status</th>
+                        <th>Konfirmasi</th>
+                        <th>Aksi</th>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </div>
             </div>
             <!-- /.card-body -->
           </div>
@@ -124,6 +128,7 @@
   <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const filterButtons = document.querySelectorAll('.float-right .btn');
@@ -148,6 +153,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fungsi untuk memperbarui tabel
     function renderTable(users) {
+        // Hancurkan instance DataTable yang ada sebelum membuat yang baru
+        if ($.fn.DataTable.isDataTable('#example1')) {
+            $('#example1').DataTable().destroy();
+        }
+
         let tableContent = `
             <table id="example1" class="table table-bordered table-striped" style="text-align: center;">
                 <thead style="text-align: center;">
@@ -208,6 +218,18 @@ document.addEventListener('DOMContentLoaded', function() {
             </table>`;
 
         document.getElementById('user-table-container').innerHTML = tableContent;
+
+        // Inisialisasi DataTable setelah tabel baru di-render
+        $('#example1').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'copy', 'csv', 'excel', 'pdf', 'print'
+                {
+                extend: 'colvis',
+                text: 'Column visibility'
+            }
+            ]
+        });
     }
 
     // Dapatkan semua pengguna saat halaman dimuat

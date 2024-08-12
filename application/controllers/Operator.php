@@ -116,7 +116,9 @@ class Operator extends CI_Controller {
                 'asal' => $this->input->post('asal'),
                 'jenis_surat' => $this->input->post('jenis_surat'),
                 'berkas' => $file_data['file_name'],
-                'user_id' => $this->input->post('user_id')
+                'user_id' => $this->input->post('user_id'),
+                'status' => $this->input->post('status') // Ambil status surat dari form
+  
                 
             );
     
