@@ -1,4 +1,10 @@
 <!-- Content Wrapper. Contains page content -->
+<head>
+    <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+    <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+  </head>
+
 <div class="content-wrapper">
 
   <?php if ($this->session->flashdata('message')) : ?>

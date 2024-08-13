@@ -521,24 +521,35 @@ public function edit_status($id_user) {
 
     
     public function berkas() {
+        if (!$this->session->userdata('email')) {
+            redirect('login');
+        }
         $email = $this->session->userdata('email');
-		$data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
-        // Ambil data bulan dan tahun dari URL atau gunakan bulan dan tahun saat ini sebagai default
-        $bulan = $this->input->get('bulan', TRUE) ?: date('m');
-        $tahun = $this->input->get('tahun', TRUE) ?: date('Y');
+        $data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
         
-        // Ambil data rekapitulasi dari model
-        $data['rekap'] = $this->Surat_Model->get_rekapitulasi($bulan, $tahun);
+        // Ambil data bulan dan tahun dari URL atau gunakan bulan dan tahun saat ini sebagai default
+        $bulan = $this->input->get('bulan', TRUE);
+        $tahun = $this->input->get('tahun', TRUE);
+        
+        // Jika tidak ada filter bulan atau tahun, tampilkan semua data
+        if (!$bulan || !$tahun) {
+            $data['rekap'] = $this->Surat_Model->get_rekapitulasi_all(); // Ambil semua data
+        } else {
+            $data['rekap'] = $this->Surat_Model->get_rekapitulasi($bulan, $tahun);
+        }
+        
         $data['bulan'] = $bulan;
         $data['tahun'] = $tahun;
         
-        // Muat view dengan data yang diambi
+        // Muat view dengan data yang diambil
         $this->load->view('template_admin/navbar', $data);
         $this->load->view('template_admin/sidebar', $data);
         $this->load->view('admin/berkas', $data);
         $this->load->view('template_admin/footer');
     }
-
+    
+    
+    
     public function filter_surat() {
         // Ambil parameter tanggal dari query string dengan XSS filtering
         $tanggal_awal = $this->input->get('tanggal_awal', true); 

@@ -5,12 +5,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Rekapitulasi Lembar Disposisi</h1>
+                    <h1>Rekapitulasi Tindak Lanjut Surat</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="<?= site_url('admin/save_surat') ?>">Dashboard</a></li>
-                        <li class="breadcrumb-item active"><a href="<?= site_url('admin') ?>">Rekapitulasi Lembar Disposisi</a></li>
+                        <li class="breadcrumb-item active"><a href="<?= site_url('admin/rekap_surat') ?>">Rekapitulasi Tindak Lanjut Surat</a></li>
                     </ol>
                 </div>
             </div>
@@ -22,7 +22,7 @@
         <div class="container-fluid">
             <div class="card">
                 <div class="card-header">
-                    <a href="<?= base_url('admin/insert_surat') ?>" class="btn btn-primary float-left"><i class="fas fa-plus"></i> Tambah Surat</a>
+                    <h2>REKAP DISPOSISI</h2>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
@@ -38,11 +38,18 @@
                             </div>
                             <div class="col-sm-2">
                                 <button type="submit" class="btn btn-primary">Tampilkan</button>
+                                <button type="button" class="btn btn-secondary ml-2" id="reset-button">Reset</button>
                             </div>
                         </div>
                     </form>
-                    
-                    <h4>Rekap Lembar Disposisi KF <?= $bulan ?> <?= $tahun ?></h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-body">
+                    <h4>Rekap Tindak Lanjut Surat <?= $bulan ? $bulan : 'Semua' ?> <?= $tahun ? $tahun : '' ?></h4>
                     <table class="table table-bordered table-striped" style="text-align: center;">
                         <thead style="text-align: center;">
                             <tr>
@@ -81,3 +88,14 @@
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
+
+<script>
+    document.getElementById('reset-button').addEventListener('click', function() {
+        // Clear the form fields
+        document.getElementById('bulan').value = '';
+        document.getElementById('tahun').value = '';
+
+        // Redirect to the current URL without query parameters to show all data
+        window.location.href = window.location.pathname;
+    });
+</script>

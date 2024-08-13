@@ -93,19 +93,41 @@ class Surat_Model extends CI_Model {
     }
 
     public function get_rekapitulasi($bulan, $tahun) {
-        // Select data nama dari tabel users dan status dari tabel surat
         $this->db->select('users.nama,  
-                        SUM(CASE WHEN surat.status = "masuk" THEN 1 ELSE 0 END) as masuk, 
-                        SUM(CASE WHEN surat.status = "dilaksanakan" THEN 1 ELSE 0 END) as dilaksanakan, 
-                        SUM(CASE WHEN surat.status = "diteruskan" THEN 1 ELSE 0 END) as diteruskan');
-        $this->db->from('surat');
-        $this->db->join('users', 'surat.id_ds_surat = users.id_user');
+                            SUM(CASE WHEN surat.status = "masuk" THEN 1 ELSE 0 END) as masuk, 
+                            SUM(CASE WHEN surat.status = "dilaksanakan" THEN 1 ELSE 0 END) as dilaksanakan, 
+                            SUM(CASE WHEN surat.status = "diteruskan" THEN 1 ELSE 0 END) as diteruskan');
+        $this->db->from('users');
+        $this->db->join('surat', 'users.id_user = surat.user_id', 'left');
+        $this->db->join('pegawai', 'surat.id_ds_surat = pegawai.id_surat', 'left');
+        $this->db->join('kepala', 'pegawai.id_ds_kepala = kepala.id_ds_kepala', 'left');
         $this->db->where('MONTH(surat.tgl_surat)', $bulan);
         $this->db->where('YEAR(surat.tgl_surat)', $tahun);
         $this->db->group_by('users.nama');
         $query = $this->db->get();
         return $query->result_array();
     }
+
+    public function get_rekapitulasi_all() {
+        $this->db->select('users.nama,  
+                            SUM(CASE WHEN surat.status = "masuk" THEN 1 ELSE 0 END) as masuk, 
+                            SUM(CASE WHEN surat.status = "dilaksanakan" THEN 1 ELSE 0 END) as dilaksanakan, 
+                            SUM(CASE WHEN surat.status = "diteruskan" THEN 1 ELSE 0 END) as diteruskan');
+        $this->db->from('users');
+        $this->db->join('surat', 'users.id_user = surat.user_id', 'left');
+        $this->db->join('pegawai', 'surat.id_ds_surat = pegawai.id_surat', 'left');
+        $this->db->join('kepala', 'pegawai.id_ds_kepala = kepala.id_ds_kepala', 'left');
+        
+        // Tidak ada filter bulan dan tahun
+        $this->db->group_by('users.nama');
+        
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+    
+    
+    
+    
     
     public function get_surat_by_user_id_kepala($user_id) {
         $this->db->select('surat.*, kepala.tindak_lanjut');

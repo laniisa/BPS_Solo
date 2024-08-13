@@ -6,6 +6,9 @@
     <title><?= $title; ?></title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+    <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
 </head>
 <body>
 <!-- Content Wrapper. Contains page content -->
@@ -72,19 +75,6 @@
         <div class="col-12">
           <div class="card">
             <div class="card-header">
-              <div class="row mb-2">
-                <div class="col-sm-6">
-                  <h1>Daftar Surat</h1>
-                </div>
-                <div class="col-sm-6">
-                  <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="<?= site_url('admin/index') ?>">Dashboard</a></li>
-                    <li class="breadcrumb-item active"><a href="<?= site_url('admin/daftar_surat') ?>">Daftar Surat</a></li>
-                  </ol>
-                </div>
-              </div>
-            </div>
-            <div class="card-header">
               <a href="<?= base_url('admin/insert_surat') ?>" class="btn btn-primary float-left"><i class="fas fa-plus"></i> Tambah Surat</a>
             </div>
             <div class="card-body">
@@ -122,7 +112,13 @@
                           <td><?= $item['perihal']; ?></td>
                           <td><?= $item['asal']; ?></td>
                           <td><?= $item['jenis_surat']; ?></td>
-                          <td><?= $item['berkas'] ? '<a href="' . $item['berkas'] . '" class="btn btn-info btn-sm">Unduh</a>' : 'Tidak ada berkas'; ?></td>
+                          <td>
+                            <?php if ($item['berkas']) : ?>
+                                <a href="<?= base_url('uploads/' . $item['berkas']); ?>" class="btn btn-info btn-sm" download>Unduh</a>
+                            <?php else : ?>
+                                Tidak ada berkas
+                            <?php endif; ?>
+                          </td>
                           <td><?= $item['status']; ?></td>
                           <td>
                             <a href="<?= base_url('admin/update_surat/' . $item['id_ds_surat']) ?>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
@@ -223,7 +219,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         <th style="text-align: center;">Aksi</th>
                     </tr>
                 </thead>
-                <tbody style="text-align: center;">`;
+                <tbody style="text-align: center;">
+        `;
 
         surat.forEach((item, index) => {
             tableContent += `
@@ -238,20 +235,23 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td>${item.perihal}</td>
                     <td>${item.asal}</td>
                     <td>${item.jenis_surat}</td>
-                    <td>${item.berkas ? `<a href="${item.berkas}" class="btn btn-info btn-sm">Unduh</a>` : 'Tidak ada berkas'}</td>
+                    <td>
+                        ${item.berkas ? `<a href="<?= base_url('uploads/') ?>${item.berkas}" class="btn btn-info btn-sm" download>Unduh</a>` : 'Tidak ada berkas'}
+                    </td>
                     <td>${item.status}</td>
                     <td>
                         <a href="<?= base_url('admin/update_surat/') ?>${item.id_ds_surat}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
                         <a href="<?= base_url('admin/delete_surat/') ?>${item.id_ds_surat}" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus surat ini?')"><i class="fas fa-trash"></i></a>
                     </td>
-                </tr>`;
+                </tr>
+            `;
         });
 
         tableContent += `
                 </tbody>
                 <tfoot style="text-align: center;">
                     <tr>
-                        <th>No</th>
+                      <th>No</th>
                         <th>No Surat</th>
                         <th>No Disposisi</th>
                         <th>Tgl Surat</th>
@@ -263,28 +263,36 @@ document.addEventListener('DOMContentLoaded', function() {
                         <th>Jenis Surat</th>
                         <th>Berkas</th>
                         <th>Status</th>
-                        <th style="text-align: center;">Aksi</th>
+                        <th>Aksi</th>
                     </tr>
                 </tfoot>
-              </table>`;
+            </table>
+        `;
 
-        document.querySelector('#surat-table-container').innerHTML = tableContent;
+        document.getElementById('surat-table-container').innerHTML = tableContent;
+
+        // Inisialisasi ulang DataTable
         $('#example1').DataTable({
-            dom: 'Bfrtip',
-            buttons: [
-                'copy', 'csv', 'excel', 'pdf', 'print'
-                {
-                extend: 'colvis',
-                text: 'Column visibility'
-            }
-            ]
+            paging: true,
+            lengthChange: false,
+            searching: true,
+            ordering: true,
+            info: true,
+            autoWidth: false,
+            responsive: true,
         });
     }
 
-    // Dapatkan semua surat saat halaman dimuat
-    fetchSurat('', ''); // Mengambil semua data surat pada awal halaman
+    // Memuat semua data surat saat halaman pertama kali dibuka
+    fetchSurat('', '');
 });
 </script>
+<script src="<?php echo base_url() ?>assets/admin/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="<?php echo base_url() ?>assets/admin/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="<?php echo base_url() ?>assets/admin/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="<?php echo base_url() ?>assets/admin/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="<?php echo base_url() ?>assets/admin/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="<?php echo base_url() ?>assets/admin/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
 
 </body>
 </html>
