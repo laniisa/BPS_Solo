@@ -53,6 +53,13 @@ class Struktural extends CI_Controller {
     }
 
     public function surat() {
+        if (!$this->session->userdata('email')) {
+            redirect('login');
+        }
+    
+        $email = $this->session->userdata('email');
+        $user = $this->db->get_where('users', ['email' => $email])->row_array();
+        $user_id = $user['id_user']; 
         // Check if temp data exists in session
         $temp_data = $this->session->userdata('temp_data');
     
@@ -77,66 +84,61 @@ class Struktural extends CI_Controller {
     }
     
     public function insert_kepala() {
-        // Load the model
-        $this->load->model('Struktural_model');
+        $this->load->model('Struktural_Model');
         
-        // Get form data
         $id_user = $this->input->post('user_id');
         $tindak_lanjut = $this->input->post('tindak_lanjut');
         $no_surat = $this->input->post('no_surat');
-    
-        // Check if 'tindak_lanjut' is 'diteruskan'
-        if ($tindak_lanjut == 'diteruskan') {
-            // Store data temporarily in session
-            $this->session->set_userdata('temp_data', [
-                'user_id' => $id_user,
-                'tindak_lanjut' => $tindak_lanjut,
-                'no_surat' => $no_surat
-            ]);
-    
-            // Redirect to surat.php
+        $current_datetime = date('Y-m-d H:i:s'); // Get the current datetime
+        
+        // Prepare data for insertion into kepala table
+        $data = [
+            'user_id' => $id_user,
+            'tindak_lanjut' => $tindak_lanjut,
+            'catatan_kepala' => ($tindak_lanjut == 'dilaksanakan') ? 'sukses' : '',
+            'tgl_disposisi' => ($tindak_lanjut == 'diteruskan') ? $current_datetime : null,
+            'tgl_dilaksanakan' => ($tindak_lanjut == 'dilaksanakan') ? $current_datetime : null
+        ];
+        
+        // Insert data into kepala table
+        $this->Struktural_Model->insert_kepala($data);
+        
+        if ($tindak_lanjut == 'dilaksanakan') {
+            // Update the surat status to reflect it's been handled
+            $this->Struktural_Model->update_surat_tgl_dilaksanakan($no_surat);
+            $this->Struktural_Model->update_surat_status($no_surat, 'dilaksanakan');
+        } elseif ($tindak_lanjut == 'diteruskan') {
+            // Update surat for disposisi
+            $this->Struktural_Model->update_surat_disposisi($no_surat);
             redirect('struktural/surat');
-        } else {
-            // Prepare data to insert
-            $data = [
-                'user_id' => $id_user,
-                'tindak_lanjut' => $tindak_lanjut,
-                'catatan_kepala' => 'sukses'
-            ];
-            
-            // Insert data into kepala table
-            $this->Struktural_model->insert_kepala($data);
-    
-            // Mark this no_surat as processed
-            $this->session->set_userdata('processed_' . $no_surat, true);
-    
-            // Redirect to a success page or back to the form
-            redirect('struktural');
         }
-    }
-    
-    
-    public function edit_aksi($id_ds_kepala) {
-        $status = $this->input->post('tindak_lanjut');
-        
-        // Debugging: periksa apakah ID dan status diterima dengan benar
-        error_log("ID: $id_ds_kepala, Aksi: $tindak_lanjut"); // Logging
-        
-        if ($id_ds_kepala && $tindak_lanjut !== null) {
-            // Update status berdasarkan id_user
-            if ($this->Struktural_Model->update_status($id_ds_kepala, $tindak_lanjut)) {
-                $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Status berhasil diupdate!</div>');
-            } else {
-                $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Gagal mengupdate status!</div>');
-            }
-        } else {
-            $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Status harus diisi!</div>');
-        }
-        
-        // Redirect ke halaman daftar admin
         redirect('struktural');
     }
     
+    
+    
+    
+    
+    public function detail_surat($no_surat) {
+        $this->load->model('Surat_Model');
+        
+        // Get the surat details
+        $surat = $this->Surat_Model->get_surat_by_no($no_surat);
+        
+        // Retrieve temporary data from the session
+        $temp_data = $this->session->userdata('temp_data');
+    
+        // Pass the surat and temporary data to the view
+        $data = [
+            'title' => 'Detail Surat',
+            'surat' => $surat,
+            'catatan_kepala' => $this->Surat_Model->get_catatan_kepala($no_surat),
+            'catatan_pegawai' => $this->Surat_Model->get_catatan_pegawai($no_surat),
+            'temp_data' => $temp_data // Passing temp_data to the view
+        ];
+    
+        $this->load->view('surat/detail_surat', $data);
+    }
     
     
     }

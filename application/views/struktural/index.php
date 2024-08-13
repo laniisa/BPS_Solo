@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Daftar Surat | <?= $title; ?></title>
-    <!-- Other head elements -->
-     
+    <title>Daftar Surat | <?= $title; ?></title>     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/dist/css/adminlte.min.css">
     <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
@@ -65,6 +63,9 @@
                                 <tbody style="text-align: center;">
                                 <?php $i = 1; ?>
                                 <?php foreach ($surat as $row) : ?>
+                                <?php if ($row['status'] == 'dilaksanakan') {
+                                    continue; // Skip rows that are marked as 'dilaksanakan'
+                                } ?>
                                 <tr>
                                     <td><?= $i++; ?></td>
                                     <td><?= $row['no_surat'] ?></td>
@@ -72,49 +73,36 @@
                                     <td><?= $row['perihal'] ?></td>
                                     <td>
                                         <?php if (!empty($row['berkas'])) : ?>
-                                            <!-- Button to view the file -->
                                             <a href="<?= base_url('uploads/' . $row['berkas']) ?>" class="btn btn-warning btn-sm" target="_blank" style="color: white;">Lihat</a>
-                                            <!-- Button to download the file -->
                                             <a href="<?= base_url('uploads/' . $row['berkas']) ?>" class="btn btn-danger btn-sm" download>Unduh</a>
                                         <?php else : ?>
                                             <span class="text-muted">Tidak ada berkas</span>
                                         <?php endif; ?>
                                     </td>
                                     <td>
-                                        <?php
-                                        // Determine if this row has been processed based on session data
-                                        $is_processed = $this->session->userdata('processed_' . $row['no_surat']);
-                                        ?>
                                         <form action="<?= base_url('struktural/insert_kepala') ?>" method="post">
                                             <input type="hidden" name="user_id" value="<?= $user['id_user']; ?>">
                                             <input type="hidden" name="no_surat" value="<?= $row['no_surat']; ?>">
-                                            <select name="tindak_lanjut" class="form-control" onchange="this.form.submit()" <?= $is_processed ? 'disabled' : '' ?>>
+                                            <select name="tindak_lanjut" class="form-control" onchange="this.form.submit()">
                                                 <option value="">Pilih Tindak Lanjut</option>
-                                                <option value="dilaksanakan" <?= !$is_processed && (isset($row['tindak_lanjut']) && $row['tindak_lanjut'] == 'dilaksanakan') ? 'selected' : '' ?>>Dilaksanakan</option>
-                                                <option value="diteruskan" <?= !$is_processed && (isset($row['tindak_lanjut']) && $row['tindak_lanjut'] == 'diteruskan') ? 'selected' : '' ?>>Diteruskan</option>
+                                                <option value="dilaksanakan" <?= isset($row['tindak_lanjut']) && $row['tindak_lanjut'] == 'dilaksanakan' ? 'selected' : '' ?>>Dilaksanakan</option>
+                                                <option value="diteruskan" <?= isset($row['tindak_lanjut']) && $row['tindak_lanjut'] == 'diteruskan' ? 'selected' : '' ?>>Diteruskan</option>
                                             </select>
                                         </form>
                                     </td>
                                     <td>
                                         <?php
-                                        // Determine the display status
-                                        if ($is_processed) {
-                                            // Form has been processed
-                                            echo '<span class="text-success">Dilaksanakan</span';
+                                        if (isset($row['tindak_lanjut']) && $row['tindak_lanjut'] == 'dilaksanakan') {
+                                            echo '<span class="text-success">Dilaksanakan</span>';
                                         } elseif (isset($row['tindak_lanjut']) && $row['tindak_lanjut'] == 'diteruskan') {
-                                            // Form has not been processed but tindak_lanjut is 'diteruskan'
                                             echo '<span class="text-danger">Diteruskan</span>';
                                         } else {
-                                            // No action yet
                                             echo '<span class="text-muted">Belum ada tindakan</span>';
                                         }
                                         ?>
                                     </td>
                                 </tr>
-                                <?php endforeach; ?>
-
-
-
+                            <?php endforeach; ?>
                                 </tbody>
                                 <tfoot style="text-align: center;">
                                     <tr>
