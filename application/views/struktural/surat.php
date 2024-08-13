@@ -42,12 +42,12 @@
                     <div class="col-md-12">
                         <div class="card card-primary">
                             <div class="card-header">
-                                <h3 class="card-title">Detail Surat</h3>
+                                <h3 class="card-title"><?= $surat['perihal']; ?></h3>
                             </div>
                             <div class="card-body">
                                 <table class="table table-bordered">
                                     <tbody>
-                                        <!-- Existing table rows -->
+                                    <?php if (!empty($surat)): ?>
                                         <tr>
                                             <th>No Disposisi</th>
                                             <td><?= $surat['no_disposisi']; ?></td>
@@ -56,27 +56,39 @@
                                             <th>No Surat</th>
                                             <td><?= $surat['no_surat']; ?></td>
                                         </tr>
-                                        <!-- Other rows -->
-
-                                        <!-- Display temporary data if available -->
-                                        <?php if ($temp_data): ?>
-                                            <tr>
-                                                <th>Temporary User ID</th>
-                                                <td><?= $temp_data['user_id']; ?></td>
-                                            </tr>
-                                            <tr>
-                                                <th>Temporary Tindak Lanjut</th>
-                                                <td><?= $temp_data['tindak_lanjut']; ?></td>
-                                            </tr>
-                                            <tr>
-                                                <th>Temporary No Surat</th>
-                                                <td><?= $temp_data['no_surat']; ?></td>
-                                            </tr>
-                                        <?php endif; ?>
+                                        <tr>
+                                            <th>Tanggal Surat</th>
+                                            <td><?= $surat['tgl_surat']; ?></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Tanggal Input</th>
+                                            <td><?= $surat['tgl_input']; ?></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Tanggal Disposisi</th>
+                                            <td><?= $surat['tgl_disposisi']; ?></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Perihal</th>
+                                            <td><?= $surat['perihal']; ?></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Asal</th>
+                                            <td><?= $surat['asal']; ?></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Jenis Surat</th>
+                                            <td><?= $surat['jenis_surat']; ?></td>
+                                        </tr>
+                                    <?php else: ?>
+                                        <tr>
+                                            <td colspan="2">Data tidak ditemukan</td>
+                                        </tr>
+                                    <?php endif; ?>
                                     </tbody>
                                 </table>
 
-                                <a href="<?= site_url(''); ?>" class="btn btn-secondary">Simpan</a>
+                                <a href="<?= site_url('struktural'); ?>" class="btn btn-secondary">Kembali</a>
                             </div>
                         </div>
                     </div>

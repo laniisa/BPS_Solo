@@ -40,5 +40,10 @@ class Struktural_Model extends CI_Model {
         $this->db->where('no_surat', $no_surat);
         $this->db->update('surat', $data);
     }
+    public function get_surat_by_no_surat($no_surat) {
+        $this->db->where('no_surat', $no_surat);
+        $query = $this->db->get('surat');
+        return $query->row_array();
+    }
 }
 

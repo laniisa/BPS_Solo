@@ -56,32 +56,24 @@ class Struktural extends CI_Controller {
         if (!$this->session->userdata('email')) {
             redirect('login');
         }
-    
+        
         $email = $this->session->userdata('email');
         $user = $this->db->get_where('users', ['email' => $email])->row_array();
         $user_id = $user['id_user']; 
-        // Check if temp data exists in session
-        $temp_data = $this->session->userdata('temp_data');
-    
-        if ($temp_data) {
-            // Load the model
-            $this->load->model('Struktural_model');
-    
-            // Get data based on temp data
-            $data['temp_data'] = $temp_data;
-            
-            // Optionally, you can retrieve more data or do more operations here
-            
-            // Load view
-            $data['title'] = 'Surat Page'; // Adjust title as needed
-            $this->load->view('template_struk/header', $data);
-            $this->load->view('struktural/surat', $data);
-            $this->load->view('template_struk/footer');
-        } else {
-            // Redirect back if no temp data exists
-            redirect('struktural');
-        }
+        
+        // Retrieve the no_surat from the query string
+        $no_surat = $this->input->get('no_surat');
+        
+        // Fetch the data for the given no_surat
+        $this->load->model('Struktural_Model');
+        $data['surat'] = $this->Struktural_Model->get_surat_by_no_surat($no_surat);
+        
+        $data['title'] = 'Surat Page'; // Adjust title as needed
+        $this->load->view('template_struk/header', $data);
+        $this->load->view('struktural/surat', $data);
+        $this->load->view('template_struk/footer');
     }
+    
     
     public function insert_kepala() {
         $this->load->model('Struktural_Model');
@@ -110,35 +102,22 @@ class Struktural extends CI_Controller {
         } elseif ($tindak_lanjut == 'diteruskan') {
             // Update surat for disposisi
             $this->Struktural_Model->update_surat_disposisi($no_surat);
-            redirect('struktural/surat');
         }
-        redirect('struktural');
+        
+        // Prepare query string parameters
+        $query_string = http_build_query([
+            'no_surat' => $no_surat
+        ]);
+        
+        redirect('struktural/surat?' . $query_string);
     }
     
     
     
     
     
-    public function detail_surat($no_surat) {
-        $this->load->model('Surat_Model');
-        
-        // Get the surat details
-        $surat = $this->Surat_Model->get_surat_by_no($no_surat);
-        
-        // Retrieve temporary data from the session
-        $temp_data = $this->session->userdata('temp_data');
     
-        // Pass the surat and temporary data to the view
-        $data = [
-            'title' => 'Detail Surat',
-            'surat' => $surat,
-            'catatan_kepala' => $this->Surat_Model->get_catatan_kepala($no_surat),
-            'catatan_pegawai' => $this->Surat_Model->get_catatan_pegawai($no_surat),
-            'temp_data' => $temp_data // Passing temp_data to the view
-        ];
     
-        $this->load->view('surat/detail_surat', $data);
-    }
     
     
     }
