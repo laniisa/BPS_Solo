@@ -31,11 +31,13 @@
                 </div>
             </div>
         </section>
+
         <?php if ($this->session->flashdata('message')) : ?>
-        <div class="alert alert-info">
-            <?= $this->session->flashdata('message'); ?>
-        </div>
-    <?php endif; ?>
+            <div class="alert alert-info">
+                <?= $this->session->flashdata('message'); ?>
+            </div>
+        <?php endif; ?>
+
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
@@ -45,50 +47,77 @@
                                 <h3 class="card-title"><?= $surat['perihal']; ?></h3>
                             </div>
                             <div class="card-body">
-                                <table class="table table-bordered">
-                                    <tbody>
-                                    <?php if (!empty($surat)): ?>
-                                        <tr>
-                                            <th>No Disposisi</th>
-                                            <td><?= $surat['no_disposisi']; ?></td>
-                                        </tr>
-                                        <tr>
-                                            <th>No Surat</th>
-                                            <td><?= $surat['no_surat']; ?></td>
-                                        </tr>
-                                        <tr>
-                                            <th>Tanggal Surat</th>
-                                            <td><?= $surat['tgl_surat']; ?></td>
-                                        </tr>
-                                        <tr>
-                                            <th>Tanggal Input</th>
-                                            <td><?= $surat['tgl_input']; ?></td>
-                                        </tr>
-                                        <tr>
-                                            <th>Tanggal Disposisi</th>
-                                            <td><?= $surat['tgl_disposisi']; ?></td>
-                                        </tr>
-                                        <tr>
-                                            <th>Perihal</th>
-                                            <td><?= $surat['perihal']; ?></td>
-                                        </tr>
-                                        <tr>
-                                            <th>Asal</th>
-                                            <td><?= $surat['asal']; ?></td>
-                                        </tr>
-                                        <tr>
-                                            <th>Jenis Surat</th>
-                                            <td><?= $surat['jenis_surat']; ?></td>
-                                        </tr>
-                                    <?php else: ?>
-                                        <tr>
-                                            <td colspan="2">Data tidak ditemukan</td>
-                                        </tr>
-                                    <?php endif; ?>
-                                    </tbody>
-                                </table>
+                                <form action="<?= site_url('struktural/proses_tujuan'); ?>" method="post">
+                                    <!-- Input hidden untuk no_disposisi -->
+                                    <input type="hidden" name="no_disposisi" value="<?= $surat['no_disposisi']; ?>">
 
-                                <a href="<?= site_url('struktural'); ?>" class="btn btn-secondary">Kembali</a>
+                                    <table class="table table-bordered">
+                                        <tbody>
+                                        <?php if (!empty($surat)): ?>
+                                            <tr>
+                                                <th>No Disposisi</th>
+                                                <td><?= $surat['no_disposisi']; ?></td>
+                                            </tr>
+                                            <tr>
+                                                <th>No Surat</th>
+                                                <td><?= $surat['no_surat']; ?></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Tanggal Surat</th>
+                                                <td><?= $surat['tgl_surat']; ?></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Tanggal Input</th>
+                                                <td><?= $surat['tgl_input']; ?></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Tanggal Disposisi</th>
+                                                <td><?= $surat['tgl_disposisi']; ?></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Perihal</th>
+                                                <td><?= $surat['perihal']; ?></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Asal</th>
+                                                <td><?= $surat['asal']; ?></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Jenis Surat</th>
+                                                <td><?= $surat['jenis_surat']; ?></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Tindak Lanjut</th>
+                                                <td><?= $surat['status']; ?></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Catatan</th>
+                                                <td>   
+                                                    <input type="text" name="catatan_kepala" id="catatan_kepala" class="form-control" placeholder="Tuliskan catatan Anda di sini..." required>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>Tujuan</th>
+                                                <td>
+                                                    <?php foreach ($users_fungsional as $user): ?>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" name="tujuan[]" value="<?= $user['id_user']; ?>" id="tujuan_<?= $user['id_user']; ?>">
+                                                            <label class="form-check-label" for="tujuan_<?= $user['id_user']; ?>"><?= $user['nama']; ?></label>
+                                                        </div>
+                                                    <?php endforeach; ?>
+                                                </td>
+                                            </tr>
+                                        <?php else: ?>
+                                            <tr>
+                                                <td colspan="2">Data tidak ditemukan</td>
+                                            </tr>
+                                        <?php endif; ?>
+                                        </tbody>
+                                    </table>
+
+                                    <a href="<?= site_url('struktural'); ?>" class="btn btn-secondary">Kembali</a>
+                                    <button type="submit" class="btn btn-primary mt-2">Simpan</button>
+                                </form>
                             </div>
                         </div>
                     </div>

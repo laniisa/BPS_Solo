@@ -68,10 +68,67 @@ class Struktural extends CI_Controller {
         $this->load->model('Struktural_Model');
         $data['surat'] = $this->Struktural_Model->get_surat_by_no_surat($no_surat);
         
+        // Fetch all users with role 2 (fungsional)
+        $data['users_fungsional'] = $this->User_Model->get_users_by_role(2);
+        
         $data['title'] = 'Surat Page'; // Adjust title as needed
         $this->load->view('template_struk/header', $data);
         $this->load->view('struktural/surat', $data);
         $this->load->view('template_struk/footer');
+    }
+
+    public function detail_surat($id) {
+        $data['title'] = 'Detail Surat';
+        
+        // Ambil data surat berdasarkan ID
+        $data['surat'] = $this->db->get_where('surat', ['id' => $id])->row_array();
+
+        // Ambil data pengguna fungsional (role ID 2)
+        $this->db->where('role_id', 2);
+        $data['users_fungsional'] = $this->db->get('users')->result_array();
+
+        // Load view
+        $this->load->view('templates/header', $data);
+        $this->load->view('struktural/detail_surat', $data);
+        $this->load->view('templates/footer');
+    }
+
+    public function proses_tujuan() {
+        // Ambil data dari form
+        $catatan_kepala = $this->input->post('catatan_kepala');
+        $tujuan = $this->input->post('tujuan');
+        $no_disposisi = $this->input->post('no_disposisi');
+
+        // Simpan catatan kepala ke tabel `kepala`
+        $data_kepala = [
+            'catatan_kepala' => $catatan_kepala,
+            'no_disposisi' => $no_disposisi,
+            // tambahkan kolom lain yang diperlukan
+        ];
+        $this->db->insert('kepala', $data_kepala);
+
+        // Simpan tujuan ke tabel `pegawai`
+        if (!empty($tujuan)) {
+            foreach ($tujuan as $id_user_fungsional) {
+                $data_pegawai = [
+                    'id_user' => $id_user_fungsional,
+                    'no_disposisi' => $no_disposisi,
+                    'status' => 'diterima', // atau status lain yang relevan
+                    // tambahkan kolom lain yang diperlukan
+                ];
+                $this->db->insert('pegawai', $data_pegawai);
+            }
+        }
+
+        // Redirect kembali ke halaman sebelumnya dengan pesan sukses
+        $this->session->set_flashdata('message', 'Data berhasil disimpan');
+        redirect('struktural');
+    }
+    
+    public function get_users_by_role($role_id) {
+        $this->db->where('role', $role_id);
+        $query = $this->db->get('users');
+        return $query->result_array();
     }
     
     

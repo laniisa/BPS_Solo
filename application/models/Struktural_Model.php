@@ -7,10 +7,18 @@ class Struktural_Model extends CI_Model {
         return $this->db->insert('kepala', $data);
     }
 
-    public function get_entry_by_user_id_and_no_surat($user_id, $no_surat) {
-        $this->db->where('user_id', $user_id);
-        $this->db->where('no_surat', $no_surat); 
-        $query = $this->db->get('kepala');
+    public function get_surat_by_no_surat_and_user($no_surat, $user_id) {
+        // Join tabel surat dengan pegawai untuk memastikan user_id adalah tujuan dari surat tersebut
+        $this->db->select('surat.*');
+        $this->db->from('surat');
+        $this->db->join('pegawai', 'pegawai.id_surat = surat.id_ds_surat', 'left');
+        $this->db->where('surat.no_surat', $no_surat);
+        $this->db->where('pegawai.id_user', $user_id);
+        
+        // Eksekusi query
+        $query = $this->db->get();
+        
+        // Mengembalikan hasil sebagai array
         return $query->row_array();
     }
 

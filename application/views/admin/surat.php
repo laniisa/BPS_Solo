@@ -280,7 +280,18 @@ document.addEventListener('DOMContentLoaded', function() {
             info: true,
             autoWidth: false,
             responsive: true,
+
+            dom: 'Bfrtip',
+            buttons: [
+                'copy', 'csv', 'excel', 'pdf', 'print'
+                {
+                extend: 'colvis',
+                text: 'Column visibility'
+            }
+            ]
         });
+
+      
     }
 
     // Memuat semua data surat saat halaman pertama kali dibuka

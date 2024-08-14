@@ -1,3 +1,14 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= $title; ?></title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+    <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+</head>
+
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -36,6 +47,8 @@
                             <div class="col-sm-2">
                                 <input type="number" class="form-control" id="tahun" name="tahun" value="<?= $tahun ?>" min="2000" max="<?= date('Y') ?>">
                             </div>
+                        </div>
+                        <div class="form-group row">
                             <div class="col-sm-2">
                                 <button type="submit" class="btn btn-primary">Tampilkan</button>
                                 <button type="button" class="btn btn-secondary ml-2" id="reset-button">Reset</button>
@@ -50,7 +63,7 @@
             <div class="card">
                 <div class="card-body">
                     <h4>Rekap Tindak Lanjut Surat <?= $bulan ? $bulan : 'Semua' ?> <?= $tahun ? $tahun : '' ?></h4>
-                    <table class="table table-bordered table-striped" style="text-align: center;">
+                    <table id="example1" class="table table-bordered table-striped" style="text-align: center;">
                         <thead style="text-align: center;">
                             <tr>
                                 <th>No</th>
@@ -98,4 +111,23 @@
         // Redirect to the current URL without query parameters to show all data
         window.location.href = window.location.pathname;
     });
+
+    $('#example1').DataTable({
+            paging: true,
+            lengthChange: false,
+            searching: true,
+            ordering: true,
+            info: true,
+            autoWidth: false,
+            responsive: true,
+
+            dom: 'Bfrtip',
+            buttons: [
+                'copy', 'csv', 'excel', 'pdf', 'print'
+                {
+                extend: 'colvis',
+                text: 'Column visibility'
+            }
+            ]
+        });
 </script>
