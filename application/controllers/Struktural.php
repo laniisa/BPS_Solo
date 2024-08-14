@@ -125,12 +125,6 @@ class Struktural extends CI_Controller {
         redirect('struktural');
     }
     
-    public function get_users_by_role($role_id) {
-        $this->db->where('role', $role_id);
-        $query = $this->db->get('users');
-        return $query->result_array();
-    }
-    
     
     public function insert_kepala() {
         $this->load->model('Struktural_Model');
@@ -168,13 +162,110 @@ class Struktural extends CI_Controller {
         
         redirect('struktural/surat?' . $query_string);
     }
+
+
+    public function rekap() {
+        if (!$this->session->userdata('email')) {
+            redirect('login');
+        }
+
+        // Ambil email dari session
+        $email = $this->session->userdata('email');
+
+        // Dapatkan informasi pengguna
+        $data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
+
+        // Ambil daftar semua surat
+        $data['surat'] = $this->Surat_Model->get_all_surat();
+
+        // Load views dengan data yang dikumpulkan
+        $this->load->view('template_struk/header', $data);
+        $this->load->view('struktural/rekap', $data);
+        $this->load->view('template_struk/footer');
+    }
+
+    public function filter_rekap() {
+        $tanggal_awal = $this->input->get('tanggal_awal');
+        $tanggal_akhir = $this->input->get('tanggal_akhir');
     
+        // Jika tidak ada filter tanggal, ambil semua surat
+        if (empty($tanggal_awal) || empty($tanggal_akhir)) {
+            $result = $this->Surat_Model->get_all_surat();
+        } else {
+            $result = $this->Surat_Model->get_filtered_surat($tanggal_awal, $tanggal_akhir);
+        }
     
+        // Mengembalikan data dalam bentuk JSON
+        echo json_encode($result);
+    }
+
+    public function detail_rekap($id) {
+        // Ambil data surat berdasarkan ID
+        $data['surat'] = $this->Surat_Model->get_surat_by_id($id);
+
+        // Load views dengan data surat yang diambil
+        $this->load->view('template_struk/header', $data);
+        $this->load->view('struktural/detail_rekap', $data);
+        $this->load->view('template_struk/footer');
+    }
     
+    public function kumpulan_surat() {
+        if (!$this->session->userdata('email')) {
+            redirect('login');
+        }
     
+        $email = $this->session->userdata('email');
+        $user = $this->db->get_where('users', ['email' => $email])->row_array();
+        $user_id = $user['id_user']; 
     
+        // Retrieve data
+        $data['surat'] = $this->Surat_Model->get_surat_by_user_id($user_id); 
+         // Load views dengan data surat yang diambil
+         $this->load->view('template_struk/header', $data);
+         $this->load->view('struktural/kumpulan_surat', $data);
+         $this->load->view('template_struk/footer');
+    }
+
+    // Menangani tindak lanjut surat
+    public function surat_kepala() {
+        $user_id = $this->input->post('user_id');
+        $no_surat = $this->input->post('no_surat');
+        $tindak_lanjut = $this->input->post('tindak_lanjut');
+
+        if ($this->Surat_Model->update_tindak_lanjut($no_surat, $tindak_lanjut)) {
+            $this->session->set_flashdata('success', 'Tindak lanjut surat berhasil diperbarui.');
+        } else {
+            $this->session->set_flashdata('message', 'Terjadi kesalahan saat memperbarui tindak lanjut surat.');
+        }
+
+        redirect('struktural/kumpulan_surat');
+    }
+
+    public function detail($id) {
+        if (!$this->session->userdata('email')) {
+            redirect('login');
+        }
     
+        $email = $this->session->userdata('email');
+        $user = $this->db->get_where('users', ['email' => $email])->row_array();
+        $user_id = $user['id_user'];
     
+        // Ambil data surat berdasarkan ID surat yang dipilih
+        $this->load->model('Surat_Model');
+        $data['surat'] = $this->Surat_Model->get_surat_by_id($id);
+    
+        // Ambil catatan kepala terkait user dari tabel kepala
+        $this->load->model('Kepala_Model');
+        $data['kepala'] = $this->Kepala_Model->get_kepala_by_user($user_id);
+    
+        // Set judul halaman
+        $data['title'] = 'Detail Surat';
+    
+        // Load view dengan data surat dan catatan kepala
+        $this->load->view('template_struk/header', $data);
+        $this->load->view('struktural/detail', $data);
+        $this->load->view('template_struk/footer');
+    }
     
     
     }

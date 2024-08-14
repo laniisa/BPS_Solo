@@ -22,12 +22,12 @@
             </a>
         </li>
         <li class="nav-item" style="display: flex; align-items: center;">
-            <a class="nav-link scrollto" href="<?= base_url('struktural/surat') ?>" role="button">
+            <a class="nav-link scrollto" href="<?= base_url('struktural/kumpulan_surat') ?>" role="button">
                 <span class="brand-text smaller-text" style="font-family: 'Arial'; font-size: 0.80rem; color: white;">Surat</span>
             </a>
         </li>
         <li class="nav-item" style="display: flex; align-items: center;">
-            <a class="nav-link" href="#" role="button">
+            <a class="nav-link scrollto" href="<?= base_url('struktural/rekap') ?>" role="button">
                 <span class="brand-text smaller-text" style="font-family: 'Arial'; font-size: 0.80rem; color: white;">Rekap</span>
             </a>
         </li>

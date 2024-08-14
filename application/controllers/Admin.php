@@ -551,25 +551,29 @@ public function edit_status($id_user) {
     
     
     public function filter_surat() {
-        // Ambil parameter tanggal dari query string dengan XSS filtering
-        $tanggal_awal = $this->input->get('tanggal_awal', true); 
-        $tanggal_akhir = $this->input->get('tanggal_akhir', true);
+        $tanggal_awal = $this->input->get('tanggal_awal');
+        $tanggal_akhir = $this->input->get('tanggal_akhir');
     
-        // Validasi input tanggal
-        $tanggal_awal = !empty($tanggal_awal) ? $tanggal_awal : null;
-        $tanggal_akhir = !empty($tanggal_akhir) ? $tanggal_akhir : null;
+        // Jika tidak ada filter tanggal, ambil semua surat
+        if (empty($tanggal_awal) || empty($tanggal_akhir)) {
+            $result = $this->Surat_Model->get_all_surat();
+        } else {
+            $result = $this->Surat_Model->get_filtered_surat($tanggal_awal, $tanggal_akhir);
+        }
     
-        // Ambil data surat yang sudah difilter menggunakan model
-        $this->load->model('Surat_Model'); // Pastikan model di-load
-        $data['surat'] = $this->Surat_Model->get_filtered_surat($tanggal_awal, $tanggal_akhir);
-    
-        // Kirim data dalam format JSON
-        $this->output
-            ->set_content_type('application/json')
-            ->set_output(json_encode($data['surat']));
+        // Mengembalikan data dalam bentuk JSON
+        echo json_encode($result);
     }
 
+
     public function detail_surat($id) {
+        if (!$this->session->userdata('email')) {
+            redirect('login');
+        }
+
+        $data['title'] = 'Detail Surat';
+        $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
+
         $data['surat'] = $this->Surat_Model->get_surat_by_id($id);
 
         $this->load->view('template_admin/navbar', $data);

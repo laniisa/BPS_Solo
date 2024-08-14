@@ -56,6 +56,15 @@ class Surat_Model extends CI_Model {
         return $query->result_array(); // This should include 'id_ds_kepala'
     }    
 
+    public function get_surat_by_user($user_id) {
+        $this->db->select('*');
+        $this->db->from('surat');
+        $this->db->where('user_id', $user_id); // Misalkan 'tujuan' adalah kolom yang menyimpan ID pengguna tujuan
+        $this->db->where('status', 'dilaksanakan'); // Menampilkan surat yang belum dilaksanakan
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
     public function insert_or_update_tujuan($surat_id, $user_id)
     {
     // Cek apakah sudah ada tujuan untuk surat ini
@@ -72,8 +81,12 @@ class Surat_Model extends CI_Model {
     }
     }
 
+    public function update_tindak_lanjut($no_surat, $tindak_lanjut) {
+        $this->db->where('no_surat', $no_surat);
+        return $this->db->update('surat', array('tindak_lanjut' => $tindak_lanjut));
+    }
+
     public function get_filtered_surat($tanggal_awal = null, $tanggal_akhir = null) {
-        // Seleksi kolom yang akan diambil
         $this->db->select('*');
         $this->db->from('surat');
 
@@ -91,6 +104,7 @@ class Surat_Model extends CI_Model {
         // Kembalikan hasil query sebagai array
         return $query->result_array();
     }
+
 
     public function get_rekapitulasi($bulan, $tahun) {
         $this->db->select('users.nama,  
@@ -124,10 +138,6 @@ class Surat_Model extends CI_Model {
         $query = $this->db->get();
         return $query->result_array();
     }
-    
-    
-    
-    
     
     public function get_surat_by_user_id_kepala($user_id) {
         $this->db->select('surat.*, kepala.tindak_lanjut');

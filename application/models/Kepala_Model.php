@@ -15,6 +15,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             return $this->db->insert('kepala', $data);
         }
 
+        public function get_kepala_by_user($user_id) {
+            // Ambil catatan kepala berdasarkan user_id
+            $this->db->where('user_id', $user_id);
+            $query = $this->db->get('kepala');
+            return $query->row_array();
+        }
+
         public function get_catatan_kepala_by_surat_id($id) {
             $this->db->select('kepala.*, users.nama');
             $this->db->from('kepala');
