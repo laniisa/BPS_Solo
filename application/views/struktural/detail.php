@@ -41,8 +41,7 @@
                                 <h3 class="card-title">Detail Surat <?= isset($surat['perihal']) ? $surat['perihal'] : ''; ?></h3>
                             </div>
                             <div class="card-body">
-                                <form action="<?= site_url('struktural/detail/' . $surat['id_ds_surat']); ?>" method="post" enctype="multipart/form-data">
-        
+                            
                                 <table class="table table-bordered" >
                                     <tbody>
                                         <tr>
@@ -119,7 +118,7 @@
                                 </table>
 
                                 <a href="<?= site_url('struktural/kumpulan_surat'); ?>" class="btn btn-secondary">Kembali</a>
-                                </form>
+                                
                             </div>
                         </div>
                     </div>
