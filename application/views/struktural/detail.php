@@ -6,14 +6,20 @@
     <title><?= $title; ?></title>
     <link rel="stylesheet" href="<?= base_url('assets/admin/plugins/bootstrap/css/bootstrap.min.css'); ?>">
     <style>
+        .table {
+            table-layout: fixed; /* Memastikan kolom tabel memiliki lebar tetap */
+        }
         .table th, .table td {
             vertical-align: middle;
+            word-wrap: break-word; /* Memungkinkan kata untuk membungkus ke baris berikutnya */
+            overflow-wrap: break-word; /* Menangani teks panjang yang meluas */
+            max-width: 200px; /* Menentukan lebar maksimum untuk sel */
         }
         .btn {
             margin-top: 10px;
         }
         .table th {
-            width: 20%;
+            width: 20%; /* Menentukan lebar kolom header tabel */
         }
         .red-text {
             color: red;
@@ -38,11 +44,10 @@
                     <div class="col-md-12">
                         <div class="card card-primary">
                             <div class="card-header">
-                                <h3 class="card-title">Detail Surat <?= isset($surat['perihal']) ? $surat['perihal'] : ''; ?></h3>
+                                <h3 class="card-title">Detail Surat <?= isset($surat['no_surat']) ? $surat['no_surat'] : ''; ?></h3>
                             </div>
                             <div class="card-body">
-                            
-                                <table class="table table-bordered" >
+                                <table class="table table-bordered">
                                     <tbody>
                                         <tr>
                                             <th>No Disposisi</th>

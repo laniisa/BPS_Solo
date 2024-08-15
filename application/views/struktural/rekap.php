@@ -5,9 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $title; ?></title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
     <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+    <style>
+        
+        .table th, .table td {
+            overflow-wrap: break-word; /* Memungkinkan teks membungkus ke baris berikutnya */
+            word-wrap: break-word; /* Alternatif untuk mendukung browser lama */
+            padding: 8px; /* Menambahkan padding untuk kenyamanan */
+        }
+    </style>
 </head>
 <body>
 <div class="content-wrapper">
@@ -66,22 +75,22 @@
             <div class="card-body">
               <div class="row">
                 <div class="col-12" id="surat-table-container">
-                  <table id="example1" class="table table-bordered table-striped" style="text-align: center;">
+                  <table id="example1" class="table table-bordered table-striped">
                     <thead style="text-align: center;">
-                      <tr>
-                        <th>No</th>
-                        <th>No Surat</th>
-                        <th>No Disposisi</th>
-                        <th>Tgl Surat</th>
-                        <th>Tgl Input</th>
-                        <th>Tgl Disposisi</th>
-                        <th>Tgl Dilaksanakan</th>
-                        <th>Perihal</th>
-                        <th>Asal</th>
-                        <th>Jenis Surat</th>
-                        <th>Status</th>
-                        <th style="text-align: center;">Aksi</th>
-                      </tr>
+                    <tr>
+                      <th >No</th>
+                      <th >No Surat</th>
+                      <th >No Disposisi</th>
+                      <th >Tgl Surat</th>
+                      <th >Tgl Input</th>
+                      <th >Tgl Disposisi</th>
+                      <th >Tgl Dilaksanakan</th>
+                      <th >Perihal</th>
+                      <th >Asal</th>
+                      <th >Jenis Surat</th>
+                      <th >Status</th>
+                      <th style="text-align: center;">Aksi</th>
+                    </tr>
                     </thead>
                     <tbody style="text-align: center;">
                       <?php $i = 1; ?>

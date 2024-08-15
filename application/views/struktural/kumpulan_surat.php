@@ -16,10 +16,16 @@
             background-color: #f8f9fa; /* Menambahkan warna latar belakang */
         }
         .list-group-item a.font-weight-bold {
-            font-size: 1.5rem; /* Membesarkan font untuk Perihal */
+            font-size: 1.7rem; /* Membesarkan font untuk Perihal */
             color: #007bff; /* Warna biru untuk tautan */
             text-decoration: none; /* Menghapus underline */
             position: relative;
+            display: block; /* Agar elemen bisa menampilkan teks di bawah */
+            max-width: 85%; /* Agar teks tidak meluas ke samping */
+            overflow: hidden; /* Menghilangkan teks yang meluas */
+            text-overflow: ellipsis; /* Menampilkan ellipsis jika teks terlalu panjang */
+            white-space: normal; /* Memungkinkan teks untuk membungkus ke baris berikutnya */
+    
         }
         .list-group-item a.font-weight-bold:hover {
             text-decoration: underline; /* Menambahkan underline saat hover */

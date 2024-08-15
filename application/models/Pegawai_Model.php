@@ -3,6 +3,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Pegawai_Model extends CI_Model {
     
+    public function get_all_pegawai() {
+        $this->db->from('pegawai');
+        return $this->db->get()->result_array();
+    }
     public function get_catatan_pegawai_by_surat_id($id) {
         $this->db->select('pegawai.*, users.nama');
         $this->db->from('pegawai');
