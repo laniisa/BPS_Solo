@@ -36,17 +36,17 @@
                 <div class="form-group">
                   <label for="role">Role</label>
                   <select class="form-control" id="role" name="role" required>
-                    <option value="Admin">Admin</option>
-                    <option value="Fungsional">Fungsional</option>
-                    <option value="Struktural">Struktural</option>
-                    <option value="Operator">Operator</option>
+                    <option value="0">Admin</option>
+                    <option value="2">Fungsional</option>
+                    <option value="1">Struktural</option>
+                    <option value="3">Operator</option>
                   </select>
                 </div>
                 <div class="form-group">
                   <label for="status">Status</label>
                   <select class="form-control" id="status" name="status" required>
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
                   </select>
                 </div>
                 <div class="form-group">

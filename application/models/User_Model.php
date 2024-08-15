@@ -58,12 +58,14 @@ class User_Model extends CI_Model {
         return ($query->num_rows() > 0) ? $query->row()->total_users : 0;
     }
 
+    
     public function update_status($id_user, $status) {
-        $this->db->set('status', $status);
+        // Validasi status yang diterima
+        $status = $status === 'active' ? 'active' : 'inactive';
+
+        // Update status di database
         $this->db->where('id_user', $id_user);
-        $result = $this->db->update('users');
-        error_log("Update result: " . ($result ? 'Success' : 'Failed')); // Logging
-        return $result;
+        return $this->db->update('users', ['status' => $status]);
     }
     
     

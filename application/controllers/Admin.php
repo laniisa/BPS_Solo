@@ -10,6 +10,7 @@ class Admin extends CI_Controller {
         $this->load->model('User_Model');
         $this->load->model('Kepala_Model');
         $this->load->model('Pegawai_Model');
+        $this->load->library('pagination');
 
         if (!$this->session->userdata('email')) {
             redirect('login');
@@ -144,9 +145,6 @@ class Admin extends CI_Controller {
         $data['title'] = 'Update Surat';
         $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
     
-        // Debugging: Lihat ID yang diterima
-        echo "ID yang diterima: " . $id;
-    
         // Mengambil data surat berdasarkan ID
         $this->load->model('Surat_Model');
         $data['surat'] = $this->Surat_Model->get_surat_by_id($id);
@@ -162,8 +160,6 @@ class Admin extends CI_Controller {
         $this->load->view('admin/update_surat', $data);
         $this->load->view('template_admin/footer');
     }
-    
-    
     
     public function update_surat_action() {
         $this->form_validation->set_rules('no_surat', 'No Surat', 'required');
@@ -201,6 +197,7 @@ class Admin extends CI_Controller {
             redirect('admin/surat');
         }
     }
+    
     
     private function upload_berkas() {
         $config['upload_path'] = './uploads/';
@@ -321,33 +318,29 @@ public function edit_status($id_user) {
 }
 
 
-    public function operator() {
-        $email = $this->session->userdata('email');
-        $data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
-
-        // Load library pagination
-        $this->load->library('pagination');
-
-        // Konfigurasi pagination
-        $config['base_url'] = site_url('admin/operator');
-        $config['total_rows'] = $this->db->count_all('users'); // Jumlah total data
-        $config['per_page'] = 10; // Jumlah data per halaman
-        $config['uri_segment'] = 3; // Uri segment untuk pagination
-
-        // Inisialisasi pagination
-        $this->pagination->initialize($config);
-
-        // Ambil data sesuai halaman yang sedang diakses
-        $page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
-        $data['users'] = $this->db->get('users', $config['per_page'], $page)->result_array();
-        $data['pagination'] = $this->pagination->create_links();
-
-        // Tampilkan view dengan data
-        $this->load->view('template_admin/navbar', $data);
-        $this->load->view('template_admin/sidebar', $data);
-        $this->load->view('admin/operator', $data);
-        $this->load->view('template_admin/footer');
+public function operator() {
+    if (!$this->session->userdata('email')) {
+        redirect('login'); 
     }
+    $email = $this->session->userdata('email');
+    $data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
+
+    // Load library pagination
+    $this->load->library('pagination');
+
+    // Konfigurasi pagination
+    $config['base_url'] = site_url('admin/operator');
+    $config['total_rows'] = $this->db->count_all('users'); // Jumlah total data
+    $config['per_page'] = 10; // Jumlah data per halaman
+    $config['uri_segment'] = 3; // Uri segment untuk pagination
+
+    
+    // Tampilkan view dengan data
+    $this->load->view('template_admin/navbar', $data);
+    $this->load->view('template_admin/sidebar', $data);
+    $this->load->view('admin/operator', $data);
+    $this->load->view('template_admin/footer');
+}
 
     public function filter_user() {
         $role = $this->input->get('role');
@@ -391,6 +384,7 @@ public function edit_status($id_user) {
 
         $this->form_validation->set_rules('nama', 'Nama', 'required|trim');
         $this->form_validation->set_rules('role', 'Role', 'required|trim');
+        $this->form_validation->set_rules('status', 'Status', 'required|trim');
         $this->form_validation->set_rules('usr', 'Username', 'required|trim');
         $this->form_validation->set_rules('email', 'Email', 'required|trim|valid_email');
         $this->form_validation->set_rules('whatsApp', 'WhatsApp', 'required|trim');
@@ -417,7 +411,7 @@ public function edit_status($id_user) {
         $data = [
             'nama' => htmlspecialchars($this->input->post('nama', true)),
             'role' => htmlspecialchars($this->input->post('role', true)),
-            'status' => 'active',
+            'status' => htmlspecialchars($this->input->post('status', true)),
             'usr' => htmlspecialchars($this->input->post('usr', true)),
             'email' => htmlspecialchars($this->input->post('email', true)),
             'whatsApp' => htmlspecialchars($this->input->post('whatsApp', true)),
@@ -437,7 +431,7 @@ public function edit_status($id_user) {
         if (empty($data['user'])) {
             show_404(); // Jika pengguna tidak ditemukan
         }
-
+    
         // Atur aturan validasi
         $this->form_validation->set_rules('nama', 'Nama', 'required');
         $this->form_validation->set_rules('role', 'Role', 'required|in_list[0,1,2,3]');
@@ -446,7 +440,7 @@ public function edit_status($id_user) {
         $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
         $this->form_validation->set_rules('whatsApp', 'WhatsApp', 'required');
         $this->form_validation->set_rules('password', 'Password', 'min_length[6]');
-
+    
         if ($this->form_validation->run() === FALSE) {
             // Jika validasi gagal, tampilkan form edit dengan pesan error
             $this->load->view('template_admin/navbar');
@@ -455,7 +449,7 @@ public function edit_status($id_user) {
             $this->load->view('template_admin/footer');
         } else {
             // Ambil data dari form
-            $update_data = [
+            $data_ = [
                 'nama' => $this->input->post('nama'),
                 'role' => $this->input->post('role'),
                 'status' => $this->input->post('status'),
@@ -463,15 +457,15 @@ public function edit_status($id_user) {
                 'email' => $this->input->post('email'),
                 'whatsApp' => $this->input->post('whatsApp')
             ];
-
+    
             // Periksa apakah password diisi, jika ya tambahkan ke data update
             $password = $this->input->post('password');
             if (!empty($password)) {
-                $update_data['password'] = password_hash($password, PASSWORD_DEFAULT);
+                $data_['password'] = password_hash($password, PASSWORD_DEFAULT);
             }
-
+    
             // Update data pengguna
-            if ($this->User_Model->update_user($id, $update_data)) {
+            if ($this->User_Model->update_user($id, $data_)) {
                 $this->session->set_flashdata('message', 'User updated successfully.');
                 redirect('admin/operator');
             } else {
@@ -480,7 +474,8 @@ public function edit_status($id_user) {
             }
         }
     }
-
+    
+    
     public function update_user($id) {
         // Pastikan hanya pengguna yang sudah login yang bisa mengakses halaman ini
         if (!$this->session->userdata('email')) {

@@ -18,7 +18,7 @@
             </div>
             <div class="info">
                 <?php if (!empty($user)): ?>
-                    <a href="#" class="d-block"><?= $user['nama']; ?></a>
+                    <a href="<?= base_url('login/logout'); ?>" class="d-block"><?= $user['nama']; ?></a>
                 <?php else: ?>
                     <a href="#" class="d-block">User not found</a>
                 <?php endif; ?>
@@ -47,7 +47,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="<?= base_url('operator/index') ?>" class="nav-link">
+                    <a href="<?= base_url('operator/surat') ?>" class="nav-link">
                         <i class="nav-icon fas fa-envelope-open-text"></i>
                         <p>Surat</p>
                     </a>

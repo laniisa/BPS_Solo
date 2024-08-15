@@ -15,17 +15,14 @@ class Operator extends CI_Controller {
         }
     }
 
-    public function index()
-    {
+    public function index(){
     if (!$this->session->userdata('email')) {
-        redirect('login'); 
+        redirect('login');
     }
-    
-    $email = $this->session->userdata('email');
-    
-    // Get user information (add more as needed)
-    $data['user'] = $this->db->get_where('users', ['usr' => $email])->row_array();
-    
+
+    $data['title'] = ' Operator ';
+    $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
+
     // Get list of surat (letters) from the Surat_Model
     $data['surat'] = $this->Surat_Model->get_all_surat(); // Fetch all surat
     $data['struktural_users'] = $this->User_Model->get_users_by_role(1);
@@ -39,7 +36,18 @@ class Operator extends CI_Controller {
 
 
     public function dashboard() {
-        $data['title'] = 'Daftar Surat';
+        if (!$this->session->userdata('email')) {
+            log_message('error', 'Email session not found');
+            redirect('login');
+        }
+    
+        $email = $this->session->userdata('email');
+    
+        // Get user information
+        $data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
+    
+        
+        $data['title'] = 'Tambah Surat';
         $data['surat'] = $this->Surat_Model->get_all_surat();
 
         $this->load->view('template/navbar', $data);
@@ -66,6 +74,10 @@ class Operator extends CI_Controller {
         if (!$this->session->userdata('email')) {
             redirect('login');
         }
+    
+        $data['title'] = 'Insert Surat';
+        $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
+    
 
             $data['title'] = 'Tambah Surat';
             $data['surat'] = $this->Surat_Model->get_all_surat();
@@ -134,6 +146,10 @@ class Operator extends CI_Controller {
         if (!$this->session->userdata('email')) {
             redirect('login');
         }
+    
+        $data['title'] = 'Update Surat';
+        $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
+    
 
         $data['title'] = 'Update Surat';
         $data['surat'] = $this->Surat_Model->get_surat_by_id($id);
@@ -199,6 +215,74 @@ class Operator extends CI_Controller {
         $this->session->set_flashdata('message', '<div class="alert alert-success">Surat berhasil dihapus</div>');
         redirect('operator/index');
     }
+
+    public function surat()
+{
+    if (!$this->session->userdata('email')) {
+        log_message('error', 'Email session not found');
+        redirect('login');
+    }
+
+    $email = $this->session->userdata('email');
+
+    // Load model
+    $this->load->model('Surat_Model');
+
+    // Get user information
+    $data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
+
+    // Get list of surat
+    $data['surat'] = $this->Surat_Model->get_all_surat();
+
+    // Load views with collected data
+    $this->load->view('template/navbar', $data);
+    $this->load->view('template/sidebar', $data);
+    $this->load->view('operator/surat', $data); // Ensure this view exists
+    $this->load->view('template/footer');
+}
+
+public function detail($id) {
+    if (!$this->session->userdata('email')) {
+        redirect('login');
+    }
+
+    $data['title'] = 'Detail Surat';
+    $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
+
+    // Ambil data surat
+    $data['surat'] = $this->Surat_Model->get_surat_by_id($id);
+    
+    // Ambil nomor disposisi dari surat
+    $no_disposisi = $data['surat']['no_disposisi'];
+
+    // Ambil catatan kepala
+    $this->db->select('kepala.catatan_kepala, kepala.tindak_lanjut, kepala.tgl_disposisi, users.nama');
+    $this->db->from('disposisi');
+    $this->db->join('kepala', 'disposisi.id_ds_kepala = kepala.id_ds_kepala');
+    $this->db->join('users', 'kepala.user_id = users.id_user');
+    $this->db->where('disposisi.no_disposisi', $no_disposisi);
+    $query_kepala = $this->db->get();
+    $data['catatan_kepala'] = $query_kepala->row_array();
+
+    // Ambil catatan pegawai
+    $this->db->select('pegawai.catatan, pegawai.tindak_lanjut, pegawai.tanggal, users.nama');
+    $this->db->from('disposisi');
+    $this->db->join('pegawai', 'disposisi.id_ds_pegawai = pegawai.id_ds_pegawai');
+    $this->db->join('users', 'pegawai.id_user = users.id_user');
+    $this->db->where('disposisi.no_disposisi', $no_disposisi);
+    $query_pegawai = $this->db->get();
+    $data['catatan_pegawai'] = $query_pegawai->result_array();
+
+    // Tambahkan tanggal dilaksanakan dari data surat
+    $data['tgl_dilaksanakan'] = $data['surat']['tgl_dilaksanakan'];
+
+    $this->load->view('template/navbar', $data);
+    $this->load->view('template/sidebar', $data);
+    $this->load->view('operator/detail', $data);
+    $this->load->view('template/footer');
+}
+
+
 }
 
     

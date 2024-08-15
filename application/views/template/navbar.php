@@ -24,7 +24,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a href="function/logout.php" class="nav-link" role="button" title="Logout" style="color: white">
+            <a href="<?= base_url('login/logout'); ?>" class="nav-link" role="button" title="Logout" style="color: white">
                 <i class="fa fa-sign-out-alt"></i>
             </a>
         </li>

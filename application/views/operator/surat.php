@@ -29,7 +29,7 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1>Daftar Surat</h1>
+          <h1>Rekap Surat</h1>
         </div>
       </div>
     </div>
@@ -75,19 +75,17 @@
           <div class="card-header">
               <div class="row mb-2">
                 <div class="col-sm-6">
-                  <h1>Daftar Surat</h1> <!-- Ganti warna teks menjadi hitam -->
+                  <h1>Rekap Surat</h1> <!-- Ganti warna teks menjadi hitam -->
                 </div>
                 <div class="col-sm-6">
                   <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="<?= site_url('admin/index') ?>">Dashboard</a></li>
-                    <li class="breadcrumb-item active"><a href="<?= site_url('admin') ?>">Daftar Surat</a></li> <!-- Hilangkan style color dari breadcrumb -->
+                    <li class="breadcrumb-item"><a href="<?= site_url('operator/index') ?>">Dashboard</a></li>
+                    <li class="breadcrumb-item active"><a href="<?= site_url('operator') ?>">Daftar Surat</a></li> <!-- Hilangkan style color dari breadcrumb -->
                   </ol>
                 </div>
               </div>
             </div>
-            <div class="card-header">
-              <a href="<?= base_url('admin/insert_surat') ?>" class="btn btn-primary float-left"><i class="fas fa-plus"></i> Tambah Surat</a>
-            </div>
+            
             <div class="card-body">
               <div class="row">
                 <div class="col-12" id="surat-table-container">
@@ -113,7 +111,7 @@
                       <?php foreach ($surat as $item) : ?>
                         <tr>
                           <td><?= $i++; ?></td>
-                          <td><a href="<?= base_url('admin/detail_surat/') . $item['id_ds_surat'] ?>"><?= $item['no_surat']; ?></a></td>
+                          <td><a href="<?= base_url('operator/detail/') . $item['id_ds_surat'] ?>"><?= $item['no_surat']; ?></a></td>
                           <td><?= $item['no_disposisi']; ?></td>
                           <td><?= $item['tgl_surat']; ?></td>
                           <td><?= $item['tgl_input']; ?></td>
@@ -129,10 +127,7 @@
                             <?php else : ?>
                                 Tidak ada berkas
                             <?php endif; ?>
-                            
-                            <a href="<?= base_url('admin/update_surat/' . $item['id_ds_surat']) ?>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
-                           <a href="<?= base_url('admin/delete_surat/' . $item['id_ds_surat']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus surat ini?')"><i class="fas fa-trash"></i></a>
-                                                
+                                               
                           </td>
                         </tr>
                       <?php endforeach; ?>
@@ -197,7 +192,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const row = `
                 <tr>
                     <td>${index + 1}</td>
-                    <td><a href="<?= base_url('admin/detail_surat/') ?>${item.id_ds_surat}">${item.no_surat}</a></td>
+                    <td><a href="<?= base_url('operator/detail/') ?>${item.id_ds_surat}">${item.no_surat}</a></td>
                     <td>${item.no_disposisi}</td>
                     <td>${item.tgl_surat}</td>
                     <td>${item.tgl_input}</td>
