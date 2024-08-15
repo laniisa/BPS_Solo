@@ -4,19 +4,21 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Struktural_Model extends CI_Model {
 
     public function insert_kepala($data) {
-        $this->db->insert('kepala', $data);
-        return $this->db->insert_id();
+        return $this->db->insert('kepala', $data);
     }
 
     public function get_surat_by_no_surat_and_user($no_surat, $user_id) {
+        // Join tabel surat dengan pegawai untuk memastikan user_id adalah tujuan dari surat tersebut
         $this->db->select('surat.*');
         $this->db->from('surat');
         $this->db->join('pegawai', 'pegawai.id_surat = surat.id_ds_surat', 'left');
         $this->db->where('surat.no_surat', $no_surat);
         $this->db->where('pegawai.id_user', $user_id);
         
+        // Eksekusi query
         $query = $this->db->get();
         
+        // Mengembalikan hasil sebagai array
         return $query->row_array();
     }
 
@@ -36,10 +38,9 @@ class Struktural_Model extends CI_Model {
         $this->db->update('surat');
     }
     
-    public function update_surat_disposisi($no_surat, $no_disposisi) {
+    public function update_surat_disposisi($no_surat) {
         $data = [
             'status' => 'disposisi',
-            'no_disposisi' => $no_disposisi,
             'tgl_disposisi' => date('Y-m-d H:i:s'),
             'tgl_dilaksanakan' => null
         ];
@@ -49,18 +50,8 @@ class Struktural_Model extends CI_Model {
     }
     public function get_surat_by_no_surat($no_surat) {
         $this->db->where('no_surat', $no_surat);
-        return $this->db->get('surat')->row_array();
+        $query = $this->db->get('surat');
+        return $query->row_array();
     }
-    public function insert_disposisi($data) {
-        return $this->db->insert('disposisi', $data);
-    }
-    
-    public function insert_pegawai($data) {
-        return $this->db->insert('pegawai', $data);
-    }
-    public function delete_surat($no_surat) {
-        $this->db->where('no_surat', $no_surat);
-        $this->db->delete('surat');
-    }
-    
 }
+

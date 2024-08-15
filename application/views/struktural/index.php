@@ -7,27 +7,6 @@
     <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
     <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
-    <style>
-        .table th, .table td {
-<<<<<<< Updated upstream
-        vertical-align: middle;
-        word-wrap: break-word; 
-        overflow-wrap: break-word; 
-        white-space: normal; 
-        max-width: 0; 
-    }
-=======
-            vertical-align: middle;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap; 
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            white-space: normal; 
-            max-width: 0; 
-        }
->>>>>>> Stashed changes
-    </style>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 
@@ -85,7 +64,7 @@
                                 <?php $i = 1; ?>
                                 <?php foreach ($surat as $row) : ?>
                                 <?php if ($row['status'] == 'dilaksanakan') {
-                                    continue; 
+                                    continue; // Skip rows that are marked as 'dilaksanakan'
                                 } ?>
                                 <tr>
                                     <td><?= $i++; ?></td>
@@ -101,7 +80,7 @@
                                         <?php endif; ?>
                                     </td>
                                     <td>
-                                        <form action="<?= base_url('struktural/surat') ?>" method="get">
+                                        <form action="<?= base_url('struktural/insert_kepala') ?>" method="post">
                                             <input type="hidden" name="user_id" value="<?= $user['id_user']; ?>">
                                             <input type="hidden" name="no_surat" value="<?= $row['no_surat']; ?>">
                                             <select name="tindak_lanjut" class="form-control" onchange="this.form.submit()">
@@ -150,5 +129,6 @@
     </section>
     <!-- /.content -->
 </div>
+<!-- /.content-wrapper -->
 </body>
 </html>
