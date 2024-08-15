@@ -28,7 +28,11 @@ class Struktural_Model extends CI_Model {
         $this->db->where('no_surat', $no_surat);
         $this->db->update('surat', $data);
     }
-
+    public function update_surat_status($no_surat, $status) {
+        $this->db->set('status', $status);
+        $this->db->where('no_surat', $no_surat);
+        $this->db->update('surat');
+    }
     public function update_surat_disposisi($no_surat, $no_disposisi) {
         $data = [
             'status' => 'disposisi',
