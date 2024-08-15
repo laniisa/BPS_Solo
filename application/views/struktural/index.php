@@ -9,12 +9,24 @@
     <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
     <style>
         .table th, .table td {
+<<<<<<< Updated upstream
         vertical-align: middle;
         word-wrap: break-word; 
         overflow-wrap: break-word; 
         white-space: normal; 
         max-width: 0; 
     }
+=======
+            vertical-align: middle;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap; 
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            white-space: normal; 
+            max-width: 0; 
+        }
+>>>>>>> Stashed changes
     </style>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
