@@ -55,5 +55,6 @@ class Struktural_Model extends CI_Model {
         $this->db->where('no_surat', $no_surat);
         $this->db->delete('surat');
     }
+
 }
 

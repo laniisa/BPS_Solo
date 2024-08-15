@@ -10,7 +10,7 @@ class Struktural extends CI_Controller {
         $this->load->model('Surat_Model');
         $this->load->model('User_Model');
         $this->load->library('session');
-        $this->load->model('Struktural_model');
+        $this->load->model('Struktural_Model');
         // Cek login di konstruktor
         if (!$this->session->userdata('email')) {
             redirect('login');
