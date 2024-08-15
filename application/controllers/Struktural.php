@@ -91,11 +91,15 @@ class Struktural extends CI_Controller {
     }
 
     public function proses_tujuan() {
+        // Ambil data dari input
         $catatan_kepala = $this->input->post('catatan_kepala');
         $tindak_lanjut = $this->input->post('tindak_lanjut');
         $no_surat = $this->input->post('no_surat');
         $tujuan = $this->input->post('tujuan'); // Array of user IDs
     
+        // Load model
+        $this->load->model('Struktural_Model');
+        
         // Retrieve the id_ds_surat from the surat table
         $surat = $this->Struktural_Model->get_surat_by_no_surat($no_surat);
         $id_ds_surat = $surat['id_ds_surat'];
@@ -108,8 +112,7 @@ class Struktural extends CI_Controller {
             'tgl_disposisi' => ($tindak_lanjut == 'diteruskan') ? date('Y-m-d H:i:s') : null,
             'tgl_dilaksanakan' => ($tindak_lanjut == 'dilaksanakan') ? date('Y-m-d H:i:s') : null,
         ];
-        $this->db->insert('kepala', $data_kepala);
-        $id_ds_kepala = $this->db->insert_id(); // Get the ID of the inserted record
+        $id_ds_kepala = $this->Struktural_Model->insert_kepala($data_kepala);
     
         // Insert data into pegawai table for each tujuan
         $id_ds_pegawai = [];
@@ -120,8 +123,7 @@ class Struktural extends CI_Controller {
                     'id_surat' => $id_ds_surat,
                     'id_ds_kepala' => $id_ds_kepala,
                 ];
-                $this->db->insert('pegawai', $data_pegawai);
-                $id_ds_pegawai[] = $this->db->insert_id(); // Collect the IDs of the inserted records
+                $id_ds_pegawai[] = $this->Struktural_Model->insert_pegawai($data_pegawai); // Collect the IDs of the inserted records
             }
         }
     
@@ -134,9 +136,7 @@ class Struktural extends CI_Controller {
                     'id_ds_surat' => $id_ds_surat,
                     'id_ds_pegawai' => $id_pegawai
                 ];
-                $this->db->insert('disposisi', $data_disposisi);
-                $no_disposisi = $this->db->insert_id(); // Get the ID of the inserted disposisi record
-                $no_disposisi_array[] = $no_disposisi;
+                $no_disposisi_array[] = $this->Struktural_Model->insert_disposisi($data_disposisi); // Collect the no_disposisi values
             }
         }
     
@@ -147,25 +147,15 @@ class Struktural extends CI_Controller {
         }
     
         // Update surat status based on tindak lanjut
-        if ($tindak_lanjut == 'dilaksanakan') {
-            $this->Struktural_Model->update_surat_tgl_dilaksanakan($no_surat);
-            $this->Struktural_Model->update_surat_status($no_surat, 'dilaksanakan');
-            $this->Struktural_Model->delete_surat($no_surat);
-        return; // Stop execution here, no redirect
-        } elseif ($tindak_lanjut == 'diteruskan') {
+        if ($tindak_lanjut == 'diteruskan') {
             $this->Struktural_Model->update_surat_disposisi($no_surat, $no_disposisi);
         }
     
-        $this->session->set_flashdata('success', 'Surat berhasil didisposisi');
-        redirect('struktural');
-    }
-    
-    
-        
-    public function get_users_by_role($role_id) {
-        $this->db->where('role', $role_id);
-        $query = $this->db->get('users');
-        return $query->result_array();
+        // Set flashdata and pass data to the view
+        $data = [
+            'success' => 'Surat berhasil didisposisi'
+        ];
+        $this->load->view('struktural/index', $data); // Use your desired view
     }
     
     public function insert_kepala() {
@@ -175,7 +165,7 @@ class Struktural extends CI_Controller {
         $tindak_lanjut = $this->input->post('tindak_lanjut');
         $no_surat = $this->input->post('no_surat');
         $current_datetime = date('Y-m-d H:i:s'); 
-        
+    
         $data = [
             'user_id' => $id_user,
             'tindak_lanjut' => $tindak_lanjut,
@@ -183,22 +173,28 @@ class Struktural extends CI_Controller {
             'tgl_disposisi' => ($tindak_lanjut == 'diteruskan') ? $current_datetime : null,
             'tgl_dilaksanakan' => ($tindak_lanjut == 'dilaksanakan') ? $current_datetime : null
         ];
-        var_dump($data);
         $this->Struktural_Model->insert_kepala($data);
-        
+    
         if ($tindak_lanjut == 'dilaksanakan') {
             $this->Struktural_Model->update_surat_tgl_dilaksanakan($no_surat);
             $this->Struktural_Model->update_surat_status($no_surat, 'dilaksanakan');
         } elseif ($tindak_lanjut == 'diteruskan') {
             $this->Struktural_Model->update_surat_disposisi($no_surat);
+            $data = [
+                'user_id' => $id_user,
+                'no_surat' => $no_surat
+            ];
+            
+            $this->load->view('struktural/surat', $data); // Send data to the view without using URL
         }
-        
-        $query_string = http_build_query([
-            'no_surat' => $no_surat
-        ]);
-        
-        redirect('struktural/surat?' . $query_string);
+    
+        // Set flashdata and pass data to the view if necessary
+        $data = [
+            'success' => 'Surat berhasil diproses'
+        ];
+        $this->load->view('struktural/index', $data); // Redirect or load a view as needed
     }
+    
 
 
     public function rekap() {

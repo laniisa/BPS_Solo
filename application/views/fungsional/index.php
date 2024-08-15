@@ -42,11 +42,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <?php if ($this->session->flashdata('success')) : ?>
-                                <div class="alert alert-success" role="alert">
-                                    <?= $this->session->flashdata('success'); ?>
-                                </div>
-                            <?php endif; ?>
+
 
                             <table id="example1" class="table table-bordered table-striped" style="text-align: center;">
                                 <thead style="text-align: center;">
@@ -80,7 +76,7 @@
                                         <?php endif; ?>
                                     </td>
                                     <td>
-                                        <form action="<?= base_url('fungsional/insert_kepala') ?>" method="post">
+                                        <form action="<?= base_url('fungsional/insert_pegawai') ?>" method="post">
                                             <input type="hidden" name="user_id" value="<?= $user['id_user']; ?>">
                                             <input type="hidden" name="no_surat" value="<?= $row['no_surat']; ?>">
                                             <select name="tindak_lanjut" class="form-control" onchange="this.form.submit()">
