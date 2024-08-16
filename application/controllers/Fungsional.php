@@ -11,6 +11,8 @@ class Fungsional extends CI_Controller {
         $this->load->model('User_Model');
         $this->load->library('session');
         $this->load->model('Fungsional_Model');
+        $this->load->model('Struktural_Model');
+
         // Cek login di konstruktor
         if (!$this->session->userdata('email')) {
             redirect('login');
@@ -98,34 +100,48 @@ class Fungsional extends CI_Controller {
         } else {
             // Handle invalid tindakan_lanjut value
             $this->session->set_flashdata('error', 'Tindak lanjut tidak valid.');
-            redirect('struktural');
+            redirect('fungsional');
         }
     }
 
+
     public function proses_tujuan() {
+        $catatan_kepala = $this->input->post('catatan_kepala');
         $tindak_lanjut = $this->input->post('tindak_lanjut');
         $no_surat = $this->input->post('no_surat');
         $tujuan = $this->input->post('tujuan'); // Array of user IDs
-        $current_datetime = date('Y-m-d H:i:s');
     
         // Mulai Transaksi
         $this->db->trans_start();
     
-        // Retrieve the id_ds_surat and id_ds_kepala from the surat table
+        // Retrieve the id_ds_surat from the surat table
         $surat = $this->Struktural_Model->get_surat_by_no_surat($no_surat);
+        
         $id_ds_surat = $surat['id_ds_surat'];
-        $id_ds_kepala = $surat['id_ds_kepala'];
     
-        // Insert data into pegawai table for each tujuan
+        // Insert data into kepala table
+        $data_kepala = [
+            'user_id' => $this->session->userdata('id_user'),
+            'catatan_kepala' => $catatan_kepala,
+            'tindak_lanjut' => $tindak_lanjut,
+            'tgl_disposisi' => ($tindak_lanjut == 'diteruskan') ? date('Y-m-d H:i:s') : null,
+            'tgl_dilaksanakan' => ($tindak_lanjut == 'dilaksanakan') ? date('Y-m-d H:i:s') : null,
+        ];
+        $this->db->insert('kepala', $data_kepala);
+        $id_ds_kepala = $this->db->insert_id();
+
+
         $id_ds_pegawai = [];
+        $tanggal_sekarang = date('Y-m-d H:i:s'); // Atau format tanggal sesuai dengan kebutuhan
+
         if (!empty($tujuan)) {
             foreach ($tujuan as $id_user_fungsional) {
+                // Data untuk tabel pegawai
                 $data_pegawai = [
                     'id_user' => $id_user_fungsional,
                     'id_surat' => $id_ds_surat,
-                    'catatan' => 'disposisi',
-                    'tindak_lanjut' => 'disposisi',
                     'id_ds_kepala' => $id_ds_kepala,
+                    'tanggal' => $tanggal_sekarang, // Tambahkan tanggal
                 ];
                 $this->db->insert('pegawai', $data_pegawai);
                 $id_ds_pegawai[] = $this->db->insert_id();
@@ -137,9 +153,9 @@ class Fungsional extends CI_Controller {
         if (!empty($id_ds_pegawai)) {
             foreach ($id_ds_pegawai as $id_pegawai) {
                 $data_disposisi = [
+                    'id_ds_kepala' => $id_ds_kepala,
                     'id_ds_surat' => $id_ds_surat,
-                    'id_ds_pegawai' => $id_pegawai,
-                    'id_ds_kepala' => $id_ds_kepala
+                    'id_ds_pegawai' => $id_pegawai
                 ];
                 $this->db->insert('disposisi', $data_disposisi);
                 $no_disposisi = $this->db->insert_id();
@@ -147,15 +163,16 @@ class Fungsional extends CI_Controller {
             }
         }
     
-        // Update surat table with the collected no_disposisi, tgl_disposisi, and status
+        // Update surat table with the collected no_disposisi
         if (!empty($no_disposisi_array)) {
             $no_disposisi = implode(',', $no_disposisi_array);
-            $update_data = [
-                'no_disposisi' => $no_disposisi,
-                'tgl_disposisi' => $current_datetime,
-                'status' => 'disposisi'
-            ];
-            $this->Struktural_Model->update_surat($no_surat, $update_data);
+            $this->Struktural_Model->update_surat_disposisi($no_surat, $no_disposisi);
+        }
+    
+        // Update surat status based on tindak lanjut
+        if ($tindak_lanjut == 'diteruskan') {
+            
+            $this->Struktural_Model->update_surat_disposisi($no_surat, $no_disposisi);
         }
     
         // Selesaikan Transaksi
@@ -166,10 +183,14 @@ class Fungsional extends CI_Controller {
         } else {
             $this->session->set_flashdata('success', 'Surat berhasil didisposisi');
         }
-    
-        // Redirect to the appropriate view
+
+        $data['surat'] = $surat; 
+        $this->load->view('fungsional/diteruskan', $data);
         redirect('fungsional');
     }
+    
+
+
     
     
     

@@ -241,11 +241,7 @@ class Operator extends CI_Controller {
     $this->load->view('template/footer');
 }
 
-public function detail($id) {
-    if (!$this->session->userdata('email')) {
-        redirect('login');
-    }
-
+public function detail_surat($id, $no_surat) {
     $data['title'] = 'Detail Surat';
     $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
 
@@ -255,21 +251,22 @@ public function detail($id) {
     // Ambil nomor disposisi dari surat
     $no_disposisi = $data['surat']['no_disposisi'];
 
-    // Ambil catatan kepala
-    $this->db->select('kepala.catatan_kepala, kepala.tindak_lanjut, kepala.tgl_disposisi, users.nama');
+    $data['surat'] = $this->Surat_Model->get_surat_by_no($no_surat);
+
+    // Ambil data disposisi untuk kepala
+    $this->db->select('kepala.catatan_kepala, kepala.tindak_lanjut, kepala.user_id, kepala.tanggal');
     $this->db->from('disposisi');
     $this->db->join('kepala', 'disposisi.id_ds_kepala = kepala.id_ds_kepala');
-    $this->db->join('users', 'kepala.user_id = users.id_user');
-    $this->db->where('disposisi.no_disposisi', $no_disposisi);
+    $this->db->where('disposisi.id_ds_surat', $data['surat']['id_ds_surat']);
     $query_kepala = $this->db->get();
     $data['catatan_kepala'] = $query_kepala->row_array();
 
-    // Ambil catatan pegawai
+    // Ambil data catatan pegawai
     $this->db->select('pegawai.catatan, pegawai.tindak_lanjut, pegawai.tanggal, users.nama');
     $this->db->from('disposisi');
     $this->db->join('pegawai', 'disposisi.id_ds_pegawai = pegawai.id_ds_pegawai');
     $this->db->join('users', 'pegawai.id_user = users.id_user');
-    $this->db->where('disposisi.no_disposisi', $no_disposisi);
+    $this->db->where('disposisi.id_ds_surat', $data['surat']['id_ds_surat']);
     $query_pegawai = $this->db->get();
     $data['catatan_pegawai'] = $query_pegawai->result_array();
 

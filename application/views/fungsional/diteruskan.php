@@ -34,7 +34,7 @@
                                 <h3 class="card-title"><?= $surat['perihal']; ?></h3>
                             </div>
                             <div class="card-body">
-                                <form action="<?= site_url('struktural/proses_tujuan'); ?>" method="post">
+                                <form action="<?= site_url('fungsional/proses_tujuan'); ?>" method="post">
                                     <!-- Input hidden untuk no_disposisi -->
                                     <input type="hidden" name="no_surat" value="<?= $surat['no_surat']; ?>">
                                     <input type="hidden" name="tindak_lanjut" value="<?= $selected_tindak_lanjut; ?>">
