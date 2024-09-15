@@ -16,17 +16,11 @@ class Surat_Model extends CI_Model {
         return $this->db->insert('surat', $data);
     }
     
-    public function get_surat_by_id($id) {
-        $query = $this->db->get_where('surat', ['id_ds_surat' => $id]);
-        $result = $query->row_array();
-        
-        // Debugging: Lihat hasil query
-        if (!$result) {
-            log_message('error', 'Surat dengan ID ' . $id . ' tidak ditemukan.');
-        }
-    
-        return $result;
-    }
+    public function get_surat_by_id($id)
+{
+    return $this->db->get_where('surat', ['id_ds_surat' => $id])->row_array();
+}
+
 
     public function get_surat_by_no($no_surat) {
         $query = $this->db->get_where('surat', array('no_surat' => $no_surat));
@@ -107,20 +101,26 @@ class Surat_Model extends CI_Model {
 
 
     public function get_rekapitulasi($bulan, $tahun) {
-        $this->db->select('users.nama,  
-                            SUM(CASE WHEN surat.status = "masuk" THEN 1 ELSE 0 END) as masuk, 
-                            SUM(CASE WHEN surat.status = "dilaksanakan" THEN 1 ELSE 0 END) as dilaksanakan, 
-                            SUM(CASE WHEN surat.status = "diteruskan" THEN 1 ELSE 0 END) as diteruskan');
-        $this->db->from('users');
-        $this->db->join('surat', 'users.id_user = surat.user_id', 'left');
-        $this->db->join('pegawai', 'surat.id_ds_surat = pegawai.id_surat', 'left');
-        $this->db->join('kepala', 'pegawai.id_ds_kepala = kepala.id_ds_kepala', 'left');
-        $this->db->where('MONTH(surat.tgl_surat)', $bulan);
-        $this->db->where('YEAR(surat.tgl_surat)', $tahun);
-        $this->db->group_by('users.nama');
-        $query = $this->db->get();
-        return $query->result_array();
+        $this->db->select('users.nama,
+            COUNT(CASE WHEN surat.status = "masuk" THEN 1 END) AS masuk,
+            COUNT(CASE WHEN pegawai.tindak_lanjut = "dilaksanakan" THEN 1 END) AS dilaksanakan_pegawai,
+            COUNT(CASE WHEN pegawai.tindak_lanjut = "diteruskan" THEN 1 END) AS diteruskan_pegawai,
+            COUNT(CASE WHEN kepala.tindak_lanjut = "dilaksanakan" THEN 1 END) AS dilaksanakan_kepala,
+            COUNT(CASE WHEN kepala.tindak_lanjut = "diteruskan" THEN 1 END) AS diteruskan_kepala')
+            ->from('users')
+            ->join('surat', 'surat.user_id = users.id_user', 'left')
+            ->join('pegawai', 'pegawai.id_user = users.id_user', 'left')
+            ->join('kepala', 'kepala.user_id = users.id_user', 'left')
+            ->group_by('users.id_user');
+        
+        if ($bulan && $tahun) {
+            $this->db->where('MONTH(surat.tanggal)', $bulan);
+            $this->db->where('YEAR(surat.tanggal)', $tahun);
+        }
+    
+        return $this->db->get()->result_array();
     }
+    
 
     public function get_rekapitulasi_all() {
         $this->db->select('users.nama,  

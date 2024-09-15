@@ -279,6 +279,33 @@ public function detail_surat($id, $no_surat) {
     $this->load->view('template/footer');
 }
 
+public function rekap() {
+    if (!$this->session->userdata('email')) {
+        redirect('login');
+    }
+    $email = $this->session->userdata('email');
+    $data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
+    
+    // Ambil data bulan dan tahun dari URL atau gunakan bulan dan tahun saat ini sebagai default
+    $bulan = $this->input->get('bulan', TRUE);
+    $tahun = $this->input->get('tahun', TRUE);
+    
+    // Jika tidak ada filter bulan atau tahun, tampilkan semua data
+    if (!$bulan || !$tahun) {
+        $data['rekap'] = $this->Surat_Model->get_rekapitulasi_all(); // Ambil semua data
+    } else {
+        $data['rekap'] = $this->Surat_Model->get_rekapitulasi($bulan, $tahun);
+    }
+    
+    $data['bulan'] = $bulan;
+    $data['tahun'] = $tahun;
+    
+    // Muat view dengan data yang diambil
+    $this->load->view('template/navbar', $data);
+    $this->load->view('template/sidebar', $data);
+    $this->load->view('operator/rekap', $data);
+    $this->load->view('template/footer');
+}
 
 }
 

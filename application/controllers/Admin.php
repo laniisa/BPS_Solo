@@ -173,22 +173,22 @@ class Admin extends CI_Controller {
             redirect('admin/update_surat/' . $this->input->post('id_ds_surat'));
         } else {
             $id = $this->input->post('id_ds_surat');
+            $berkas_baru = $this->upload_berkas();
             $data = [
                 'no_surat' => $this->input->post('no_surat'),
                 'tgl_surat' => $this->input->post('tgl_surat'),
                 'tgl_input' => $this->input->post('tgl_input'),
-                'tgl_disposisi' => $this->input->post('tgl_disposisi'),
                 'tgl_dilaksanakan' => $this->input->post('tgl_dilaksanakan'),
                 'perihal' => $this->input->post('perihal'),
                 'asal' => $this->input->post('asal'),
                 'jenis_surat' => $this->input->post('jenis_surat'),
                 'status' => $this->input->post('status'),
-                'user_id' => $this->input->post('user_id'),
-                'berkas' => $this->upload_berkas()
+                'user_id' => $this->input->post('user_id')
             ];
     
-            if (empty($data['berkas'])) {
-                unset($data['berkas']);
+            // Tambahkan data berkas jika ada berkas baru
+            if ($berkas_baru) {
+                $data['berkas'] = $berkas_baru;
             }
     
             // Update data surat
@@ -197,7 +197,6 @@ class Admin extends CI_Controller {
             redirect('admin/surat');
         }
     }
-    
     
     private function upload_berkas() {
         $config['upload_path'] = './uploads/';
@@ -209,9 +208,11 @@ class Admin extends CI_Controller {
         if ($this->upload->do_upload('berkas')) {
             return $this->upload->data('file_name');
         } else {
+            // Mengambil file lama jika tidak ada upload baru
             return $this->input->post('berkas_lama');
         }
     }
+    
     
         public function delete_surat($id) {
         if (!$this->session->userdata('email')) {
@@ -276,22 +277,6 @@ class Admin extends CI_Controller {
         echo json_encode($users);
     }
     
-
-    public function admin()
-    {
-        if (!$this->session->userdata('email')) {
-			redirect('login'); 
-		}
-
-        $data['title'] = 'Daftar Admin';
-        $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
-        $data['users'] = $this->User_Model->get_users_by_role(0); // Get users with role 0 (Admin)
-
-        $this->load->view('template_admin/navbar', $data);
-        $this->load->view('template_admin/sidebar', $data);
-        $this->load->view('admin/admin', $data);
-        $this->load->view('template_admin/footer');
-    }
 
     // Admin.php (Controller)
 
@@ -502,7 +487,7 @@ public function operator() {
         redirect('admin/operator');
     }
 
-    public function delete_user($id) {
+    public function delete_op($id) {
         // Pastikan hanya pengguna yang sudah login yang bisa mengakses halaman ini
         if (!$this->session->userdata('email')) {
             redirect('login');
@@ -511,7 +496,7 @@ public function operator() {
         $this->User_Model->delete_user($id);
 
         $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">User berhasil dihapus.</div>');
-        redirect('users');
+        redirect('admin/operator');
     }
 
     
@@ -542,6 +527,8 @@ public function operator() {
         $this->load->view('admin/berkas', $data);
         $this->load->view('template_admin/footer');
     }
+    
+    
     
     
     
