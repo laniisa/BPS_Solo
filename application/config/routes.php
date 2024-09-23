@@ -56,3 +56,4 @@ $route['login'] = 'login/index';
 $route['regis'] = 'login/regis';
 
 
+

@@ -70,49 +70,49 @@
                                     </tr>
                                 </thead>
                                 <tbody style="text-align: center;">
-<?php $i = 1; ?>
-<?php foreach ($surat as $row) : ?>
-<?php if ($row['status'] == 'dilaksanakan') {
-    continue; 
-} ?>
-<tr>
-    <td><?= $i++; ?></td>
-    <td><?= $row['no_surat'] ?></td>
-    <td><?= $row['tgl_surat'] ?></td>
-    <td><?= $row['perihal'] ?></td>
-    <td>
-        <?php if (!empty($row['berkas'])) : ?>
-            <a href="<?= base_url('uploads/' . $row['berkas']) ?>" class="btn btn-warning btn-sm" target="_blank" style="color: white;">Lihat</a>
-            <a href="<?= base_url('uploads/' . $row['berkas']) ?>" class="btn btn-danger btn-sm" download>Unduh</a>
-        <?php else : ?>
-            <span class="text-muted">Tidak ada berkas</span>
-        <?php endif; ?>
-    </td>
-    <td>
-        <form action="<?= base_url('struktural/insert_kepala') ?>" method="post">
-            <input type="hidden" name="user_id" value="<?= $user['id_user']; ?>">
-            <input type="hidden" name="no_surat" value="<?= $row['no_surat']; ?>">
-            <select name="tindak_lanjut" class="form-control" <?= !empty($row['tindak_lanjut']) ? 'disabled' : '' ?> onchange="this.form.submit()">
-                <option value="">Pilih Tindak Lanjut</option>
-                <option value="dilaksanakan" <?= isset($row['tindak_lanjut']) && $row['tindak_lanjut'] == 'dilaksanakan' ? 'selected' : '' ?>>Dilaksanakan</option>
-                <option value="diteruskan" <?= isset($row['tindak_lanjut']) && $row['tindak_lanjut'] == 'diteruskan' ? 'selected' : '' ?>>Diteruskan</option>
-            </select>
-        </form>
-    </td>
-    <td>
-        <?php
-        if (isset($row['tindak_lanjut']) && $row['tindak_lanjut'] == 'dilaksanakan') {
-            echo '<span class="text-success">Dilaksanakan</span>';
-        } elseif (isset($row['tindak_lanjut']) && $row['tindak_lanjut'] == 'diteruskan') {
-            echo '<span class="text-danger">Diteruskan</span>';
-        } else {
-            echo '<span class="text-muted">Belum dilaksanakan</span>';
-        }
-        ?>
-    </td>
-</tr>
-<?php endforeach; ?>
-</tbody>
+                                <?php $i = 1; ?>
+                                <?php foreach ($surat as $row) : ?>
+                                <?php if ($row['status'] == 'dilaksanakan') {
+                                    continue; 
+                                } ?>
+                                <tr>
+                                    <td><?= $i++; ?></td>
+                                    <td><?= $row['no_surat'] ?></td>
+                                    <td><?= $row['tgl_surat'] ?></td>
+                                    <td><?= $row['perihal'] ?></td>
+                                    <td>
+                                        <?php if (!empty($row['berkas'])) : ?>
+                                            <a href="<?= base_url('uploads/' . $row['berkas']) ?>" class="btn btn-warning btn-sm" target="_blank" style="color: white;">Lihat</a>
+                                            <a href="<?= base_url('uploads/' . $row['berkas']) ?>" class="btn btn-danger btn-sm" download>Unduh</a>
+                                        <?php else : ?>
+                                            <span class="text-muted">Tidak ada berkas</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <form action="<?= base_url('struktural/insert_pegawai') ?>" method="post">
+                                            <input type="hidden" name="id_user" value="<?= $user['id_user']; ?>">
+                                            <input type="hidden" name="no_surat" value="<?= $row['no_surat']; ?>">
+                                            <select name="tindak_lanjut" class="form-control" <?= !empty($row['tindak_lanjut']) ? 'disabled' : '' ?> onchange="this.form.submit()">
+                                                <option value="">Pilih Tindak Lanjut</option>
+                                                <option value="dilaksanakan" <?= isset($row['tindak_lanjut']) && $row['tindak_lanjut'] == 'dilaksanakan' ? 'selected' : '' ?>>Dilaksanakan</option>
+                                                <option value="diteruskan" <?= isset($row['tindak_lanjut']) && $row['tindak_lanjut'] == 'diteruskan' ? 'selected' : '' ?>>Diteruskan</option>
+                                            </select>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <?php
+                                        if (isset($row['tindak_lanjut']) && $row['tindak_lanjut'] == 'dilaksanakan') {
+                                            echo '<span class="text-success">Dilaksanakan</span>';
+                                        } elseif (isset($row['tindak_lanjut']) && $row['tindak_lanjut'] == 'diteruskan') {
+                                            echo '<span class="text-danger">Diteruskan</span>';
+                                        } else {
+                                            echo '<span class="text-muted">Belum dilaksanakan</span>';
+                                        }
+                                        ?>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                                </tbody>
 
                                 <tfoot style="text-align: center;">
                                     <tr>

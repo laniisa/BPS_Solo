@@ -80,7 +80,7 @@ class Struktural extends CI_Controller {
     }
 
     public function proses_tujuan() {
-        $catatan_kepala = $this->input->post('catatan_kepala');
+        $catatan = $this->input->post('catatan');
         $tindak_lanjut = $this->input->post('tindak_lanjut');
         $no_surat = $this->input->post('no_surat');
         $tujuan = $this->input->post('tujuan'); // Array of user IDs
@@ -93,28 +93,20 @@ class Struktural extends CI_Controller {
         
         $id_ds_surat = $surat['id_ds_surat'];
     
-        // Insert data into kepala table
-        $data_kepala = [
-            'user_id' => $this->session->userdata('id_user'),
-            'catatan_kepala' => $catatan_kepala,
-            'tindak_lanjut' => $tindak_lanjut,
-            'tgl_disposisi' => ($tindak_lanjut == 'diteruskan') ? date('Y-m-d H:i:s') : null,
-            'tgl_dilaksanakan' => ($tindak_lanjut == 'dilaksanakan') ? date('Y-m-d H:i:s') : null,
-        ];
-        $this->db->insert('kepala', $data_kepala);
-        $id_ds_kepala = $this->db->insert_id();
     
         // Insert data into pegawai table for each tujuan
         $id_ds_pegawai = [];
         if (!empty($tujuan)) {
             foreach ($tujuan as $id_user_fungsional) {
-                $data_pegawai = [
-                    'id_user' => $id_user_fungsional,
-                    'id_surat' => $id_ds_surat,
-                    'id_ds_kepala' => $id_ds_kepala,
+                $data_ds = [
+                    'user_id' => $this->session->userdata('id_user'),
+                    'catatan' => $catatan,
+                    'tindak_lanjut' => $tindak_lanjut,
+                    'tanggal' => ($tindak_lanjut == 'diteruskan') ? date('Y-m-d H:i:s') : null,
+                    //'tgl_dilaksanakan' => ($tindak_lanjut == 'dilaksanakan') ? date('Y-m-d H:i:s') : null,
                 ];
-                $this->db->insert('pegawai', $data_pegawai);
-                $id_ds_pegawai[] = $this->db->insert_id();
+                $this->db->insert('pegawai', $data_ds);
+                $id_disposisi[] = $this->db->insert_id();
             }
         }
     
@@ -123,9 +115,8 @@ class Struktural extends CI_Controller {
         if (!empty($id_ds_pegawai)) {
             foreach ($id_ds_pegawai as $id_pegawai) {
                 $data_disposisi = [
-                    'id_ds_kepala' => $id_ds_kepala,
                     'id_ds_surat' => $id_ds_surat,
-                    'id_ds_pegawai' => $id_pegawai
+                    'id_disposisi' => $id_disposisi
                 ];
                 $this->db->insert('disposisi', $data_disposisi);
                 $no_disposisi = $this->db->insert_id();
@@ -160,50 +151,63 @@ class Struktural extends CI_Controller {
     }
     
     
-    public function insert_kepala() {
+    public function insert_pegawai() {
         $this->load->model('Struktural_Model');
-    
-        $id_user = $this->input->post('user_id');
+        
+        $id_user = $this->session->userdata('id_user'); 
         $tindak_lanjut = $this->input->post('tindak_lanjut');
         $no_surat = $this->input->post('no_surat');
         $current_datetime = date('Y-m-d H:i:s');
     
+        if (empty($id_user)) {
+            $this->session->set_flashdata('error', 'User ID is missing. Please log in again.');
+            redirect('login');
+            return;
+        }
+    
+        // Fetch surat data
+        $surat_data = $this->Struktural_Model->get_surat_by_no_surat_and_user($no_surat, $id_user);
+    
+        if (!$surat_data) {
+            $this->session->set_flashdata('error', 'No matching surat found.');
+            redirect('struktural');
+            return;
+        }
+    
+        $id_surat = $surat_data['id_ds_surat'];
+    
         if ($tindak_lanjut == 'dilaksanakan') {
-            $data = [
-                'user_id' => $id_user,
+            // Prepare data for insertion into pegawai and disposisi
+            $pegawai_data = [
+                'id_user' => $id_user,
+                'id_surat' => $id_surat,
                 'tindak_lanjut' => $tindak_lanjut,
-                'catatan_kepala' => 'sukses',
-                'tgl_disposisi' => null,
-                'tgl_dilaksanakan' => $current_datetime
+                'tanggal' => $current_datetime
+            ];
+            $disposisi_data = [
+                'id_surat' => $id_surat,
+                'id_pegawai' => $id_user, // Assuming id_pegawai is linked to the user
+                'tanggal' => $current_datetime
             ];
     
-            // Insert data into kepala table
-            $this->Struktural_Model->insert_kepala($data);
+            // Insert into pegawai and disposisi tables
+            $this->Struktural_Model->insert_pegawai($pegawai_data);
+            $this->Struktural_Model->insert_disposisi($disposisi_data);
     
-            // Update surat if tindakan_lanjut is 'dilaksanakan'
+            // Update surat table with tgl_dilaksanakan and status
             $this->Struktural_Model->update_surat_tgl_dilaksanakan($no_surat);
             $this->Struktural_Model->update_surat_status($no_surat, 'dilaksanakan');
-            $this->Struktural_Model->delete_surat($no_surat);
-    
+            
             // Set flashdata for success
             $this->session->set_flashdata('success', 'Surat berhasil dilaksanakan');
-            
-            // Redirect to structural page
             redirect('struktural');
-    
         } elseif ($tindak_lanjut == 'diteruskan') {
-            // Redirect to surat.php with necessary parameters
             redirect('struktural/surat?no_surat=' . urlencode($no_surat) . '&user_id=' . urlencode($id_user));
         } else {
-            // Handle invalid tindakan_lanjut value
             $this->session->set_flashdata('error', 'Tindak lanjut tidak valid.');
             redirect('struktural');
         }
     }
-    
-    
-    
-    
     
 
 
@@ -271,7 +275,7 @@ class Struktural extends CI_Controller {
 
     // Menangani tindak lanjut surat
     public function surat_kepala() {
-        $user_id = $this->input->post('user_id');
+        $id_user = $this->input->post('id_user');
         $no_surat = $this->input->post('no_surat');
         $tindak_lanjut = $this->input->post('tindak_lanjut');
 

@@ -22,6 +22,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             return $query->row_array();
         }
 
+
+
+        
         public function get_catatan_kepala_by_surat_id($id) {
             $this->db->select('kepala.*, users.nama');
             $this->db->from('kepala');
