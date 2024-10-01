@@ -29,6 +29,11 @@ class User_Model extends CI_Model {
         return $this->db->get('users')->row_array();
     }
 
+    public function get_roles() {
+        $query = $this->db->get('user_role');
+        return $query->result_array(); // Mengembalikan hasil dalam bentuk array
+    }
+
     public function get_user_by_id($id) {
         $query = $this->db->get_where('users', ['id_user' => $id]);
         return $query->row_array();

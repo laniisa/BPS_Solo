@@ -318,44 +318,55 @@ public function operator() {
     $config['total_rows'] = $this->db->count_all('users'); // Jumlah total data
     $config['per_page'] = 10; // Jumlah data per halaman
     $config['uri_segment'] = 3; // Uri segment untuk pagination
+    $this->pagination->initialize($config);
 
-    
-    // Tampilkan view dengan data
+    // Mengambil data pengguna untuk halaman saat ini
+    $page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
+    $this->db->limit($config['per_page'], $page);
+    $data['users'] = $this->db->get('users')->result_array(); // Data users sesuai halaman
+
+    // Load view dengan data users
     $this->load->view('template_admin/navbar', $data);
     $this->load->view('template_admin/sidebar', $data);
     $this->load->view('admin/operator', $data);
     $this->load->view('template_admin/footer');
 }
 
-    public function filter_user() {
-        $role = $this->input->get('role');
-        if (strtolower($role) == 'all') {
-            $users = $this->User_Model->get_all_user();
-        } else {
-            $role_id = null;
-            switch (strtolower($role)) {
-                case 'admin':
-                    $role_id = 0;
-                    break;
-                case 'struktural':
-                    $role_id = 1;
-                    break;
-                case 'fungsional':
-                    $role_id = 2;
-                    break;
-                case 'operator':
-                    $role_id = 3;
-                    break;
-            }
-            if ($role_id !== null) {
-                $users = $this->User_Model->get_users_by_role($role_id);
-            } else {
-                $users = [];
-            }
-        }
-        echo json_encode($users);
+public function filter_user() {
+    $role = $this->input->get('role');
+    if ($role == 'all') {
+        $users = $this->db->get('users')->result_array(); // Semua user
+    } else {
+        $this->db->where('role', $role);
+        $users = $this->db->get('users')->result_array(); // User sesuai role
+    }
+    echo json_encode($users); // Kirim data ke view dalam format JSON
+}
+
+    
+public function tambah_user() {
+    if (!$this->session->userdata('email')) {
+        redirect('login');
     }
 
+    $email = $this->session->userdata('email');
+    $data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
+
+    // Mengambil data role dari tabel user_role
+    $data['roles'] = $this->db->get('user_role')->result_array();
+
+    // Debugging: cek data role
+    echo '<pre>';
+    print_r($data['roles']);
+    echo '</pre>';
+    die(); // Hentikan proses untuk melihat data role di browser
+
+    // Load view untuk tambah user
+    $this->load->view('template_admin/navbar', $data);
+    $this->load->view('template_admin/sidebar', $data);
+    $this->load->view('admin/insert_op', $data);
+    $this->load->view('template_admin/footer');
+}
 
     
     public function insert_op() {

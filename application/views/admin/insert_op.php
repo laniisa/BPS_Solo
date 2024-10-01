@@ -36,12 +36,17 @@
                 <div class="form-group">
                   <label for="role">Role</label>
                   <select class="form-control" id="role" name="role" required>
-                    <option value="0">Admin</option>
-                    <option value="2">Fungsional</option>
-                    <option value="1">Struktural</option>
-                    <option value="3">Operator</option>
+                      <?php if (!empty($roles)): ?>
+                          <?php foreach ($roles as $role): ?>
+                              <option value="<?= $role['id_user_role']; ?>"><?= $role['role']; ?></option>
+                          <?php endforeach; ?>
+                      <?php else: ?>
+                          <option value="">No roles available</option>
+                      <?php endif; ?>
                   </select>
                 </div>
+
+
                 <div class="form-group">
                   <label for="status">Status</label>
                   <select class="form-control" id="status" name="status" required>

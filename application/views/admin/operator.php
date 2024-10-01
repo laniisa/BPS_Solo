@@ -1,6 +1,6 @@
 <!-- Content Wrapper. Contains page content -->
 <head>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
@@ -31,16 +31,16 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
-          <div class="card"> <!-- Ganti warna background card dan teks -->
+          <div class="card" style="background-color: #f8f9fa;"> <!-- Background card menjadi lebih terang -->
             <div class="card-header">
               <div class="row mb-2">
                 <div class="col-sm-6">
-                  <h1>Daftar User</h1> <!-- Ganti warna teks menjadi hitam -->
+                  <h1 style="color: black;">Daftar User</h1> <!-- Teks hitam -->
                 </div>
                 <div class="col-sm-6">
                   <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="<?= site_url('admin/index') ?>">Dashboard</a></li>
-                    <li class="breadcrumb-item active"><a href="<?= site_url('admin') ?>">Daftar Users</a></li> <!-- Hilangkan style color dari breadcrumb -->
+                    <li class="breadcrumb-item active"><a href="<?= site_url('admin') ?>">Daftar Users</a></li>
                   </ol>
                 </div>
               </div>
@@ -80,108 +80,120 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const filterButtons = document.querySelectorAll('.float-right .btn');
+    
+    // Tambahkan log untuk memastikan event listener bekerja
+    console.log('Filter buttons:', filterButtons);
+
     filterButtons.forEach(button => {
         button.addEventListener('click', function(event) {
             event.preventDefault();
+            
+            // Tambahkan log untuk memastikan id button benar
             const role = this.id.replace('filter-', '');
+            console.log('Filter clicked:', role); // Log ketika tombol diklik
+            
             fetchUsers(role);
         });
     });
 
     // Fungsi untuk mendapatkan data pengguna berdasarkan role
     function fetchUsers(role) {
+        console.log(`Fetching users with role: ${role}`); // Debugging URL dan role
+
         fetch(`<?= site_url('admin/filter_user') ?>?role=${role}`)
             .then(response => response.json())
             .then(data => {
-                console.log(data); // Tambahkan ini untuk melihat data yang diterima
+                console.log('Fetched data:', data); // Tampilkan respons dari server
                 renderTable(data);
             })
-            .catch(error => console.error('Error fetching data:', error));
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
     }
 
     // Fungsi untuk memperbarui tabel
     function renderTable(users) {
-    console.log('Data users:', users); // Tambahkan log ini untuk memverifikasi data
+        console.log('Rendering table with users:', users); // Debugging data users
 
-    if ($.fn.DataTable.isDataTable('#example1')) {
-        $('#example1').DataTable().destroy();
-    }
+        if ($.fn.DataTable.isDataTable('#example1')) {
+            $('#example1').DataTable().destroy();
+        }
 
-    let tableContent = `
-        <table id="example1" class="table table-bordered table-striped" style="text-align: center;">
-            <thead style="text-align: center;">
+        let tableContent = `
+            <table id="example1" class="table table-bordered table-striped" style="text-align: center;">
+                <thead style="text-align: center;">
+                    <tr>
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>Role</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>WhatsApp</th>
+                        <th>Status</th>
+                        <th>Konfirmasi</th>
+                        <th style="text-align: center;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody style="text-align: center;">`;
+
+        users.forEach((user, index) => {
+            tableContent += `
                 <tr>
-                    <th>No</th>
-                    <th>Nama</th>
-                    <th>Role</th>
-                    <th>Username</th>
-                    <th>Email</th>
-                    <th>WhatsApp</th>
-                    <th>Status</th>
-                    <th>Konfirmasi</th>
-                    <th style="text-align: center;">Aksi</th>
-                </tr>
-            </thead>
-            <tbody style="text-align: center;">`;
+                    <td>${index + 1}</td>
+                    <td>${user.nama}</td>
+                    <td>${user.role}</td>
+                    <td>${user.usr}</td>
+                    <td>${user.email}</td>
+                    <td>${user.whatsApp}</td>
+                    <td>
+                        <form action="<?= base_url('admin/edit_status/') ?>${user.id_user}" method="POST">
+                          <select name="status" class="form-control" onchange="this.form.submit()">
+                            <option value="active" ${user.status == 'active' ? 'selected' : ''}>Active</option>
+                            <option value="inactive" ${user.status == 'inactive' ? 'selected' : ''}>Inactive</option>
+                          </select>
+                        </form>
+                    </td>
+                    <td>${user.status == 'active' ? '<button type="button" class="btn btn-success btn-sm">Active</button>' : '<button type="button" class="btn btn-danger btn-sm">Inactive</button>'}</td>
+                    <td>
+                        <a href="<?= base_url('admin/update_op/') ?>${user.id_user}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                        <a href="<?= base_url('admin/delete_op/') ?>${user.id_user}" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus user ini?')"><i class="fas fa-trash"></i></a>
+                    </td>
+                </tr>`;
+        });
 
-    users.forEach((user, index) => {
         tableContent += `
-            <tr>
-                <td>${index + 1}</td>
-                <td>${user.nama}</td>
-                <td>${user.role}</td>
-                <td>${user.usr}</td>
-                <td>${user.email}</td>
-                <td>${user.whatsApp}</td>
-                <td>
-                    <form action="<?= base_url('admin/edit_status/') ?>${user.id_user}" method="POST">
-                      <select name="status" class="form-control" onchange="this.form.submit()">
-                        <option value="active" ${user.status == 'active' ? 'selected' : ''}>Active</option>
-                        <option value="inactive" ${user.status == 'inactive' ? 'selected' : ''}>Inactive</option>
-                      </select>
-                    </form>
-                </td>
-                <td>${user.status == 'active' ? '<button type="button" class="btn btn-success btn-sm">Active</button>' : '<button type="button" class="btn btn-danger btn-sm">Inactive</button>'}</td>
-                <td>
-                    <a href="<?= base_url('admin/update_op/') ?>${user.id_user}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
-                    <a href="<?= base_url('admin/delete_op/') ?>${user.id_user}" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus user ini?')"><i class="fas fa-trash"></i></a>
-                </td>
-            </tr>`;
-    });
+                </tbody>
+                <tfoot style="text-align: center;">
+                    <tr>
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>Role</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>WhatsApp</th>
+                        <th>Status</th>
+                        <th>Konfirmasi</th>
+                        <th>Aksi</th>
+                    </tr>
+                </tfoot>
+            </table>`;
 
-    tableContent += `
-            </tbody>
-            <tfoot style="text-align: center;">
-                <tr>
-                    <th>No</th>
-                    <th>Nama</th>
-                    <th>Role</th>
-                    <th>Username</th>
-                    <th>Email</th>
-                    <th>WhatsApp</th>
-                    <th>Status</th>
-                    <th>Konfirmasi</th>
-                    <th>Aksi</th>
-                </tr>
-            </tfoot>
-        </table>`;
+        document.getElementById('user-table-container').innerHTML = tableContent;
 
-    document.getElementById('user-table-container').innerHTML = tableContent;
-
-    $('#example1').DataTable({
-        dom: 'Bfrtip',
-        buttons: [
-            'copy', 'csv', 'excel', 'pdf', 'print',
-            {
-                extend: 'colvis',
-                text: 'Column visibility'
-            }
-        ]
-    });
-}
-
+        $('#example1').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'copy', 'csv', 'excel', 'pdf', 'print',
+                {
+                    extend: 'colvis',
+                    text: 'Column visibility'
+                }
+            ]
+        });
+    }
 
     // Dapatkan semua pengguna saat halaman dimuat
     fetchUsers('all');
 });
+
 </script>
