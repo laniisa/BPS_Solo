@@ -267,16 +267,6 @@ class Admin extends CI_Controller {
         $this->load->view('template_admin/footer');
     }
     
-    public function filter_users() {
-        $role = $this->input->get('role');
-        if ($role == 'all') {
-            $users = $this->User_Model->get_all_users();
-        } else {
-            $users = $this->User_Model->get_users_by_role($role);
-        }
-        echo json_encode($users);
-    }
-    
 
     // Admin.php (Controller)
 
@@ -344,132 +334,170 @@ public function filter_user() {
 }
 
     
-public function tambah_user() {
+public function insert_op() {
     if (!$this->session->userdata('email')) {
-        redirect('login');
+        redirect('login'); 
     }
-
-    $email = $this->session->userdata('email');
-    $data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
-
-    // Mengambil data role dari tabel user_role
-    $data['roles'] = $this->db->get('user_role')->result_array();
-
-    // Debugging: cek data role
-    echo '<pre>';
-    print_r($data['roles']);
-    echo '</pre>';
-    die(); // Hentikan proses untuk melihat data role di browser
-
-    // Load view untuk tambah user
+    $data['roles'] = $this->User_Model->get_roles();  // Fetch roles from user_role table
+    
     $this->load->view('template_admin/navbar', $data);
     $this->load->view('template_admin/sidebar', $data);
     $this->load->view('admin/insert_op', $data);
     $this->load->view('template_admin/footer');
+    
 }
 
-    
-    public function insert_op() {
-        // Pastikan hanya pengguna yang sudah login yang bisa mengakses halaman ini
-        if (!$this->session->userdata('email')) {
-            redirect('login');
+// Function to handle form submission
+public function insert_user() {
+    $this->form_validation->set_rules('nama', 'Nama', 'required');
+    $this->form_validation->set_rules('usr', 'Username', 'required|is_unique[users.usr]');
+    $this->form_validation->set_rules('role', 'Role', 'required');
+    $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
+    $this->form_validation->set_rules('whatsApp', 'WhatsApp', 'required');
+    $this->form_validation->set_rules('jabatan', 'Jabatan', 'required');
+    $this->form_validation->set_rules('status', 'Status', 'required');
+    $this->form_validation->set_rules('password', 'Password', 'required|min_length[6]');
+    $this->form_validation->set_rules('password_confirm', 'Konfirmasi Password', 'required|matches[password]');
+
+    if ($this->form_validation->run() == FALSE) {
+        // Reload the form view with validation errors and roles data
+        $this->insert_op();
+    } else {
+        // Handle file upload for Foto
+        $foto = '';
+        if (!empty($_FILES['foto']['name'])) {
+            $config['upload_path'] = './assets/img/foto-users/'; // Folder tempat menyimpan foto
+            $config['allowed_types'] = 'jpg|jpeg|png'; // Jenis file yang diizinkan
+            $config['max_size'] = 2048; // Ukuran maksimal file (2 MB)
+            $this->load->library('upload', $config);
+
+            if ($this->upload->do_upload('foto')) {
+                // Ambil nama file yang di-upload
+                $foto = $this->upload->data('file_name');
+            } else {
+                // Jika gagal upload, tampilkan pesan error
+                $this->session->set_flashdata('message', $this->upload->display_errors());
+                redirect('admin/insert_op');
+                return;
+            }
         }
+        $status = $this->input->post('status');  // Pastikan ini menerima nilai yang benar ('active' atau 'inactive')
 
-        $data['title'] = 'Tambah User';
-        $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
 
-        $this->form_validation->set_rules('nama', 'Nama', 'required|trim');
-        $this->form_validation->set_rules('role', 'Role', 'required|trim');
-        $this->form_validation->set_rules('status', 'Status', 'required|trim');
-        $this->form_validation->set_rules('usr', 'Username', 'required|trim');
-        $this->form_validation->set_rules('email', 'Email', 'required|trim|valid_email');
-        $this->form_validation->set_rules('whatsApp', 'WhatsApp', 'required|trim');
-        $this->form_validation->set_rules('password', 'Password', 'required|trim|min_length[6]');
-
-        if ($this->form_validation->run() == false) {
-            // Validasi form gagal, tampilkan kembali halaman tambah user dengan pesan error
-            $this->load->view('template_admin/navbar', $data);
-            $this->load->view('template_admin/sidebar', $data);
-            $this->load->view('admin/insert_op', $data);
-            $this->load->view('template_admin/footer');
-        } else {
-            // Validasi form berhasil, lanjutkan ke proses penyimpanan user baru
-            $this->save_op();
-        }
-    }
-
-    public function save_op() {
-        // Pastikan hanya pengguna yang sudah login yang bisa mengakses halaman ini
-        if (!$this->session->userdata('email')) {
-            redirect('login');
-        }
-
-        $data = [
-            'nama' => htmlspecialchars($this->input->post('nama', true)),
-            'role' => htmlspecialchars($this->input->post('role', true)),
-            'status' => htmlspecialchars($this->input->post('status', true)),
-            'usr' => htmlspecialchars($this->input->post('usr', true)),
-            'email' => htmlspecialchars($this->input->post('email', true)),
-            'whatsApp' => htmlspecialchars($this->input->post('whatsApp', true)),
-            'password' => password_hash($this->input->post('password'), PASSWORD_DEFAULT)
+        // Prepare data for insertion
+        $data_user = [
+            'nama' => $this->input->post('nama'),
+            'usr' => $this->input->post('usr'),
+            'role' => $this->input->post('role'),
+            'email' => $this->input->post('email'),
+            'whatsApp' => $this->input->post('whatsApp'),
+            'jabatan' => $this->input->post('jabatan'),
+            'status' => $this->input->post('status'),
+            'foto' => $foto, // Simpan nama file foto
+            'password' => password_hash($this->input->post('password'), PASSWORD_DEFAULT),
         ];
 
-        $this->User_Model->insert_user($data);
+        // Insert user data into database
+        if ($this->User_Model->insert_user($data_user)) {
+            $this->session->set_flashdata('message', 'User successfully added.');
+            redirect('admin/operator');
+        } else {
+            $this->session->set_flashdata('message', 'Failed to add user.');
+            redirect('admin/insert_op');
+        }
+    }
+}
 
-        $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">User baru berhasil ditambahkan.</div>');
-        redirect('admin/operator');
+
+// Display users list
+    public function users_list() {
+        $data['users'] = $this->User_Model->get_all_users();
+        $this->load->view('admin/users_list', $data);
     }
 
-    public function update_op($id) {
-        // Ambil data pengguna dari model
-        $data['user'] = $this->User_Model->get_user_by_id($id);
-        
-        if (empty($data['user'])) {
-            show_404(); // Jika pengguna tidak ditemukan
+    public function update_op($id_user) {
+        if (!$this->session->userdata('email')) {
+            redirect('login');
         }
+        $email = $this->session->userdata('email');
+        $data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
+        
+        // Ambil data user berdasarkan ID yang akan diupdate
+        $data['user'] = $this->User_Model->get_user_by_id($id_user);
+        if (!$data['user']) {
+            // Jika user tidak ditemukan, tampilkan error
+            show_404();
+            return;
+        }
+        $data['roles'] = $this->User_Model->get_roles();  // Fetch roles from user_role table
     
-        // Atur aturan validasi
+    
+        // Validasi input form
         $this->form_validation->set_rules('nama', 'Nama', 'required');
-        $this->form_validation->set_rules('role', 'Role', 'required|in_list[0,1,2,3]');
-        $this->form_validation->set_rules('status', 'Status', 'required|in_list[active,inactive]');
         $this->form_validation->set_rules('usr', 'Username', 'required');
         $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
-        $this->form_validation->set_rules('whatsApp', 'WhatsApp', 'required');
-        $this->form_validation->set_rules('password', 'Password', 'min_length[6]');
+        $this->form_validation->set_rules('role', 'Role', 'required');
+        $this->form_validation->set_rules('status', 'Status', 'required');
     
-        if ($this->form_validation->run() === FALSE) {
-            // Jika validasi gagal, tampilkan form edit dengan pesan error
+        if ($this->form_validation->run() == FALSE) {
+            // Jika validasi gagal, muat ulang halaman dengan data user dan pesan error
             $this->load->view('template_admin/navbar');
             $this->load->view('template_admin/sidebar');
             $this->load->view('admin/update_op', $data);
             $this->load->view('template_admin/footer');
         } else {
-            // Ambil data dari form
-            $data_ = [
+            // Ambil data input form
+            $update_data = [
                 'nama' => $this->input->post('nama'),
-                'role' => $this->input->post('role'),
-                'status' => $this->input->post('status'),
                 'usr' => $this->input->post('usr'),
                 'email' => $this->input->post('email'),
-                'whatsApp' => $this->input->post('whatsApp')
+                'role' => $this->input->post('role'),
+                'status' => $this->input->post('status'),
+                'jabatan' => $this->input->post('jabatan'),
+                'whatsApp' => $this->input->post('whatsApp'),
             ];
     
-            // Periksa apakah password diisi, jika ya tambahkan ke data update
-            $password = $this->input->post('password');
-            if (!empty($password)) {
-                $data_['password'] = password_hash($password, PASSWORD_DEFAULT);
+            // Proses upload foto (jika ada)
+            $foto = $data['user']['foto'];  // Foto lama
+            if (!empty($_FILES['foto']['name'])) {
+                $config['upload_path'] = './assets/img/foto-users/'; // Folder tempat menyimpan foto
+                $config['allowed_types'] = 'jpg|jpeg|png'; // Jenis file yang diizinkan
+                $config['max_size'] = 2048; // Ukuran maksimal file (2 MB)
+                $this->load->library('upload', $config);
+    
+                if ($this->upload->do_upload('foto')) {
+                    // Hapus foto lama jika ada
+                    if (file_exists('./assets/img/foto-users/' . $foto) && $foto != 'default.jpg') {
+                        unlink('./assets/img/foto-users/' . $foto);
+                    }
+                    // Ambil nama file foto yang baru di-upload
+                    $foto = $this->upload->data('file_name');
+                } else {
+                    // Jika gagal upload, tampilkan pesan error
+                    $this->session->set_flashdata('message', $this->upload->display_errors());
+                    redirect("admin/update_op/$id_user");
+                    return;
+                }
             }
     
-            // Update data pengguna
-            if ($this->User_Model->update_user($id, $data_)) {
-                $this->session->set_flashdata('message', 'User updated successfully.');
-                redirect('admin/operator');
-            } else {
-                $this->session->set_flashdata('message', 'Failed to update user.');
-                redirect('admin/update_op/' . $id);
+            // Tambahkan foto ke data jika ada perubahan
+            $update_data['foto'] = $foto;
+    
+            // Jika password diinputkan
+            if ($this->input->post('password') !== '') {
+                $password = password_hash($this->input->post('password'), PASSWORD_DEFAULT);
+                $update_data['password'] = $password;
             }
+    
+            // Proses update data user
+            $this->User_Model->update_user($id_user, $update_data);
+    
+            // Set pesan sukses
+            $this->session->set_flashdata('message', 'User berhasil diperbarui');
+            redirect('admin/operator');
         }
     }
+    
     
     
     public function update_user($id) {
@@ -515,6 +543,7 @@ public function tambah_user() {
         if (!$this->session->userdata('email')) {
             redirect('login');
         }
+    
         $email = $this->session->userdata('email');
         $data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
         
@@ -538,8 +567,6 @@ public function tambah_user() {
         $this->load->view('admin/berkas', $data);
         $this->load->view('template_admin/footer');
     }
-    
-    
     
     
     

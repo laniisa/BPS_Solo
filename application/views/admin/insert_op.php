@@ -27,58 +27,88 @@
               <h3 class="card-title">Tambah User</h3>
             </div>
             <!-- form start -->
-            <form method="post" action="<?= site_url('admin/save_op') ?>">
-              <div class="card-body">
-                <div class="form-group">
-                  <label for="nama">Nama</label>
-                  <input type="text" class="form-control" id="nama" name="nama" placeholder="Nama" required>
-                </div>
-                <div class="form-group">
-                  <label for="role">Role</label>
-                  <select class="form-control" id="role" name="role" required>
-                      <?php if (!empty($roles)): ?>
+            <div class="container mt-5">
+              <h2>Tambah User</h2>
+              <?= $this->session->flashdata('message'); ?>
+              <form action="<?= base_url('admin/insert_user'); ?>" method="post" enctype="multipart/form-data">
+                  
+                  <div class="form-group">
+                      <label for="nama">Nama</label>
+                      <input type="text" class="form-control" id="nama" name="nama" required>
+                      <?= form_error('nama', '<small class="text-danger">', '</small>'); ?>
+                  </div>
+                  
+                  <div class="form-group">
+                      <label for="usr">Username</label>
+                      <input type="text" class="form-control" id="usr" name="usr" required>
+                      <?= form_error('usr', '<small class="text-danger">', '</small>'); ?>
+                  </div>
+                  
+                  <div class="form-group">
+                      <label for="role">Role</label>
+                      <select class="form-control" id="role" name="role" required>
+                          <option value="">--Select Role--</option>
                           <?php foreach ($roles as $role): ?>
-                              <option value="<?= $role['id_user_role']; ?>"><?= $role['role']; ?></option>
+                              <option value="<?= $role['id_user_role']; ?>"><?= ucfirst($role['role']); ?></option>
                           <?php endforeach; ?>
-                      <?php else: ?>
-                          <option value="">No roles available</option>
-                      <?php endif; ?>
-                  </select>
-                </div>
+                      </select>
+                      <?= form_error('role', '<small class="text-danger">', '</small>'); ?>
+                  </div>
 
+                  <div class="form-group">
+                      <label for="email">Email</label>
+                      <input type="email" class="form-control" id="email" name="email" required>
+                      <?= form_error('email', '<small class="text-danger">', '</small>'); ?>
+                  </div>
+                  
+                  <div class="form-group">
+                      <label for="whatsApp">WhatsApp</label>
+                      <input type="text" class="form-control" id="whatsApp" name="whatsApp" required>
+                      <?= form_error('whatsApp', '<small class="text-danger">', '</small>'); ?>
+                  </div>
 
-                <div class="form-group">
-                  <label for="status">Status</label>
-                  <select class="form-control" id="status" name="status" required>
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for="usr">Username</label>
-                  <input type="text" class="form-control" id="usr" name="usr" placeholder="Username" required>
-                </div>
-                <div class="form-group">
-                  <label for="email">Email</label>
-                  <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
-                </div>
-                <div class="form-group">
-                  <label for="whatsApp">WhatsApp</label>
-                  <input type="text" class="form-control" id="whatsApp" name="whatsApp" placeholder="WhatsApp" required>
-                </div>
-                <div class="form-group">
-                  <label for="password">Password</label>
-                  <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
-                </div>
-              </div>
-              <!-- /.card-body -->
+                  <div class="form-group">
+                    <label for="jabatan">Jabatan</label>
+                    <select class="form-control" id="jabatan" name="jabatan" required>
+                      <option value="kepala">Kepala</option>
+                      <option value="staff">Staff</option>
+                      <option value="lainnya">lainnya</option>
+                    </select>
+                    <?= form_error('jabatan', '<small class="text-danger">', '</small>'); ?>
 
-              <div class="card-footer">
-              <a href="<?= site_url('admin/operator'); ?>" class="btn btn-secondary">Batal</a>
-            
-                <button type="submit" class="btn btn-primary">Submit</button>
-              </div>
-            </form>
+                  </div> 
+
+                  <div class="form-group">
+                      <label for="status">Status</label>
+                      <select class="form-control" id="status" name="status" required>
+                          <option value="active">Active</option>
+                          <option value="inactive">Inactive</option>
+                      </select>
+                      <?= form_error('status', '<small class="text-danger">', '</small>'); ?>
+                  </div>
+
+                  <div class="form-group">
+                      <label for="foto">Foto</label>
+                      <input type="file" class="form-control-file" id="foto" name="foto">
+                      <?= form_error('foto', '<small class="text-danger">', '</small>'); ?>
+                  </div>
+
+                  <div class="form-group">
+                      <label for="password">Password</label>
+                      <input type="password" class="form-control" id="password" name="password" required>
+                      <?= form_error('password', '<small class="text-danger">', '</small>'); ?>
+                  </div>
+
+                  <div class="form-group">
+                      <label for="password_confirm">Konfirmasi Password</label>
+                      <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
+                      <?= form_error('password_confirm', '<small class="text-danger">', '</small>'); ?>
+                  </div>
+
+                  <button type="submit" class="btn btn-primary">Add User</button>
+              </form>
+          </div>
+
           </div>
           <!-- /.card -->
         </div>

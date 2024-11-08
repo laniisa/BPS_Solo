@@ -34,8 +34,8 @@ class User_Model extends CI_Model {
         return $query->result_array(); // Mengembalikan hasil dalam bentuk array
     }
 
-    public function get_user_by_id($id) {
-        $query = $this->db->get_where('users', ['id_user' => $id]);
+    public function get_user_by_id($id_user) {
+        $query = $this->db->get_where('users', ['id_user' => $id_user]);
         return $query->row_array();
     }
 

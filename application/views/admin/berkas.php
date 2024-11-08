@@ -9,9 +9,7 @@
     <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
 </head>
 
-<!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -25,19 +23,17 @@
                     </ol>
                 </div>
             </div>
-        </div><!-- /.container-fluid -->
+        </div>
     </section>
 
-    <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
             <div class="card">
                 <div class="card-header">
                     <h2>REKAP DISPOSISI</h2>
                 </div>
-                <!-- /.card-header -->
                 <div class="card-body">
-                    <form method="get" action="">
+                    <form method="get" action="<?= base_url('admin/berkas') ?>">
                         <div class="form-group row">
                             <label for="bulan" class="col-sm-1 col-form-label">Bulan:</label>
                             <div class="col-sm-2">
@@ -64,7 +60,7 @@
                 <div class="card-body">
                     <h4>Rekap Tindak Lanjut Surat <?= $bulan ? $bulan : 'Semua' ?> <?= $tahun ? $tahun : '' ?></h4>
                     <table id="example1" class="table table-bordered table-striped" style="text-align: center;">
-                        <thead style="text-align: center;">
+                        <thead>
                             <tr>
                                 <th>No</th>
                                 <th>Nama</th>
@@ -73,7 +69,7 @@
                                 <th>Didisposisi</th>
                             </tr>
                         </thead>
-                        <tbody style="text-align: center;">
+                        <tbody>
                             <?php if (count($rekap) > 0): ?>
                                 <?php foreach ($rekap as $index => $item): ?>
                                     <tr>
@@ -90,44 +86,34 @@
                                 </tr>
                             <?php endif; ?>
                         </tbody>
+
                     </table>
                 </div>
-                <!-- /.card-body -->
             </div>
-            <!-- /.card -->
         </div>
-        <!-- /.container-fluid -->
     </section>
-    <!-- /.content -->
 </div>
-<!-- /.content-wrapper -->
 
 <script>
     document.getElementById('reset-button').addEventListener('click', function() {
-        // Clear the form fields
-        document.getElementById('bulan').value = '';
-        document.getElementById('tahun').value = '';
-
-        // Redirect to the current URL without query parameters to show all data
-        window.location.href = window.location.pathname;
+        window.location.href = "<?= base_url('admin/berkas') ?>";
     });
 
     $('#example1').DataTable({
-            paging: true,
-            lengthChange: false,
-            searching: true,
-            ordering: true,
-            info: true,
-            autoWidth: false,
-            responsive: true,
-
-            dom: 'Bfrtip',
-            buttons: [
-                'copy', 'csv', 'excel', 'pdf', 'print'
-                {
+        paging: true,
+        lengthChange: false,
+        searching: true,
+        ordering: true,
+        info: true,
+        autoWidth: false,
+        responsive: true,
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print',
+            {
                 extend: 'colvis',
                 text: 'Column visibility'
             }
-            ]
-        });
+        ]
+    });
 </script>

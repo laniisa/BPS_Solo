@@ -32,21 +32,36 @@
               <h3 class="card-title">Edit User</h3>
             </div>
             <!-- form start -->
-            <form method="post" action="<?= site_url('admin/update_op/' . $user['id_user']) ?>">
+            <form method="post" action="<?= site_url('admin/update_op/' . $user['id_user']) ?>" enctype="multipart/form-data">
               <div class="card-body">
                 <div class="form-group">
                   <label for="nama">Nama</label>
                   <input type="text" class="form-control" id="nama" name="nama" value="<?= htmlspecialchars($user['nama'], ENT_QUOTES) ?>" required>
                 </div>
+
+                <div class="form-group">
+                  <label for="usr">Username</label>
+                  <input type="text" class="form-control" id="usr" name="usr" value="<?= htmlspecialchars($user['usr'], ENT_QUOTES) ?>" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="email">Email</label>
+                  <input type="email" class="form-control" id="email" name="email" value="<?= htmlspecialchars($user['email'], ENT_QUOTES) ?>" required>
+                </div>
+                
                 <div class="form-group">
                   <label for="role">Role</label>
                   <select class="form-control" id="role" name="role" required>
-                    <option value="0" <?= $user['role'] == '0' ? 'selected' : '' ?>>Admin</option>
-                    <option value="2" <?= $user['role'] == '2' ? 'selected' : '' ?>>Fungsional</option>
-                    <option value="1" <?= $user['role'] == '1' ? 'selected' : '' ?>>Struktural</option>
-                    <option value="3" <?= $user['role'] == '3' ? 'selected' : '' ?>>Operator</option>
+                      <option value="">--Pilih Role--</option>
+                      <?php foreach ($roles as $role): ?>
+                          <option value="<?= $role['id_user_role']; ?>" <?= $role['id_user_role'] == $user['role'] ? 'selected' : '' ?>>
+                            <?= ucfirst($role['role']); ?>
+                          </option>
+                      <?php endforeach; ?>
                   </select>
+                  <?= form_error('role', '<small class="text-danger">', '</small>'); ?>
                 </div>
+
                 <div class="form-group">
                   <label for="status">Status</label>
                   <select class="form-control" id="status" name="status" required>
@@ -54,22 +69,38 @@
                     <option value="inactive" <?= $user['status'] == 'inactive' ? 'selected' : '' ?>>Inactive</option>
                   </select>
                 </div>
+      
                 <div class="form-group">
-                  <label for="usr">Username</label>
-                  <input type="text" class="form-control" id="usr" name="usr" value="<?= htmlspecialchars($user['usr'], ENT_QUOTES) ?>" required>
+                  <label for="jabatan">Jabatan</label>
+                  <select class="form-control" id="jabatan" name="jabatan" required>
+                    <option value="kepala" <?= $user['jabatan'] == 'kepala' ? 'selected' : '' ?>>Kepala</option>
+                    <option value="staff" <?= $user['jabatan'] == 'staff' ? 'selected' : '' ?>>Staff</option>
+                    <option value="lainnya" <?= $user['jabatan'] == 'lainnya' ? 'selected' : '' ?>>Lainnya</option>
+                  </select>
+                  <?= form_error('jabatan', '<small class="text-danger">', '</small>'); ?>
                 </div>
-                <div class="form-group">
-                  <label for="email">Email</label>
-                  <input type="email" class="form-control" id="email" name="email" value="<?= htmlspecialchars($user['email'], ENT_QUOTES) ?>" required>
-                </div>
+
                 <div class="form-group">
                   <label for="whatsApp">WhatsApp</label>
                   <input type="text" class="form-control" id="whatsApp" name="whatsApp" value="<?= htmlspecialchars($user['whatsApp'], ENT_QUOTES) ?>" required>
                 </div>
+
+                <div class="form-group">
+                  <label for="foto">Foto</label>
+                  <input type="file" class="form-control-file" id="foto" name="foto">
+                  <?= form_error('foto', '<small class="text-danger">', '</small>'); ?>
+                </div>
+
                 <div class="form-group">
                   <label for="password">Password</label>
-                  <input type="password" class="form-control" id="password" name="password">
-                  <small class="form-text text-muted">Leave blank if you do not want to change the password.</small>
+                  <input type="password" class="form-control" id="password" name="password" >
+                  <?= form_error('password', '<small class="text-danger">', '</small>'); ?>
+                </div>
+
+                <div class="form-group">
+                  <label for="password_confirm">Konfirmasi Password</label>
+                  <input type="password" class="form-control" id="password_confirm" name="password_confirm" >
+                  <?= form_error('password_confirm', '<small class="text-danger">', '</small>'); ?>
                 </div>
               </div>
               <!-- /.card-body -->

@@ -80,36 +80,40 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const filterButtons = document.querySelectorAll('.float-right .btn');
-    
-    // Tambahkan log untuk memastikan event listener bekerja
-    console.log('Filter buttons:', filterButtons);
 
     filterButtons.forEach(button => {
         button.addEventListener('click', function(event) {
             event.preventDefault();
-            
-            // Tambahkan log untuk memastikan id button benar
-            const role = this.id.replace('filter-', '');
-            console.log('Filter clicked:', role); // Log ketika tombol diklik
-            
+
+            // Tentukan nilai role berdasarkan id button
+            let role;
+            switch (this.id) {
+                case 'filter-all': role = 'all'; break;
+                case 'filter-admin': role = '0'; break;        // Admin = 0
+                case 'filter-struktural': role = '1'; break;   // Struktural = 2
+                case 'filter-fungsional': role = '2'; break;   // Fungsional = 1
+                case 'filter-operator': role = '3'; break;     // Operator = 3
+                default: role = 'all';
+            }
+
             fetchUsers(role);
         });
     });
 
-    // Fungsi untuk mendapatkan data pengguna berdasarkan role
     function fetchUsers(role) {
-        console.log(`Fetching users with role: ${role}`); // Debugging URL dan role
-
         fetch(`<?= site_url('admin/filter_user') ?>?role=${role}`)
             .then(response => response.json())
             .then(data => {
-                console.log('Fetched data:', data); // Tampilkan respons dari server
                 renderTable(data);
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
     }
+
+    
+
+  
 
     // Fungsi untuk memperbarui tabel
     function renderTable(users) {
@@ -154,6 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </form>
                     </td>
                     <td>${user.status == 'active' ? '<button type="button" class="btn btn-success btn-sm">Active</button>' : '<button type="button" class="btn btn-danger btn-sm">Inactive</button>'}</td>
+                    
                     <td>
                         <a href="<?= base_url('admin/update_op/') ?>${user.id_user}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
                         <a href="<?= base_url('admin/delete_op/') ?>${user.id_user}" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus user ini?')"><i class="fas fa-trash"></i></a>
