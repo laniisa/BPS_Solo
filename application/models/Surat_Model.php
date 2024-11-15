@@ -101,39 +101,52 @@ class Surat_Model extends CI_Model {
 
 
     public function get_rekapitulasi($bulan, $tahun) {
-        $this->db->select('users.nama, 
-                           COUNT(DISTINCT IF(surat.status = "masuk", surat.id_ds_surat, NULL)) AS masuk, 
-                           COUNT(DISTINCT IF(pegawai.tindak_lanjut = "dilaksanakan", pegawai.id_disposisi, NULL)) AS dilaksanakan,
-                           COUNT(DISTINCT IF(pegawai.tindak_lanjut = "diteruskan", pegawai.id_disposisi, NULL)) AS diteruskan');
-        $this->db->from('users');
-        $this->db->join('surat', 'surat.user_id = users.id_user', 'left');
-        $this->db->join('pegawai', 'pegawai.id_user = users.id_user', 'left');
-        $this->db->group_start()
-                 ->where('MONTH(surat.tgl_surat)', $bulan)
-                 ->where('YEAR(surat.tgl_surat)', $tahun)
-                 ->group_end();
-        $this->db->or_group_start()
-                 ->where('MONTH(pegawai.tanggal)', $bulan)
-                 ->where('YEAR(pegawai.tanggal)', $tahun)
-                 ->group_end();
-        $this->db->group_by('users.nama');
+        $this->db->select('users.nama,
+            COUNT(CASE WHEN surat.status = "masuk" THEN 1 END) AS masuk,
+            COUNT(CASE WHEN pegawai.tindak_lanjut = "dilaksanakan" THEN 1 END) AS dilaksanakan_pegawai,
+            COUNT(CASE WHEN pegawai.tindak_lanjut = "diteruskan" THEN 1 END) AS diteruskan_pegawai,
+            COUNT(CASE WHEN kepala.tindak_lanjut = "dilaksanakan" THEN 1 END) AS dilaksanakan_kepala,
+            COUNT(CASE WHEN kepala.tindak_lanjut = "diteruskan" THEN 1 END) AS diteruskan_kepala')
+            ->from('users')
+            ->join('surat', 'surat.user_id = users.id_user', 'left')
+            ->join('pegawai', 'pegawai.id_user = users.id_user', 'left')
+            ->join('kepala', 'kepala.user_id = users.id_user', 'left')
+            ->group_by('users.id_user');
+        
+        if ($bulan && $tahun) {
+            $this->db->where('MONTH(surat.tanggal)', $bulan);
+            $this->db->where('YEAR(surat.tanggal)', $tahun);
+        }
     
         return $this->db->get()->result_array();
     }
-   
+    
+
     public function get_rekapitulasi_all() {
-        $this->db->select('users.nama, 
-                           COUNT(DISTINCT IF(surat.status = "masuk", surat.id_ds_surat, NULL)) AS masuk, 
-                           COUNT(DISTINCT IF(pegawai.tindak_lanjut = "dilaksanakan", pegawai.id_disposisi, NULL)) AS dilaksanakan,
-                           COUNT(DISTINCT IF(pegawai.tindak_lanjut = "diteruskan", pegawai.id_disposisi, NULL)) AS diteruskan');
+        $this->db->select('users.nama,  
+                            SUM(CASE WHEN surat.status = "masuk" THEN 1 ELSE 0 END) as masuk, 
+                            SUM(CASE WHEN surat.status = "dilaksanakan" THEN 1 ELSE 0 END) as dilaksanakan, 
+                            SUM(CASE WHEN surat.status = "diteruskan" THEN 1 ELSE 0 END) as diteruskan');
         $this->db->from('users');
-        $this->db->join('surat', 'surat.user_id = users.id_user', 'left');
-        $this->db->join('pegawai', 'pegawai.id_user = users.id_user', 'left');
+        $this->db->join('surat', 'users.id_user = surat.user_id', 'left');
+        $this->db->join('pegawai', 'surat.id_ds_surat = pegawai.id_surat', 'left');
+        $this->db->join('kepala', 'pegawai.id_ds_kepala = kepala.id_ds_kepala', 'left');
+        
+        // Tidak ada filter bulan dan tahun
         $this->db->group_by('users.nama');
         
-        return $this->db->get()->result_array();
+        $query = $this->db->get();
+        return $query->result_array();
     }
-   
+    
+    public function get_surat_by_user_id_kepala($user_id) {
+        $this->db->select('surat.*, kepala.tindak_lanjut');
+        $this->db->from('surat');
+        $this->db->join('kepala', 'kepala.id_surat = surat.id_ds_surat', 'left');
+        $this->db->where('surat.user_id', $user_id);
+        $query = $this->db->get();
+        return $query->result_array();
+    }
     
 }
 ?>

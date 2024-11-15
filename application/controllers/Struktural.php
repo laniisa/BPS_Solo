@@ -150,57 +150,64 @@ class Struktural extends CI_Controller {
         redirect('struktural');
     }
     
-    
     public function insert_pegawai() {
         $this->load->model('Struktural_Model');
-        
+    
         $id_user = $this->session->userdata('id_user'); 
         $tindak_lanjut = $this->input->post('tindak_lanjut');
         $no_surat = $this->input->post('no_surat');
         $current_datetime = date('Y-m-d H:i:s');
-    
+        $action_click = $this->input->post('action_click'); 
+        
         if (empty($id_user)) {
             $this->session->set_flashdata('error', 'User ID is missing. Please log in again.');
             redirect('login');
             return;
         }
-    
-        // Fetch surat data
-        $surat_data = $this->Struktural_Model->get_surat_by_no_surat_and_user($no_surat, $id_user);
-    
+        
+        $surat_data = $this->Surat_Model->get_surat_by_no($no_surat);
+        
         if (!$surat_data) {
             $this->session->set_flashdata('error', 'No matching surat found.');
             redirect('struktural');
             return;
         }
-    
+        
         $id_surat = $surat_data['id_ds_surat'];
-    
+        $action_click_count = $this->get_action_click_count($id_surat);
+        
         if ($tindak_lanjut == 'dilaksanakan') {
-            // Prepare data for insertion into pegawai and disposisi
             $pegawai_data = [
                 'id_user' => $id_user,
                 'id_surat' => $id_surat,
-                'tindak_lanjut' => $tindak_lanjut,
-                'tanggal' => $current_datetime
+                'catatan' => 'sukses',
+                'tindak_lanjut' => 'dilaksanakan',
+                'tanggal' => $current_datetime,
+                'action_click' => $action_click_count 
             ];
+    
+            $this->db->insert('pegawai', $pegawai_data);
+            $id_disposisi = $this->db->insert_id(); 
+    
             $disposisi_data = [
-                'id_surat' => $id_surat,
-                'id_pegawai' => $id_user, // Assuming id_pegawai is linked to the user
-                'tanggal' => $current_datetime
+                'id_ds_surat' => $id_surat,
+                'status' => 'dilaksanakan',
+                'id_disposisi' => $id_disposisi 
             ];
     
-            // Insert into pegawai and disposisi tables
-            $this->Struktural_Model->insert_pegawai($pegawai_data);
-            $this->Struktural_Model->insert_disposisi($disposisi_data);
+            $this->db->insert('disposisi', $disposisi_data);
     
-            // Update surat table with tgl_dilaksanakan and status
-            $this->Struktural_Model->update_surat_tgl_dilaksanakan($no_surat);
-            $this->Struktural_Model->update_surat_status($no_surat, 'dilaksanakan');
+            $surat_update_data = [
+                'tgl_dilaksanakan' => $current_datetime,
+                'status' => 'dilaksanakan',
+                'user_id' => $id_user 
+            ];
+    
+            $this->Surat_Model->update_surat($id_surat, $surat_update_data);
             
-            // Set flashdata for success
             $this->session->set_flashdata('success', 'Surat berhasil dilaksanakan');
             redirect('struktural');
+            
         } elseif ($tindak_lanjut == 'diteruskan') {
             redirect('struktural/surat?no_surat=' . urlencode($no_surat) . '&user_id=' . urlencode($id_user));
         } else {
@@ -208,6 +215,16 @@ class Struktural extends CI_Controller {
             redirect('struktural');
         }
     }
+    private function get_action_click_count($id_surat) {
+        // Count the number of actions for this surat
+        $this->db->from('pegawai');
+        $this->db->where('id_surat', $id_surat);
+        return $this->db->count_all_results(); // This will return the count of rows
+    }
+    
+    
+
+
     
 
 
