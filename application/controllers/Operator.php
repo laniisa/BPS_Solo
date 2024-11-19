@@ -241,43 +241,35 @@ class Operator extends CI_Controller {
     $this->load->view('template/footer');
 }
 
-public function detail_surat($id, $no_surat) {
+public function detail($id) {
+    if (!$this->session->userdata('email')) {
+        redirect('login');
+    }
+    
     $data['title'] = 'Detail Surat';
     $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
 
-    // Ambil data surat
+    // Ambil data surat berdasarkan ID
     $data['surat'] = $this->Surat_Model->get_surat_by_id($id);
-    
-    // Ambil nomor disposisi dari surat
-    $no_disposisi = $data['surat']['no_disposisi'];
 
-    $data['surat'] = $this->Surat_Model->get_surat_by_no($no_surat);
+    // Jika surat tidak ditemukan, redirect ke halaman daftar surat
+    if (!$data['surat']) {
+        redirect('operator/surat');
+    }
 
-    // Ambil data disposisi untuk kepala
-    $this->db->select('kepala.catatan_kepala, kepala.tindak_lanjut, kepala.user_id, kepala.tanggal');
-    $this->db->from('disposisi');
-    $this->db->join('kepala', 'disposisi.id_ds_kepala = kepala.id_ds_kepala');
-    $this->db->where('disposisi.id_ds_surat', $data['surat']['id_ds_surat']);
-    $query_kepala = $this->db->get();
-    $data['catatan_kepala'] = $query_kepala->row_array();
+    // Ambil catatan pegawai berdasarkan ID surat
+    $data['catatan_pegawai'] = $this->Surat_Model->get_catatan_pegawai_by_surat($id);
 
-    // Ambil data catatan pegawai
-    $this->db->select('pegawai.catatan, pegawai.tindak_lanjut, pegawai.tanggal, users.nama');
-    $this->db->from('disposisi');
-    $this->db->join('pegawai', 'disposisi.id_ds_pegawai = pegawai.id_ds_pegawai');
-    $this->db->join('users', 'pegawai.id_user = users.id_user');
-    $this->db->where('disposisi.id_ds_surat', $data['surat']['id_ds_surat']);
-    $query_pegawai = $this->db->get();
-    $data['catatan_pegawai'] = $query_pegawai->result_array();
-
-    // Tambahkan tanggal dilaksanakan dari data surat
+    // Tambahkan tanggal dilaksanakan jika ada
     $data['tgl_dilaksanakan'] = $data['surat']['tgl_dilaksanakan'];
 
+    // Load views
     $this->load->view('template/navbar', $data);
     $this->load->view('template/sidebar', $data);
     $this->load->view('operator/detail', $data);
     $this->load->view('template/footer');
 }
+
 
 public function rekap() {
     if (!$this->session->userdata('email')) {

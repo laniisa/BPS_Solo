@@ -8,7 +8,6 @@ class Admin extends CI_Controller {
         $this->load->helper('url');
         $this->load->model('Surat_Model');
         $this->load->model('User_Model');
-        $this->load->model('Kepala_Model');
         $this->load->model('Pegawai_Model');
         $this->load->library('pagination');
 
@@ -590,43 +589,30 @@ public function insert_user() {
         if (!$this->session->userdata('email')) {
             redirect('login');
         }
-    
+
         $data['title'] = 'Detail Surat';
         $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
     
-        // Ambil data surat
+        // Ambil data surat berdasarkan ID
         $data['surat'] = $this->Surat_Model->get_surat_by_id($id);
-        
-        // Ambil nomor disposisi dari surat
-        $no_disposisi = $data['surat']['no_disposisi'];
     
-        // Ambil catatan kepala
-        $this->db->select('kepala.catatan_kepala, kepala.tindak_lanjut, kepala.tgl_disposisi, users.nama');
-        $this->db->from('disposisi');
-        $this->db->join('kepala', 'disposisi.id_ds_kepala = kepala.id_ds_kepala');
-        $this->db->join('users', 'kepala.user_id = users.id_user');
-        $this->db->where('disposisi.no_disposisi', $no_disposisi);
-        $query_kepala = $this->db->get();
-        $data['catatan_kepala'] = $query_kepala->row_array();
+        // Jika surat tidak ditemukan, redirect ke halaman daftar surat
+        if (!$data['surat']) {
+            redirect('admin/surat');
+        }
     
-        // Ambil catatan pegawai
-        $this->db->select('pegawai.catatan, pegawai.tindak_lanjut, pegawai.tanggal, users.nama');
-        $this->db->from('disposisi');
-        $this->db->join('pegawai', 'disposisi.id_ds_pegawai = pegawai.id_ds_pegawai');
-        $this->db->join('users', 'pegawai.id_user = users.id_user');
-        $this->db->where('disposisi.no_disposisi', $no_disposisi);
-        $query_pegawai = $this->db->get();
-        $data['catatan_pegawai'] = $query_pegawai->result_array();
+        // Ambil catatan pegawai berdasarkan ID surat
+        $data['catatan_pegawai'] = $this->Surat_Model->get_catatan_pegawai_by_surat($id);
     
-        // Tambahkan tanggal dilaksanakan dari data surat
+        // Tambahkan tanggal dilaksanakan jika ada
         $data['tgl_dilaksanakan'] = $data['surat']['tgl_dilaksanakan'];
     
+        // Load views
         $this->load->view('template_admin/navbar', $data);
         $this->load->view('template_admin/sidebar', $data);
         $this->load->view('admin/detail_surat', $data);
         $this->load->view('template_admin/footer');
     }
-    
     
 }
 

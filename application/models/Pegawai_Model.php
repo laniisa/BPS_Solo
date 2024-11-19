@@ -16,5 +16,15 @@ class Pegawai_Model extends CI_Model {
         return $this->db->get()->result_array();
     }
 
+    public function get_pegawai_by_disposisi($no_disposisi) {
+        $this->db->select('pegawai.catatan, pegawai.tindak_lanjut, pegawai.tanggal, users.nama');
+        $this->db->from('disposisi');
+        $this->db->join('pegawai', 'disposisi.id_disposisi = pegawai.id_disposisi');
+        $this->db->join('users', 'pegawai.id_user = users.id_user');
+        $this->db->where('disposisi.no_disposisi', $no_disposisi);
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
     // Tambahkan metode lainnya sesuai kebutuhan
 }
