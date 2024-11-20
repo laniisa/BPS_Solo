@@ -56,7 +56,7 @@
                                             </tr>
                                             <tr>
                                                 <th>Tanggal Disposisi</th>
-                                                <td><?= $surat['tgl_disposisi']; ?></td>
+                                                <td><?=date('Y-m-d');  ?></td>
                                             </tr>
                                             <tr>
                                                 <th>Perihal</th>
