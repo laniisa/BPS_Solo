@@ -43,7 +43,7 @@
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="<?= site_url('index') ?>">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="<?= site_url('admin/') ?>">Dashboard</a></li>
                             <li class="breadcrumb-item active">Detail Surat</li>
                         </ol>
                     </div>
@@ -101,71 +101,36 @@
                                         <tr>
                                             <th>Catatan</th>
                                             <td>
-                                                <div>
-                                                    <h3>Catatan Kepala</h3>
-                                                    <?php if ($catatan_kepala): ?>
+                                                <h3>Catatan Pegawai</h3>
+                                                <?php if ($catatan_pegawai): ?>
+                                                    <?php foreach ($catatan_pegawai as $catatan): ?>
                                                         <table class="info-table">
                                                             <tr>
                                                                 <th>Nama:</th>
-                                                                <td><?= $catatan_kepala['nama']; ?></td>
+                                                                <td><?= $catatan['nama']; ?></td>
                                                             </tr>
                                                             <tr>
                                                                 <th>Catatan:</th>
-                                                                <td><?= $catatan_kepala['catatan_kepala']; ?></td>
+                                                                <td><?= $catatan['catatan'] ? $catatan['catatan'] : 'Tidak ada catatan'; ?></td>
                                                             </tr>
                                                             <tr>
                                                                 <th>Tindak Lanjut:</th>
-                                                                <td><?= $catatan_kepala['tindak_lanjut']; ?></td>
+                                                                <td><?= $catatan['tindak_lanjut'] ? $catatan['tindak_lanjut'] : 'Belum ada tindak lanjut'; ?></td>
                                                             </tr>
                                                             <tr>
                                                                 <th>Tanggal:</th>
-                                                                <td>
-                                                                    <?php if ($catatan_kepala['tindak_lanjut'] == 'Diteruskan'): ?>
-                                                                        <?= $catatan_kepala['tgl_disposisi']; ?>
-                                                                    <?php else: ?>
-                                                                        <?= $surat['tgl_dilaksanakan']; ?>
-                                                                    <?php endif; ?>
-                                                                </td>
+                                                                <td><?= $catatan['tanggal'] ? $catatan['tanggal'] : 'Belum ada tanggal'; ?></td>
                                                             </tr>
                                                         </table>
-                                                    <?php else: ?>
-                                                        <p>Tidak ada catatan dari kepala.</p>
-                                                    <?php endif; ?>
-
-                                                    <h3>Catatan Pegawai</h3>
-                                                    <?php if ($catatan_pegawai): ?>
-                                                        <?php foreach ($catatan_pegawai as $catatan): ?>
-                                                            <table class="info-table">
-                                                                <tr>
-                                                                    <th>Nama:</th>
-                                                                    <td><?= $catatan['nama']; ?></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <th>Catatan:</th>
-                                                                    <td><?= $catatan['catatan']; ?></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <th>Tindak Lanjut:</th>
-                                                                    <td><?= $catatan['tindak_lanjut']; ?></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <th>Tanggal:</th>
-                                                                    <td>
-                                                                        <?php if ($catatan['tindak_lanjut'] == 'Diteruskan'): ?>
-                                                                            <?= $catatan['tanggal']; ?>
-                                                                        <?php else: ?>
-                                                                            <?= $surat['tgl_dilaksanakan']; ?>
-                                                                        <?php endif; ?>
-                                                                    </td>
-                                                                </tr>
-                                                            </table>
-                                                        <?php endforeach; ?>
-                                                    <?php else: ?>
-                                                        <p>Tidak ada catatan dari pegawai.</p>
-                                                    <?php endif; ?>
-                                                </div>
+                                                        <hr>
+                                                    <?php endforeach; ?>
+                                                <?php else: ?>
+                                                    <p>Tidak ada catatan dari pegawai.</p>
+                                                <?php endif; ?>
                                             </td>
                                         </tr>
+
+
                                         <tr>
                                             <th>Berkas</th>
                                             <td>

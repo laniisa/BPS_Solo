@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const row = `
                 <tr>
                     <td>${index + 1}</td>
-                    <td><a href="<?= base_url('admin/detail_surat/') ?>${item.id_ds_surat}">${item.no_surat}</a></td>
+                    <td><a href="<?= base_url('admin/detail/') ?>${item.id_ds_surat}">${item.no_surat}</a></td>
                     <td>${item.tgl_surat}</td>
                     <td>${item.tgl_input}</td>
                     <td>${item.tgl_dilaksanakan}</td>
