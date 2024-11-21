@@ -32,16 +32,8 @@
             </div>
             <div class="info">
                 <?php if (!empty($user)): ?>
-                    <a href="#" class="d-block dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><?= $user['nama']; ?></a>
-                    <div class="dropdown-menu">
-                        <a href="<?= base_url('profile'); ?>" class="dropdown-item">
-                            <i class="fas fa-user-circle"></i> Profile
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="<?= base_url('login/logout'); ?>" class="dropdown-item">
-                            <i class="fas fa-sign-out-alt"></i> Logout
-                        </a>
-                    </div>
+                    <a href="#" class="nav-item"  aria-expanded="false"><?= $user['nama']; ?></a>
+                    
                 <?php else: ?>
                     <a href="#" class="d-block">User not found</a>
                 <?php endif; ?>
@@ -85,6 +77,19 @@
                     <a href="<?= base_url('admin/berkas') ?>" class="nav-link">
                         <i class="nav-icon fas fa-folder-open"></i>
                         <p>Rekap</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="<?= base_url('admin/profile') ?>" class="nav-link">
+                        <i class="nav-icon fas fa-user"></i>
+                        <p>Profile</p>
+                    </a>
+                </li>
+                <!-- Logout Menu -->
+                <li class="nav-item">
+                    <a href="<?= base_url('login/logout'); ?>" class="nav-link">
+                        <i class="nav-icon fas fa-sign-out-alt"></i>
+                        <p>Logout</p>
                     </a>
                 </li>
             </ul>

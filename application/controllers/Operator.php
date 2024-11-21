@@ -23,6 +23,10 @@ class Operator extends CI_Controller {
     $data['title'] = ' Operator ';
     $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
 
+    $data['jumlah_surat'] = $this->Surat_Model->get_jumlah_surat();
+    $data['surat_dilaksanakan'] = $this->Surat_Model->get_surat_dilaksanakan();
+    $data['surat_masuk'] = $this->Surat_Model->get_surat_masuk();
+
     // Get list of surat (letters) from the Surat_Model
     $data['surat'] = $this->Surat_Model->get_all_surat(); // Fetch all surat
     $data['struktural_users'] = $this->User_Model->get_users_by_role(1);
@@ -275,6 +279,7 @@ public function rekap() {
     if (!$this->session->userdata('email')) {
         redirect('login');
     }
+
     $email = $this->session->userdata('email');
     $data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
     
@@ -298,6 +303,103 @@ public function rekap() {
     $this->load->view('operator/rekap', $data);
     $this->load->view('template/footer');
 }
+
+public function profile() {
+    if (!$this->session->userdata('email')) {
+        redirect('login');
+    }
+
+    // Ambil ID user dari session
+    $id_user = $this->session->userdata('id_user');
+
+    // Data yang dikirim ke view
+    $data['title'] = 'Profile';
+    $data['user'] = $this->User_Model->get_user_by_id($id_user);
+
+    // Load template dan halaman profil
+    $this->load->view('template/navbar', $data);
+    $this->load->view('template/sidebar', $data);
+    $this->load->view('operator/profile', $data);
+    $this->load->view('template/footer');
+}
+
+public function update_profile() {
+    if (!$this->session->userdata('email')) {
+        redirect('login');
+    }
+
+    // Ambil ID user dari session
+    $id_user = $this->session->userdata('id_user');
+
+    // Data yang dikirim ke view
+    $data['title'] = 'Update Profile';
+    $data['user'] = $this->User_Model->get_user_by_id($id_user);
+
+    // Load template dan halaman update
+    $this->load->view('template/navbar', $data);
+    $this->load->view('template/sidebar', $data);
+    $this->load->view('operator/update_profile', $data);
+    $this->load->view('template/footer');
+}
+
+public function update() {
+    $id_user = $this->session->userdata('id_user');
+
+    // Validasi form
+    $this->form_validation->set_rules('nama', 'Nama', 'required');
+    $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
+    $this->form_validation->set_rules('password', 'Password', 'min_length[6]|matches[password_confirm]');
+    $this->form_validation->set_rules('password_confirm', 'Konfirmasi Password', 'matches[password]');
+
+    if ($this->form_validation->run() == FALSE) {
+        $this->update_profile();
+    } else {
+        $data = [
+            'nama' => $this->input->post('nama'),
+            'email' => $this->input->post('email'),
+            'whatsApp' => $this->input->post('whatsApp'),
+            'jabatan' => $this->input->post('jabatan')
+        ];
+
+        // Update password jika diisi
+        if (!empty($this->input->post('password'))) {
+            $data['password'] = password_hash($this->input->post('password'), PASSWORD_DEFAULT);
+        }
+
+        // Jika ada upload foto
+        if (!empty($_FILES['foto']['name'])) {
+            $config['upload_path'] = './assets/img/foto-users/';
+            $config['allowed_types'] = 'jpg|jpeg|png';
+            $config['max_size'] = 2048; // 2 MB
+        
+            $this->load->library('upload', $config);
+        
+            // Cek jika upload berhasil
+            if ($this->upload->do_upload('foto')) {
+                // Dapatkan nama foto lama dari database
+                $old_foto = $this->input->post('old_foto');
+                
+                // Hapus foto lama jika ada
+                if (!empty($old_foto) && file_exists(FCPATH . 'assets/img/foto-users/' . $old_foto)) {
+                    unlink(FCPATH . 'assets/img/foto-users/' . $old_foto); // Menghapus foto lama
+                }
+        
+                // Menyimpan nama file foto baru
+                $data['foto'] = $this->upload->data('file_name');
+            } else {
+                $this->session->set_flashdata('error', $this->upload->display_errors());
+                redirect('operator/update_profile');
+            }
+        }
+        
+
+        // Update data pengguna
+        $this->User_Model->update_user($id_user, $data);
+        $this->session->set_flashdata('success', 'Profil berhasil diperbarui.');
+        redirect('operator/profile');
+    }
+}
+
 
 }
 

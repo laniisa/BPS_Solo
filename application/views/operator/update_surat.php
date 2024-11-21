@@ -1,11 +1,42 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $title; ?></title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            padding-left: 250px; /* Adjust padding for sidebar width */
+        }
+        /* Make the sidebar fixed if it is present */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100vh;
+            background-color: #f8f9fa;
+            padding-top: 20px;
+            border-right: 1px solid #ddd;
+        }
+        .content {
+            padding: 20px;
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
+    <div class="sidebar">
+        <!-- Sidebar content here, e.g., links, menu, etc. -->
+        <h4>Sidebar</h4>
+        <ul>
+            <li><a href="#">Menu Item 1</a></li>
+            <li><a href="#">Menu Item 2</a></li>
+            <li><a href="#">Menu Item 3</a></li>
+        </ul>
+    </div>
+
+    <div class="container content mt-5">
         <h2><?= $title; ?></h2>
         <?php if ($this->session->flashdata('message')): ?>
             <?= $this->session->flashdata('message'); ?>

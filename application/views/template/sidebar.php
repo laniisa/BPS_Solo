@@ -11,14 +11,19 @@
         <!-- Sidebar user panel (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image">
-                <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="black" class="bi bi-person-circle" viewBox="0 0 16 16">
-                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
-                    <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
-                </svg>
+                <?php if (!empty($user['foto'])): ?>
+                    <img src="<?= base_url('assets/img/foto-users/' . $user['foto']); ?>" alt="User Image" class="img-circle elevation-2" style="width: 35px; height: 35px;">
+                <?php else: ?>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="black" class="bi bi-person-circle" viewBox="0 0 16 16">
+                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
+                        <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
+                    </svg>
+                <?php endif; ?>
             </div>
             <div class="info">
                 <?php if (!empty($user)): ?>
-                    <a href="<?= base_url('login/logout'); ?>" class="d-block"><?= $user['nama']; ?></a>
+                    <a href="#" class="nav-item"  aria-expanded="false"><?= $user['nama']; ?></a>
+                    
                 <?php else: ?>
                     <a href="#" class="d-block">User not found</a>
                 <?php endif; ?>
@@ -56,6 +61,19 @@
                     <a href="<?= base_url('operator/rekap') ?>" class="nav-link">
                         <i class="nav-icon fas fa-folder-open"></i>
                         <p>Rekap</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="<?= base_url('operator/profile') ?>" class="nav-link">
+                        <i class="nav-icon fas fa-user"></i>
+                        <p>Profile</p>
+                    </a>
+                </li>
+                <!-- Logout Menu -->
+                <li class="nav-item">
+                    <a href="<?= base_url('login/logout'); ?>" class="nav-link">
+                        <i class="nav-icon fas fa-sign-out-alt"></i>
+                        <p>Logout</p>
                     </a>
                 </li>
             </ul>

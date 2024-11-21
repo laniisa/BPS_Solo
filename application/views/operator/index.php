@@ -32,6 +32,60 @@
             </div>
         </section>
 
+        <section>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Jumlah Surat -->
+            <div class="col-12 col-sm-6 col-md-3">
+                <div class="info-box" style="height: 120px; padding: 20px;">
+                    <span class="info-box-icon bg-secondary elevation-1" style="font-size: 40px;"><i class="fas fa-user-friends"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text" style="font-size: 18px;">Jumlah Surat</span>
+                        <span class="info-box-number" style="font-size: 24px;">
+                            <?= $jumlah_surat ?> <small>surat</small>
+                        </span>
+                    </div>
+                    <!-- /.info-box-content -->
+                </div>
+                <!-- /.info-box -->
+            </div>
+            <!-- /.col -->
+
+            <!-- Surat Dilaksanakan -->
+            <div class="col-12 col-sm-6 col-md-3">
+                <div class="info-box mb-3" style="height: 120px; padding: 20px;">
+                    <span class="info-box-icon bg-success elevation-1" style="font-size: 40px;"><i class="fas fa-check-circle"></i></span> <!-- Ikon Ceklis -->
+                    <div class="info-box-content">
+                        <span class="info-box-text" style="font-size: 18px;">Surat Dilaksanakan</span>
+                        <span class="info-box-number" style="font-size: 24px;">
+                            <?= $surat_dilaksanakan; ?> <small>surat</small>
+                        </span>
+                    </div>
+                    <!-- /.info-box-content -->
+                </div>
+                <!-- /.info-box -->
+            </div>
+
+            <!-- Surat Masuk -->
+            <div class="col-12 col-sm-6 col-md-3">
+                <div class="info-box mb-3" style="height: 120px; padding: 20px;">
+                    <span class="info-box-icon bg-primary elevation-1" style="font-size: 40px;"><i class="fas fa-envelope"></i></span> <!-- Ikon Surat Masuk -->
+                    <div class="info-box-content">
+                        <span class="info-box-text" style="font-size: 18px;">Surat Masuk</span>
+                        <span class="info-box-number" style="font-size: 24px;">
+                            <?= $surat_masuk; ?> <small>surat</small>
+                        </span>
+                    </div>
+                    <!-- /.info-box-content -->
+                </div>
+                <!-- /.info-box -->
+            </div>
+            <!-- /.col -->
+        </div>
+    </div>
+</section>
+
+
         <section class="content">
             <div class="container-fluid">
                 <div class="row">

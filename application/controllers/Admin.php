@@ -69,13 +69,15 @@ class Admin extends CI_Controller {
         if (!$this->session->userdata('email')) {
             redirect('login'); 
         }
-    
+        $data['title'] = 'Tambah Surat';
+            $data['surat'] = $this->Surat_Model->get_all_surat();
+            $data['kepala'] = $this->User_Model->get_users_by_role(1);
+            $this->load->model('Surat_Model');
+        
         $data['title'] = 'Tambah Surat';
         $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
     
-        $this->load->model('Surat_Model');
-        $data['surat'] = $this->Surat_Model->get_all_surat();
-    
+        
         $this->load->view('template_admin/navbar', $data);
         $this->load->view('template_admin/sidebar', $data);
         $this->load->view('admin/insert_surat', $data);
@@ -125,6 +127,7 @@ class Admin extends CI_Controller {
                     'asal' => $this->input->post('asal'),
                     'jenis_surat' => $this->input->post('jenis_surat'),
                     'berkas' => $file_data['file_name'],
+                    'user_id' => $this->input->post('user_id'),
                     'status' => $this->input->post('status') // Jika status dibutuhkan
                 ];
     
@@ -166,6 +169,8 @@ class Admin extends CI_Controller {
         $this->form_validation->set_rules('perihal', 'Perihal', 'required');
         $this->form_validation->set_rules('asal', 'Asal', 'required');
         $this->form_validation->set_rules('jenis_surat', 'Jenis Surat', 'required');
+        
+        $this->form_validation->set_rules('user_id', 'Tujuan', 'required');
     
         if ($this->form_validation->run() == FALSE) {
             $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Data tidak lengkap!</div>');
@@ -271,6 +276,9 @@ class Admin extends CI_Controller {
 
 // Admin.php (Controller)
 public function edit_status($id_user) {
+    if (!$this->session->userdata('email')) {
+        redirect('login');
+    }
     $status = $this->input->post('status');
     
     // Debugging: periksa apakah ID dan status diterima dengan benar
@@ -613,6 +621,103 @@ public function insert_user() {
         $this->load->view('admin/detail_surat', $data);
         $this->load->view('template_admin/footer');
     }
+
+    public function profile() {
+        if (!$this->session->userdata('email')) {
+            redirect('login');
+        }
+
+        // Ambil ID user dari session
+        $id_user = $this->session->userdata('id_user');
+
+        // Data yang dikirim ke view
+        $data['title'] = 'Profile';
+        $data['user'] = $this->User_Model->get_user_by_id($id_user);
+
+        // Load template dan halaman profil
+        $this->load->view('template_admin/navbar', $data);
+        $this->load->view('template_admin/sidebar', $data);
+        $this->load->view('admin/profile', $data);
+        $this->load->view('template_admin/footer');
+    }
+
+    public function update_profile() {
+        if (!$this->session->userdata('email')) {
+            redirect('login');
+        }
+
+        // Ambil ID user dari session
+        $id_user = $this->session->userdata('id_user');
+
+        // Data yang dikirim ke view
+        $data['title'] = 'Update Profile';
+        $data['user'] = $this->User_Model->get_user_by_id($id_user);
+
+        // Load template dan halaman update
+        $this->load->view('template_admin/navbar', $data);
+        $this->load->view('template_admin/sidebar', $data);
+        $this->load->view('admin/update_profile', $data);
+        $this->load->view('template_admin/footer');
+    }
+
+    public function update() {
+        $id_user = $this->session->userdata('id_user');
+
+        // Validasi form
+        $this->form_validation->set_rules('nama', 'Nama', 'required');
+        $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
+        $this->form_validation->set_rules('password', 'Password', 'min_length[6]|matches[password_confirm]');
+        $this->form_validation->set_rules('password_confirm', 'Konfirmasi Password', 'matches[password]');
+
+        if ($this->form_validation->run() == FALSE) {
+            $this->update_profile();
+        } else {
+            $data = [
+                'nama' => $this->input->post('nama'),
+                'email' => $this->input->post('email'),
+                'whatsApp' => $this->input->post('whatsApp'),
+                'jabatan' => $this->input->post('jabatan')
+            ];
+
+            // Update password jika diisi
+            if (!empty($this->input->post('password'))) {
+                $data['password'] = password_hash($this->input->post('password'), PASSWORD_DEFAULT);
+            }
+
+            // Jika ada upload foto
+            if (!empty($_FILES['foto']['name'])) {
+                $config['upload_path'] = './assets/img/foto-users/';
+                $config['allowed_types'] = 'jpg|jpeg|png';
+                $config['max_size'] = 2048; // 2 MB
+            
+                $this->load->library('upload', $config);
+            
+                // Cek jika upload berhasil
+                if ($this->upload->do_upload('foto')) {
+                    // Dapatkan nama foto lama dari database
+                    $old_foto = $this->input->post('old_foto');
+                    
+                    // Hapus foto lama jika ada
+                    if (!empty($old_foto) && file_exists(FCPATH . 'assets/img/foto-users/' . $old_foto)) {
+                        unlink(FCPATH . 'assets/img/foto-users/' . $old_foto); // Menghapus foto lama
+                    }
+            
+                    // Menyimpan nama file foto baru
+                    $data['foto'] = $this->upload->data('file_name');
+                } else {
+                    $this->session->set_flashdata('error', $this->upload->display_errors());
+                    redirect('admin/update_profile');
+                }
+            }
+            
+
+            // Update data pengguna
+            $this->User_Model->update_user($id_user, $data);
+            $this->session->set_flashdata('success', 'Profil berhasil diperbarui.');
+            redirect('admin/profile');
+        }
+    }
+    
     
 }
 

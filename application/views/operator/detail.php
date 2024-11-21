@@ -99,6 +99,10 @@
                                             <td><?= $surat['jenis_surat']; ?></td>
                                         </tr>
                                         <tr>
+                                            <th>Status</th>
+                                            <td><?= $surat['status']; ?></td>
+                                        </tr>
+                                        <tr>
                                             <th>Catatan</th>
                                             <td>
                                                 <h3>Catatan Pegawai</h3>

@@ -53,6 +53,17 @@ public function get_surat_by_id($id) {
         return $this->db->count_all_results();
     }
 
+    public function get_surat_dilaksanakan() {
+        $this->db->where('status', 'dilaksanakan');  // Misalnya status surat 'dilaksanakan'
+        return $this->db->count_all_results('surat'); // Menghitung jumlah surat yang dilaksanakan
+    }
+
+    // Fungsi untuk mendapatkan jumlah surat yang masuk
+    public function get_surat_masuk() {
+        $this->db->where('status', 'masuk');  // Misalnya status surat 'masuk'
+        return $this->db->count_all_results('surat'); // Menghitung jumlah surat yang masuk
+    }
+
     public function get_surat_by_user_id($user_id) {
         $this->db->select('*'); // Ensure all columns are selected
         $this->db->from('surat');
@@ -114,8 +125,8 @@ public function get_surat_by_id($id) {
     public function get_rekapitulasi($bulan, $tahun) {
         $this->db->select('users.nama, 
                            COUNT(DISTINCT IF(surat.status = "masuk", surat.id_ds_surat, NULL)) AS masuk, 
-                           COUNT(DISTINCT IF(pegawai.tindak_lanjut = "dilaksanakan", pegawai.id_disposisi, NULL)) AS dilaksanakan,
-                           COUNT(DISTINCT IF(pegawai.tindak_lanjut = "diteruskan", pegawai.id_disposisi, NULL)) AS diteruskan');
+                           COUNT(DISTINCT IF(pegawai.tindak_lanjut = "dilaksanakan" OR surat.status = "dilaksanakan", pegawai.id_disposisi, NULL)) AS dilaksanakan,
+                           COUNT(DISTINCT IF(pegawai.tindak_lanjut = "diteruskan" OR surat.status = "diteruskan", pegawai.id_disposisi, NULL)) AS diteruskan');
         $this->db->from('users');
         $this->db->join('surat', 'surat.user_id = users.id_user', 'left');
         $this->db->join('pegawai', 'pegawai.id_user = users.id_user', 'left');
@@ -128,15 +139,15 @@ public function get_surat_by_id($id) {
                  ->where('YEAR(pegawai.tanggal)', $tahun)
                  ->group_end();
         $this->db->group_by('users.nama');
-    
+        
         return $this->db->get()->result_array();
     }
-   
+    
     public function get_rekapitulasi_all() {
         $this->db->select('users.nama, 
                            COUNT(DISTINCT IF(surat.status = "masuk", surat.id_ds_surat, NULL)) AS masuk, 
-                           COUNT(DISTINCT IF(pegawai.tindak_lanjut = "dilaksanakan", pegawai.id_disposisi, NULL)) AS dilaksanakan,
-                           COUNT(DISTINCT IF(pegawai.tindak_lanjut = "diteruskan", pegawai.id_disposisi, NULL)) AS diteruskan');
+                           COUNT(DISTINCT IF(pegawai.tindak_lanjut = "dilaksanakan" OR surat.status = "dilaksanakan", pegawai.id_disposisi, NULL)) AS dilaksanakan,
+                           COUNT(DISTINCT IF(pegawai.tindak_lanjut = "diteruskan" OR surat.status = "diteruskan", pegawai.id_disposisi, NULL)) AS diteruskan');
         $this->db->from('users');
         $this->db->join('surat', 'surat.user_id = users.id_user', 'left');
         $this->db->join('pegawai', 'pegawai.id_user = users.id_user', 'left');
@@ -144,7 +155,7 @@ public function get_surat_by_id($id) {
         
         return $this->db->get()->result_array();
     }
-   
+    
     
     public function get_surat_by_user_id_kepala($user_id) {
         $this->db->select('surat.*, kepala.tindak_lanjut');
