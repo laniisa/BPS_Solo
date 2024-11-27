@@ -118,7 +118,7 @@
                                     </tbody>
                                 </table>
 
-                                <a href="<?= site_url('struktural/kumpulan_surat'); ?>" class="btn btn-secondary">Kembali</a>
+                                <a href="<?= site_url('fungsional/kumpulan_surat'); ?>" class="btn btn-secondary">Kembali</a>
                                 
                             </div>
                         </div>

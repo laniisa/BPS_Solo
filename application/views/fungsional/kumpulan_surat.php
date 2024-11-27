@@ -113,7 +113,7 @@
                                     <?php foreach ($surat as $row) : ?>
                                     <li class="list-group-item">
                                         <div class="d-flex justify-content-between align-items-center">
-                                            <a href="<?= base_url('struktural/detail/' . $row['id_ds_surat']) ?>" class="font-weight-bold" title="Lihat Detail Surat">
+                                            <a href="<?= base_url('fungsional/detail/' . $row['id_ds_surat']) ?>" class="font-weight-bold" title="Lihat Detail Surat">
                                                 <?= $row['perihal'] ?>
                                             </a>
 

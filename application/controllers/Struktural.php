@@ -11,6 +11,7 @@ class Struktural extends CI_Controller {
         $this->load->model('User_Model');
         $this->load->library('session');
         $this->load->model('Struktural_Model');
+        $this->load->model('Fungsional_Model');
         // Cek login di konstruktor
         if (!$this->session->userdata('email')) {
             redirect('login');
@@ -25,8 +26,6 @@ class Struktural extends CI_Controller {
         $email = $this->session->userdata('email');
         $user = $this->db->get_where('users', ['email' => $email])->row_array();
         $user_id = $user['id_user']; 
-    
-        // Retrieve data
         $data['surat'] = $this->Surat_Model->get_surat_by_user_id($user_id); 
 
         // Log the data to check for 'id_ds_kepala'
@@ -46,12 +45,16 @@ class Struktural extends CI_Controller {
             redirect('login');
         }
     
-        $email = $this->session->userdata('email');
-        $user = $this->db->get_where('users', ['email' => $email])->row_array();
-        $user_id = $user['id_user']; 
+        $user_id = $this->input->get('user_id');
         
         $no_surat = $this->input->get('no_surat');
-        $tindak_lanjut = $this->input->get('tindak_lanjut'); // Capture the selected tindak_lanjut
+        if (empty($no_surat) || empty($user_id)) {
+            $this->session->set_flashdata('error', 'Missing required parameters.');
+            redirect('struktural');
+            return;
+        }
+        $tindak_lanjut = $this->input->get('tindak_lanjut');
+        $data['selected_tindak_lanjut'] = $tindak_lanjut;
         
         $this->load->model('Struktural_Model');
         $data['surat'] = $this->Struktural_Model->get_surat_by_no_surat($no_surat);
@@ -135,7 +138,6 @@ class Struktural extends CI_Controller {
     public function insert_pegawai() {
         $this->load->model('Struktural_Model');
 
-        $current_datetime = date('Y-m-d H:i:s');
         $id_user = $this->session->userdata('id_user'); 
         $tindak_lanjut = $this->input->post('tindak_lanjut');
         $no_surat = $this->input->post('no_surat');
@@ -175,7 +177,8 @@ class Struktural extends CI_Controller {
             $disposisi_data = [
                 'id_ds_surat' => $id_surat,
                 'status' => 'dilaksanakan',
-                'id_disposisi' => $id_disposisi 
+                'id_disposisi' => $id_disposisi,
+                'user_tujuan' => NULL 
             ];
     
             $this->db->insert('disposisi', $disposisi_data);
@@ -197,7 +200,7 @@ class Struktural extends CI_Controller {
             ];
             $this->db->where('no_surat', $no_surat);  
             $this->db->update('surat', $surat_update_data);
-            redirect('struktural/surat?no_surat=' . urlencode($no_surat) . '&user_id=' . urlencode($id_user));
+            redirect('struktural/surat?no_surat=' . urlencode($no_surat) . '&user_id=' . urlencode($id_user) . '&tindak_lanjut=' . urlencode($tindak_lanjut));
         } else {
             $this->session->set_flashdata('error', 'Tindak lanjut tidak valid.');
             redirect('struktural');
@@ -211,10 +214,6 @@ class Struktural extends CI_Controller {
     }
     
     
-
-
-    
-
 
     public function rekap() {
         if (!$this->session->userdata('email')) {

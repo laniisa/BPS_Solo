@@ -8,9 +8,9 @@ class Fungsional_Model extends CI_Model {
     }
 
     public function get_surat_by_user_id($user_id) {
-        $this->db->select('id_surat');
-        $this->db->from('pegawai');
-        $this->db->where('id_user', $user_id);
+        $this->db->select('id_ds_surat');
+        $this->db->from('disposisi');
+        $this->db->where('user_tujuan', $user_id);
         $query = $this->db->get();
         $result = $query->result_array(); 
         
@@ -19,7 +19,7 @@ class Fungsional_Model extends CI_Model {
         log_message('debug', 'ID Surat Result: ' . print_r($result, true));
     
         foreach ($result as $row) {
-            $id_surat = $row['id_surat'];
+            $id_surat = $row['id_ds_surat'];
             $this->db->select('*');
             $this->db->from('surat');
             $this->db->where('id_ds_surat', $id_surat);
@@ -53,7 +53,25 @@ class Fungsional_Model extends CI_Model {
         $this->db->where('id_surat', $id_surat);
         $this->db->update('pegawai', $data);
     }
-    
+    public function get_user_tujuan_by_surat($id_ds_surat)
+    {
+        $this->db->select('user_tujuan');
+        $this->db->from('disposisi');
+        $this->db->where('id_ds_surat', $id_ds_surat);
+        $query = $this->db->get();
+        
+        return $query->result_array(); 
+    }
+    public function get_user_tujuan_by_surat_disposisi($id_ds_surat, )
+    {
+        $this->db->select('user_tujuan');
+        $this->db->from('disposisi');
+        $this->db->where('id_ds_surat', $id_ds_surat);
+        $query = $this->db->get();
+        
+        return $query->result_array(); 
+    }
+
 
     
 }

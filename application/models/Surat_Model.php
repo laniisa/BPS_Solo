@@ -69,7 +69,7 @@ public function get_surat_by_id($id) {
         $this->db->from('surat');
         $this->db->where('user_id', $user_id);
         $query = $this->db->get();
-        return $query->result_array(); // This should include 'id_ds_kepala'
+        return $query->result_array(); 
     }    
 
     public function get_surat_by_user($user_id) {

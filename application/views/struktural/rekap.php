@@ -10,30 +10,35 @@
     <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
     <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
     <style>
-        
         .table th, .table td {
-            overflow-wrap: break-word; /* Memungkinkan teks membungkus ke baris berikutnya */
-            word-wrap: break-word; /* Alternatif untuk mendukung browser lama */
-            padding: 8px; /* Menambahkan padding untuk kenyamanan */
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            padding: 8px;
+        }
+        .card-header h1, .card-header h2 {
+            margin-bottom: 0;
         }
     </style>
 </head>
 <body>
 <div class="content-wrapper">
-
   <?php if ($this->session->flashdata('message')) : ?>
     <?= $this->session->flashdata('message'); ?>
   <?php endif; ?>
-  
-  <section class="content">
-    <div class="container-fluid">
-      <div class="row mb-2">
-        <div class="col-sm-6">
-          <h1>Daftar Surat</h1>
+
+  <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Rekapitulasi Surat</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                    </ol>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  </section>
+    </section>
 
   <section class="content">
     <div class="container-fluid">
@@ -41,27 +46,23 @@
         <div class="col-md-6">
           <div class="card">
             <div class="card-header">
-              <h2>Rekapitulasi Surat</h2>
+              <h4>Filter Surat</h4>
             </div>
             <div class="card-body">
-              <div class="row">
-                <div class="col-12">
-                  <form id="filter-form" class="form">
-                    <div class="form-group mb-2">
-                      <label for="tanggal_awal">Tanggal Awal</label>
-                      <input type="date" id="tanggal_awal" name="tanggal_awal" class="form-control">
-                    </div>
-                    <div class="form-group mb-2">
-                      <label for="tanggal_akhir">Tanggal Akhir</label>
-                      <input type="date" id="tanggal_akhir" name="tanggal_akhir" class="form-control">
-                    </div>
-                    <div class="form-group mb-2">
-                      <button type="submit" class="btn btn-primary">Tampilkan</button>
-                      <button type="reset" class="btn btn-secondary ml-2" id="reset-button">Reset</button>
-                    </div>
-                  </form>
+              <form id="filter-form" class="form">
+                <div class="form-group mb-2">
+                  <label for="tanggal_awal">Tanggal Awal</label>
+                  <input type="date" id="tanggal_awal" name="tanggal_awal" class="form-control">
                 </div>
-              </div>
+                <div class="form-group mb-2">
+                  <label for="tanggal_akhir">Tanggal Akhir</label>
+                  <input type="date" id="tanggal_akhir" name="tanggal_akhir" class="form-control">
+                </div>
+                <div class="form-group mb-2">
+                  <button type="submit" class="btn btn-primary">Tampilkan</button>
+                  <button type="reset" class="btn btn-secondary ml-2" id="reset-button">Reset</button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
@@ -72,24 +73,25 @@
       <div class="row">
         <div class="col-12">
           <div class="card">
+            <div class="card-header">
+              <a href="<?= base_url('admin/insert_surat') ?>" class="btn btn-primary float-left"><i class="fas fa-plus"></i> Tambah Surat</a>
+            </div>
             <div class="card-body">
               <div class="row">
                 <div class="col-12" id="surat-table-container">
                   <table id="example1" class="table table-bordered table-striped">
                     <thead style="text-align: center;">
                     <tr>
-                      <th >No</th>
-                      <th >No Surat</th>
-                      <th >No Disposisi</th>
-                      <th >Tgl Surat</th>
-                      <th >Tgl Input</th>
-                      <th >Tgl Disposisi</th>
-                      <th >Tgl Dilaksanakan</th>
-                      <th >Perihal</th>
-                      <th >Asal</th>
-                      <th >Jenis Surat</th>
-                      <th >Status</th>
-                      <th style="text-align: center;">Aksi</th>
+                      <th>No</th>
+                      <th>No Surat</th>
+                      <th>Tgl Surat</th>
+                      <th>Tgl Input</th>
+                      <th>Tgl Dilaksanakan</th>
+                      <th>Perihal</th>
+                      <th>Asal</th>
+                      <th>Jenis Surat</th>
+                      <th>Status</th>
+                      <th>Aksi</th>
                     </tr>
                     </thead>
                     <tbody style="text-align: center;">
@@ -98,10 +100,8 @@
                         <tr>
                           <td><?= $i++; ?></td>
                           <td><a href="<?= base_url('admin/detail_surat/') . $item['id_ds_surat'] ?>"><?= $item['no_surat']; ?></a></td>
-                          <td><?= $item['no_disposisi']; ?></td>
                           <td><?= $item['tgl_surat']; ?></td>
                           <td><?= $item['tgl_input']; ?></td>
-                          <td><?= $item['tgl_disposisi']; ?></td>
                           <td><?= $item['tgl_dilaksanakan']; ?></td>
                           <td><?= $item['perihal']; ?></td>
                           <td><?= $item['asal']; ?></td>
@@ -121,10 +121,8 @@
                       <tr>
                         <th>No</th>
                         <th>No Surat</th>
-                        <th>No Disposisi</th>
                         <th>Tgl Surat</th>
                         <th>Tgl Input</th>
-                        <th>Tgl Disposisi</th>
                         <th>Tgl Dilaksanakan</th>
                         <th>Perihal</th>
                         <th>Asal</th>
@@ -164,7 +162,6 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch(`<?= site_url('struktural/filter_rekap') ?>?tanggal_awal=${tanggalAwal}&tanggal_akhir=${tanggalAkhir}`)
             .then(response => response.json())
             .then(data => {
-                console.log(data); // Lihat data yang diterima
                 renderTable(data);
             })
             .catch(error => console.error('Error fetching data:', error));
@@ -178,25 +175,37 @@ document.addEventListener('DOMContentLoaded', function() {
                 <tr>
                     <td>${index + 1}</td>
                     <td><a href="<?= base_url('admin/detail_surat/') ?>${item.id_ds_surat}">${item.no_surat}</a></td>
-                    <td>${item.no_disposisi}</td>
                     <td>${item.tgl_surat}</td>
                     <td>${item.tgl_input}</td>
-                    <td>${item.tgl_disposisi}</td>
                     <td>${item.tgl_dilaksanakan}</td>
                     <td>${item.perihal}</td>
                     <td>${item.asal}</td>
                     <td>${item.jenis_surat}</td>
                     <td>${item.status}</td>
-                    <td>${item.berkas ? `<a href="<?= base_url('uploads/') ?>${item.berkas}" class="btn btn-info btn-sm" download>Unduh</a>` : 'Tidak ada berkas'}</td>
-                </tr>
-            `;
+                    <td>${item.berkas ? `<a href="<?= base_url('uploads/') ?>${item.berkas}" class="btn btn-info btn-sm" download>Unduh</a>` : 'Tidak ada berkas'}
+                    </td>
+                </tr>`;
             tableBody.insertAdjacentHTML('beforeend', row);
         });
     }
-
-    // Initial fetch of all surat
-    fetchSurat('', '');
 });
+</script>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script src="<?php echo base_url() ?>assets/admin/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="<?php echo base_url() ?>assets/admin/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="<?php echo base_url() ?>assets/admin/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="<?php echo base_url() ?>assets/admin/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script>
+  $(function () {
+    $("#example1").DataTable({
+      "responsive": true,
+      "lengthChange": true,
+      "autoWidth": false,
+      "ordering": false,
+    });
+  });
 </script>
 </body>
 </html>
