@@ -88,6 +88,7 @@
                       <th>Asal</th>
                       <th>Jenis Surat</th>
                       <th>Status</th>
+                      <th>Aksi</th>
                     </tr>
                     </thead>
                     <tbody style="text-align: center;">
@@ -103,6 +104,13 @@
                           <td><?= $item['asal']; ?></td>
                           <td><?= $item['jenis_surat']; ?></td>
                           <td><?= $item['status']; ?></td>
+                          <td>
+                            <?php if ($item['berkas']) : ?>
+                                <a href="<?= base_url('uploads/' . $item['berkas']); ?>" class="btn btn-info btn-sm" download>Unduh</a>
+                            <?php else : ?>
+                                Tidak ada berkas
+                            <?php endif; ?>
+                          </td>
                         </tr>
                       <?php endforeach; ?>
                     </tbody>
