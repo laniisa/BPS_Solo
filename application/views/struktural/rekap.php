@@ -73,9 +73,6 @@
       <div class="row">
         <div class="col-12">
           <div class="card">
-            <div class="card-header">
-              <a href="<?= base_url('admin/insert_surat') ?>" class="btn btn-primary float-left"><i class="fas fa-plus"></i> Tambah Surat</a>
-            </div>
             <div class="card-body">
               <div class="row">
                 <div class="col-12" id="surat-table-container">
@@ -91,7 +88,6 @@
                       <th>Asal</th>
                       <th>Jenis Surat</th>
                       <th>Status</th>
-                      <th>Aksi</th>
                     </tr>
                     </thead>
                     <tbody style="text-align: center;">
@@ -107,30 +103,9 @@
                           <td><?= $item['asal']; ?></td>
                           <td><?= $item['jenis_surat']; ?></td>
                           <td><?= $item['status']; ?></td>
-                          <td>
-                            <?php if ($item['berkas']) : ?>
-                                <a href="<?= base_url('uploads/' . $item['berkas']); ?>" class="btn btn-info btn-sm" download>Unduh</a>
-                            <?php else : ?>
-                                Tidak ada berkas
-                            <?php endif; ?>
-                          </td>
                         </tr>
                       <?php endforeach; ?>
                     </tbody>
-                    <tfoot style="text-align: center;">
-                      <tr>
-                        <th>No</th>
-                        <th>No Surat</th>
-                        <th>Tgl Surat</th>
-                        <th>Tgl Input</th>
-                        <th>Tgl Dilaksanakan</th>
-                        <th>Perihal</th>
-                        <th>Asal</th>
-                        <th>Jenis Surat</th>
-                        <th>Status</th>
-                        <th>Aksi</th>
-                      </tr>
-                    </tfoot>
                   </table>
                 </div>
               </div>

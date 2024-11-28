@@ -69,20 +69,38 @@ class Struktural extends CI_Controller {
         $this->load->view('template_struk/footer');
     }
 
-    public function detail_surat($id) {
+    public function detail($id) {
+        if (!$this->session->userdata('email')) {
+            redirect('login');
+        }
+
         $data['title'] = 'Detail Surat';
-        
-        $data['surat'] = $this->db->get_where('surat', ['id' => $id])->row_array();
-
-        $this->db->where('role_id', 2);
-        $data['users_fungsional'] = $this->db->get('users')->result_array();
-
-        $this->load->view('templates/header', $data);
-        $this->load->view('struktural/detail_surat', $data);
-        $this->load->view('templates/footer');
+        $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
+    
+        $data['surat'] = $this->Surat_Model->get_surat_by_id($id);
+    
+        if (!$data['surat']) {
+            redirect('admin/surat');
+        }
+    
+        $data['catatan_pegawai'] = $this->Surat_Model->get_catatan_pegawai_by_surat($id);
+    
+        $data['tgl_dilaksanakan'] = $data['surat']['tgl_dilaksanakan'];
+    
+        // Load views
+        $this->load->view('template_struk/header', $data);
+        $this->load->view('struktural/detail', $data);
+        $this->load->view('template_struk/footer');
     }
 
     public function proses_tujuan() {
+        if (!$this->session->userdata('email')) {
+            redirect('login');
+        }
+
+        $email = $this->session->userdata('email');
+
+        $data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
         $catatan = $this->input->post('catatan_kepala');
         $no_surat = $this->input->post('no_surat');
         $tujuan = $this->input->post('tujuan'); 
@@ -136,6 +154,13 @@ class Struktural extends CI_Controller {
     }
     
     public function insert_pegawai() {
+        if (!$this->session->userdata('email')) {
+            redirect('login');
+        }
+
+        $email = $this->session->userdata('email');
+
+        $data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
         $this->load->model('Struktural_Model');
 
         $id_user = $this->session->userdata('id_user'); 
@@ -264,6 +289,10 @@ class Struktural extends CI_Controller {
         if (!$this->session->userdata('email')) {
             redirect('login');
         }
+
+        $email = $this->session->userdata('email');
+
+        $data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
     
         $email = $this->session->userdata('email');
         $user = $this->db->get_where('users', ['email' => $email])->row_array();
@@ -290,32 +319,6 @@ class Struktural extends CI_Controller {
         }
 
         redirect('struktural/kumpulan_surat');
-    }
-
-    public function detail($id) {
-        if (!$this->session->userdata('email')) {
-            redirect('login');
-        }
-    
-        $email = $this->session->userdata('email');
-        $user = $this->db->get_where('users', ['email' => $email])->row_array();
-        $user_id = $user['id_user'];
-    
-        // Ambil data surat berdasarkan ID surat yang dipilih
-        $this->load->model('Surat_Model');
-        $data['surat'] = $this->Surat_Model->get_surat_by_id($id);
-    
-        // Ambil catatan kepala terkait user dari tabel kepala
-        $this->load->model('Kepala_Model');
-        $data['kepala'] = $this->Kepala_Model->get_kepala_by_user($user_id);
-    
-        // Set judul halaman
-        $data['title'] = 'Detail Surat';
-    
-        // Load view dengan data surat dan catatan kepala
-        $this->load->view('template_struk/header', $data);
-        $this->load->view('struktural/detail', $data);
-        $this->load->view('template_struk/footer');
     }
     
     
