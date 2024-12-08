@@ -6,11 +6,6 @@ class Surat_Model extends CI_Model {
         return $this->db->get()->result_array();
     }
 
-    public function get_kepala() {
-        $query = $this->db->get('kepala'); // Sesuaikan nama tabel jika perlu
-        return $query->result_array();
-    }
-
     // Fungsi untuk memasukkan data surat ke database
     public function insert_surat($data) {
         return $this->db->insert('surat', $data);
@@ -69,7 +64,7 @@ public function get_surat_by_id($id) {
         $this->db->from('surat');
         $this->db->where('user_id', $user_id);
         $query = $this->db->get();
-        return $query->result_array(); // This should include 'id_ds_kepala'
+        return $query->result_array(); 
     }    
 
     public function get_surat_by_user($user_id) {
@@ -154,16 +149,6 @@ public function get_surat_by_id($id) {
         $this->db->group_by('users.nama');
         
         return $this->db->get()->result_array();
-    }
-    
-    
-    public function get_surat_by_user_id_kepala($user_id) {
-        $this->db->select('surat.*, kepala.tindak_lanjut');
-        $this->db->from('surat');
-        $this->db->join('kepala', 'kepala.id_surat = surat.id_ds_surat', 'left');
-        $this->db->where('surat.user_id', $user_id);
-        $query = $this->db->get();
-        return $query->result_array();
     }
     
 

@@ -56,7 +56,7 @@
                                             </tr>
                                             <tr>
                                                 <th>Tanggal Disposisi</th>
-                                                <td><?= $surat['tgl_disposisi']; ?></td>
+                                                <td><?= date('Y-m-d'); ?></td>
                                             </tr>
                                             <tr>
                                                 <th>Perihal</th>
@@ -77,20 +77,30 @@
                                             <tr>
                                                 <th>Catatan</th>
                                                 <td>
-                                                    <input type="text" name="catatan_kepala" id="catatan_kepala" class="form-control" placeholder="Tuliskan catatan Anda di sini..." required>
+                                                    <input type="text" name="catatan" id="catatan_kepala" class="form-control" placeholder="Tuliskan catatan Anda di sini..." required>
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <th>Tujuan</th>
-                                                <td>
-                                                    <?php foreach ($users_fungsional as $user): ?>
+                                            <th>Tujuan</th>
+                                            <td>
+                                                <?php 
+                                                $existing_tujuan = array_column($this->Fungsional_Model->get_user_tujuan_by_surat($surat['id_ds_surat']), 'user_tujuan');
+
+                                                $user_id_url = $this->input->get('user_id'); 
+                                                foreach ($users_fungsional as $user): 
+                                                    if ($user['id_user'] != $user_id_url && !in_array($user['id_user'], $existing_tujuan)): 
+                                                ?>
                                                         <div class="form-check">
                                                             <input class="form-check-input" type="checkbox" name="tujuan[]" value="<?= $user['id_user']; ?>" id="tujuan_<?= $user['id_user']; ?>">
                                                             <label class="form-check-label" for="tujuan_<?= $user['id_user']; ?>"><?= $user['nama']; ?></label>
                                                         </div>
-                                                    <?php endforeach; ?>
-                                                </td>
-                                            </tr>
+                                                <?php 
+                                                    endif; 
+                                                endforeach; 
+                                                ?>
+                                            </td>
+                                        </tr>
+
                                         <?php else: ?>
                                             <tr>
                                                 <td colspan="2">Data tidak ditemukan</td>
