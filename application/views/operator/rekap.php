@@ -101,22 +101,5 @@
         this.closest('form').submit();  // Submit form dengan nilai kosong
     });
 
-    $('#example1').DataTable({
-        paging: true,
-        lengthChange: true,   // Allow changing number of records per page
-        pageLength: 10,       // Default number of records per page
-        searching: true,
-        ordering: true,
-        info: true,
-        autoWidth: false,
-        responsive: true,
-        dom: 'Bfrtip',
-        buttons: [
-            'copy', 'csv', 'excel', 'pdf', 'print',
-            {
-                extend: 'colvis',
-                text: 'Column visibility'
-            }
-        ]
-    });
+    
 </script>

@@ -121,20 +121,7 @@
                         </tr>
                       <?php endforeach; ?>
                     </tbody>
-                    <tfoot style="text-align: center;">
-                      <tr>
-                        <th>No</th>
-                        <th>No Surat</th>
-                        <th>Tgl Surat</th>
-                        <th>Tgl Input</th>
-                        <th>Tgl Dilaksanakan</th>
-                        <th>Perihal</th>
-                        <th>Asal</th>
-                        <th>Jenis Surat</th>
-                        <th>Status</th>
-                        <th>Aksi</th>
-                      </tr>
-                    </tfoot>
+                    
                   </table>
                 </div>
               </div>
@@ -195,15 +182,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
-</script>
 
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-<script src="<?php echo base_url() ?>assets/admin/plugins/datatables/jquery.dataTables.min.js"></script>
-<script src="<?php echo base_url() ?>assets/admin/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-<script src="<?php echo base_url() ?>assets/admin/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
-<script src="<?php echo base_url() ?>assets/admin/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
-<script>
   $(function () {
     $("#example1").DataTable({
       "responsive": true,

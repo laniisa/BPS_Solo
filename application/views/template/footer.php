@@ -7,7 +7,7 @@
       Disposisi Surat BPS 
     </div>
     <!-- Default to the left -->
-    <strong>Copyright &copy; <a href="https://ft.unsoed.ac.id/" style="color:#0279C8">Badan Pusat Statistik 2024</a>.</strong>
+    <strong>Copyright &copy; <a href="https://surakartakota.bps.go.id/" style="color:#0279C8">Badan Pusat Statistik 2024</a>.</strong>
     <div class="footer-middle"></div>
   </footer>
 
@@ -39,8 +39,52 @@
       "responsive": true,
       "lengthChange": false,
       "autoWidth": false,
-      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+      "buttons": [
+        {
+          extend: "copy",
+          exportOptions: {
+            columns: ':visible'  // Hanya menyalin kolom yang terlihat
+          }
+        },
+        {
+          extend: "csv",
+          exportOptions: {
+            columns: ':visible'  // Hanya mengekspor kolom yang terlihat
+          }
+        },
+        {
+          extend: "excel",
+          exportOptions: {
+            columns: ':visible'  // Hanya mengekspor kolom yang terlihat
+          }
+        },
+        {
+          extend: "pdf",
+          exportOptions: {
+            columns: ':visible'  // Hanya mengekspor kolom yang terlihat
+          }
+        },
+        {
+          extend: "print",
+          exportOptions: {
+            columns: ':visible'  // Hanya mencetak kolom yang terlihat
+          }
+        },
+        "colvis" // Tombol visibility untuk mengatur kolom mana yang akan ditampilkan
+      ],
+      "columnDefs": [
+        // Tambahkan pengaturan visibilitas kolom jika diperlukan
+        {
+          targets: [0], // Misalnya, sembunyikan kolom pertama
+          visible: true // Kolom pertama selalu terlihat
+        },
+        {
+          targets: [1], // Misalnya, sembunyikan kolom kedua
+          visible: false // Kolom kedua disembunyikan
+        }
+      ]
     }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
     $('#example2').DataTable({
       "paging": true,
       "lengthChange": false,
@@ -52,6 +96,7 @@
     });
   });
 </script>
+
 </body>
 
 </html>

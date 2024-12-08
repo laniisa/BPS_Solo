@@ -20,7 +20,7 @@ class Operator extends CI_Controller {
         redirect('login');
     }
 
-    $data['title'] = ' Operator ';
+    $data['title'] = ' Surat ';
     $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
 
     $data['jumlah_surat'] = $this->Surat_Model->get_jumlah_surat();
@@ -39,26 +39,6 @@ class Operator extends CI_Controller {
     }
 
 
-    public function dashboard() {
-        if (!$this->session->userdata('email')) {
-            log_message('error', 'Email session not found');
-            redirect('login');
-        }
-    
-        $email = $this->session->userdata('email');
-    
-        // Get user information
-        $data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
-    
-        
-        $data['title'] = 'Tambah Surat';
-        $data['surat'] = $this->Surat_Model->get_all_surat();
-
-        $this->load->view('template/navbar', $data);
-        $this->load->view('template/sidebar', $data);
-        $this->load->view('operator/index', $data);
-        $this->load->view('template/footer');
-    }
 
     public function update_tujuan() {
         $id_ds_surat = $this->input->post('id_ds_surat');
@@ -221,24 +201,21 @@ class Operator extends CI_Controller {
     }
 
     public function surat()
-{
+    {
     if (!$this->session->userdata('email')) {
         log_message('error', 'Email session not found');
         redirect('login');
     }
-
+    $data['title'] = 'Surat';
     $email = $this->session->userdata('email');
 
-    // Load model
     $this->load->model('Surat_Model');
 
-    // Get user information
     $data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
 
-    // Get list of surat
     $data['surat'] = $this->Surat_Model->get_all_surat();
 
-    // Load views with collected data
+    
     $this->load->view('template/navbar', $data);
     $this->load->view('template/sidebar', $data);
     $this->load->view('operator/surat', $data); // Ensure this view exists
@@ -281,6 +258,7 @@ public function rekap() {
     }
 
     $email = $this->session->userdata('email');
+    $data['title'] = 'Rekap Disposisi';
     $data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
     
     // Ambil data bulan dan tahun dari URL atau gunakan bulan dan tahun saat ini sebagai default

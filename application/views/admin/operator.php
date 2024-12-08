@@ -89,10 +89,10 @@ document.addEventListener('DOMContentLoaded', function() {
             let role;
             switch (this.id) {
                 case 'filter-all': role = 'all'; break;
-                case 'filter-admin': role = '0'; break;        // Admin = 0
-                case 'filter-struktural': role = '1'; break;   // Struktural = 2
-                case 'filter-fungsional': role = '2'; break;   // Fungsional = 1
-                case 'filter-operator': role = '3'; break;     // Operator = 3
+                case 'filter-admin': role = '0'; break;        
+                case 'filter-struktural': role = '1'; break;   
+                case 'filter-fungsional': role = '2'; break;   
+                case 'filter-operator': role = '3'; break;     
                 default: role = 'all';
             }
 
@@ -129,7 +129,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     <tr>
                         <th>No</th>
                         <th>Nama</th>
-                        <th>Role</th>
                         <th>Username</th>
                         <th>Email</th>
                         <th>WhatsApp</th>
@@ -145,7 +144,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 <tr>
                     <td>${index + 1}</td>
                     <td>${user.nama}</td>
-                    <td>${user.role}</td>
                     <td>${user.usr}</td>
                     <td>${user.email}</td>
                     <td>${user.whatsApp}</td>
@@ -167,34 +165,59 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         tableContent += `
-                </tbody>
-                <tfoot style="text-align: center;">
-                    <tr>
-                        <th>No</th>
-                        <th>Nama</th>
-                        <th>Role</th>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th>WhatsApp</th>
-                        <th>Status</th>
-                        <th>Konfirmasi</th>
-                        <th>Aksi</th>
-                    </tr>
-                </tfoot>
+                
             </table>`;
 
         document.getElementById('user-table-container').innerHTML = tableContent;
 
         $('#example1').DataTable({
-            dom: 'Bfrtip',
-            buttons: [
-                'copy', 'csv', 'excel', 'pdf', 'print',
-                {
-                    extend: 'colvis',
-                    text: 'Column visibility'
-                }
-            ]
-        });
+    dom: 'Bfrtip',
+    buttons: [
+        {
+            extend: 'copy',
+            exportOptions: {
+                columns: ':not(.no-export)' // Mengatur agar kolom dengan class 'no-export' tidak diekspor
+            }
+        },
+        {
+            extend: 'csv',
+            exportOptions: {
+                columns: ':not(.no-export)' // Mengatur agar kolom dengan class 'no-export' tidak diekspor
+            }
+        },
+        {
+            extend: 'excel',
+            exportOptions: {
+                columns: ':not(.no-export)' // Mengatur agar kolom dengan class 'no-export' tidak diekspor
+            }
+        },
+        {
+            extend: 'pdf',
+            exportOptions: {
+                columns: ':not(.no-export)' // Mengatur agar kolom dengan class 'no-export' tidak diekspor
+            }
+        },
+        {
+            extend: 'print',
+            exportOptions: {
+                columns: ':not(.no-export)' // Mengatur agar kolom dengan class 'no-export' tidak diekspor
+            }
+        },
+        {
+            extend: 'colvis',
+            text: 'Column visibility'
+        }
+    ],
+    columnDefs: [
+        {
+            targets: [5, 7], // Kolom Status dan Aksi (indeks 5 dan 6)
+            className: 'no-export' // Menandai kolom yang tidak akan diekspor
+        }
+    ]
+});
+
+
+
     }
 
     // Dapatkan semua pengguna saat halaman dimuat
