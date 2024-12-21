@@ -47,7 +47,7 @@
         <div class="text-center nt-3">
           <button type="submit" class="btn btn-block" style="background-color: #0279C8; color: #ffffff;">Login</button>
         </div>
-        <a href="<?= base_url('login/regis'); ?>" class="text-center" style="color: #0279C8;">Register</a>
+        <!-- <a href="<?= base_url('login/regis'); ?>" class="text-center" style="color: #0279C8;">Register</a> -->
         <!-- /.col -->
       </form>
     </div>
