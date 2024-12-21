@@ -1,70 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
     <title>Daftar Surat | <?= $title; ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/dist/css/adminlte.min.css">
-    <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
-    <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
     <style>
         .list-group-item {
-            border: none; /* Menghilangkan garis */
-            padding: 15px 20px; /* Menambahkan padding untuk kenyamanan */
-            margin-bottom: 10px; /* Menambahkan jarak antara item */
-            border-radius: 8px; /* Menambahkan sedikit radius pada tepi */
-            background-color: #f8f9fa; /* Menambahkan warna latar belakang */
+            border: none; 
+            padding: 15px 20px;
+            margin-bottom: 10px; 
+            border-radius: 8px; 
+            background-color: #f8f9fa; 
         }
+
         .list-group-item a.font-weight-bold {
-            font-size: 1.7rem; /* Membesarkan font untuk Perihal */
-            color: #007bff; /* Warna biru untuk tautan */
-            text-decoration: none; /* Menghapus underline */
+            font-size: 1.4rem;
+            color: inherit; 
+            text-decoration: none; 
             position: relative;
-            display: block; /* Agar elemen bisa menampilkan teks di bawah */
-            max-width: 85%; /* Agar teks tidak meluas ke samping */
-            overflow: hidden; /* Menghilangkan teks yang meluas */
-            text-overflow: ellipsis; /* Menampilkan ellipsis jika teks terlalu panjang */
-            white-space: normal; /* Memungkinkan teks untuk membungkus ke baris berikutnya */
-    
+            display: block;
+            max-width: 85%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: normal;
         }
+
         .list-group-item a.font-weight-bold:hover {
-            text-decoration: underline; /* Menambahkan underline saat hover */
+            text-decoration: none; 
+            color: inherit;
+            background-color: transparent 
         }
-        .list-group-item a.font-weight-bold::after {
-            
-            display: none; /* Awalnya disembunyikan */
-            position: absolute;
-            top: -25px;
-            left: 0;
-            background: rgba(0, 0, 0, 0.75);
-            color: #fff;
-            padding: 3px 5px;
-            border-radius: 4px;
-            white-space: nowrap;
-            font-size: 0.875rem;
-            z-index: 10;
+        body.dark-mode .list-group-item a.font-weight-bold:hover {
+            color: inherit !important; 
+            background-color: transparent !important; 
         }
-        
-        .list-group-item small.text-muted::after {
-            
-            display: none; /* Awalnya disembunyikan */
-            position: absolute;
-            top: -25px;
-            left: 0;
-            background: rgba(0, 0, 0, 0.75);
-            color: #fff;
-            padding: 3px 5px;
-            border-radius: 4px;
-            white-space: nowrap;
-            font-size: 0.875rem;
-            z-index: 10;
-        }
-        .list-group-item small.text-muted:hover::after {
-            display: block; /* Menampilkan tooltip saat hover */
-        }
+
         .btn-warning.btn-sm {
-            padding: 5px 10px; /* Menyesuaikan ukuran tombol */
+            padding: 5px 10px; 
         }
+
+        small a {
+            color: #ffffff; 
+            background-color: #007bff; 
+            padding: 0.01px 1.2px; 
+            border-radius: 4px; 
+            text-decoration: none; 
+            font-size: 0.7rem; 
+            display: inline-block; 
+        }
+
+        small a:hover {
+            text-decoration: none; 
+            color: #ffffff; 
+            background-color: #007bff; 
+        }
+
+    
     </style>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -100,11 +92,12 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <?php if ($this->session->flashdata('success')) : ?>
-                                <div class="alert alert-success" role="alert">
-                                    <?= $this->session->flashdata('success'); ?>
+                        <div class="input-group mb-3">
+                                <input type="text" id="searchInput" class="form-control" placeholder="Search...">
+                                <div class="input-group-append">
+                                    <span class="input-group-text"><i class="fas fa-search"></i></span>
                                 </div>
-                            <?php endif; ?>
+                            </div>
 
                             <?php if (empty($surat)) : ?>
                                 <p class="text-center">Tidak ada surat untuk ditampilkan.</p>
@@ -148,6 +141,22 @@
 <!-- /.content-wrapper -->
 
 <script src="<?php echo base_url() ?>assets/admin/plugins/jquery/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#searchInput").on("keyup", function () {
+            var value = $(this).val().toLowerCase(); 
+            var visibleItems = 0;
+
+            $(".list-group-item").filter(function () {
+                var isVisible = $(this).text().toLowerCase().indexOf(value) > -1; 
+                $(this).toggle(isVisible); 
+                if (isVisible) visibleItems++;
+            });
+
+            $("#noResult").toggle(visibleItems === 0);
+        });
+    });
+</script>
 <script src="<?php echo base_url() ?>assets/admin/dist/js/adminlte.min.js"></script>
 </body>
 </html>

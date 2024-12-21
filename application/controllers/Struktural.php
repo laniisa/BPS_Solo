@@ -12,7 +12,6 @@ class Struktural extends CI_Controller {
         $this->load->library('session');
         $this->load->model('Struktural_Model');
         $this->load->model('Fungsional_Model');
-        // Cek login di konstruktor
         if (!$this->session->userdata('email')) {
             redirect('login');
         }
@@ -26,9 +25,29 @@ class Struktural extends CI_Controller {
         $email = $this->session->userdata('email');
         $user = $this->db->get_where('users', ['email' => $email])->row_array();
         $user_id = $user['id_user']; 
-        $data['surat'] = $this->Surat_Model->get_surat_by_user_id($user_id); 
+        $data['surat'] = $this->Surat_Model->get_surat_by_user_id($user_id);
+        $catatan_pegawai = $this->Surat_Model->get_catatan_pegawai_by_surat(array_column($data['surat'], 'id_ds_surat'));
 
-        // Log the data to check for 'id_ds_kepala'
+        $data['catatan_pegawai_grouped'] = [];
+        if (!empty($catatan_pegawai)) {
+            foreach ($catatan_pegawai as $catatan) {
+                if (isset($catatan['id_surat'])) {
+                    $data['catatan_pegawai_grouped'][$catatan['id_surat']][] = $catatan;
+                }
+            }
+        }
+
+        $tujuan_pegawai = $this->Surat_Model->get_tujuan_pegawai_by_surat(array_column($data['surat'], 'id_ds_surat'));
+
+        $data['tujuan_pegawai_grouped'] = [];
+        if (!empty($tujuan_pegawai)) {
+            foreach ($tujuan_pegawai as $tujuan) {
+                if (isset($tujuan['id_surat'])) {
+                    $data['tujuan_pegawai_grouped'][$tujuan['id_surat']][] = $tujuan;
+                }
+            }
+        }
+
         error_log(print_r($data['surat'], true));
     
         $data['title'] = 'Daftar Surat';
@@ -39,6 +58,7 @@ class Struktural extends CI_Controller {
         $this->load->view('struktural/index', $data);
         $this->load->view('template_struk/footer');
     }
+    
 
     public function surat() {
         if (!$this->session->userdata('email')) {
@@ -62,6 +82,7 @@ class Struktural extends CI_Controller {
         
         // Pass the selected tindak_lanjut to the view
         $data['selected_tindak_lanjut'] = $tindak_lanjut; 
+        $data['title'] = 'Surat Diteruskan';
         
         $data['title'] = 'Surat Page'; 
         $this->load->view('template_struk/header', $data);
@@ -86,6 +107,7 @@ class Struktural extends CI_Controller {
         $data['catatan_pegawai'] = $this->Surat_Model->get_catatan_pegawai_by_surat($id);
     
         $data['tgl_dilaksanakan'] = $data['surat']['tgl_dilaksanakan'];
+        $data['title'] = 'Detail Surat';
     
         // Load views
         $this->load->view('template_struk/header', $data);
@@ -99,6 +121,7 @@ class Struktural extends CI_Controller {
         }
 
         $email = $this->session->userdata('email');
+        $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
 
         $data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
         $catatan = $this->input->post('catatan_kepala');
@@ -110,7 +133,7 @@ class Struktural extends CI_Controller {
         $surat = $this->Struktural_Model->get_surat_by_no_surat($no_surat);
         
         $id_ds_surat = $surat['id_ds_surat'];
-        $tindak_lanjut = $surat['status'];
+        $tindak_lanjut = 'diteruskan';
 
         $this->db->where('id_ds_surat', $id_ds_surat);
         $this->db->update('surat', ['status' => $tindak_lanjut]);
@@ -140,6 +163,11 @@ class Struktural extends CI_Controller {
                 $this->db->insert('disposisi', $data_disposisi);
             }
         }
+        $surat_update_data = [
+                'status' => 'diteruskan',
+            ];
+            $this->db->where('no_surat', $no_surat);  
+            $this->db->update('surat', $surat_update_data);
         $this->db->trans_complete();
     
         if ($this->db->trans_status() === FALSE) {
@@ -220,11 +248,11 @@ class Struktural extends CI_Controller {
             redirect('struktural');
             
         } elseif ($tindak_lanjut == 'diteruskan') {
-            $surat_update_data = [
-                'status' => 'diteruskan',
-            ];
+            // $surat_update_data = [
+            //     'status' => 'diteruskan',
+            // ];
             $this->db->where('no_surat', $no_surat);  
-            $this->db->update('surat', $surat_update_data);
+            // $this->db->update('surat', $surat_update_data);
             redirect('struktural/surat?no_surat=' . urlencode($no_surat) . '&user_id=' . urlencode($id_user) . '&tindak_lanjut=' . urlencode($tindak_lanjut));
         } else {
             $this->session->set_flashdata('error', 'Tindak lanjut tidak valid.');
@@ -232,10 +260,9 @@ class Struktural extends CI_Controller {
         }
     }
     private function get_action_click_count($id_surat) {
-        // Count the number of actions for this surat
         $this->db->from('pegawai');
         $this->db->where('id_surat', $id_surat);
-        return $this->db->count_all_results(); // This will return the count of rows
+        return $this->db->count_all_results(); 
     }
     
     
@@ -245,16 +272,13 @@ class Struktural extends CI_Controller {
             redirect('login');
         }
 
-        // Ambil email dari session
         $email = $this->session->userdata('email');
 
-        // Dapatkan informasi pengguna
         $data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
 
-        // Ambil daftar semua surat
         $data['surat'] = $this->Surat_Model->get_all_surat();
+        $data['title'] = 'Rekap Surat';
 
-        // Load views dengan data yang dikumpulkan
         $this->load->view('template_struk/header', $data);
         $this->load->view('struktural/rekap', $data);
         $this->load->view('template_struk/footer');
@@ -264,22 +288,18 @@ class Struktural extends CI_Controller {
         $tanggal_awal = $this->input->get('tanggal_awal');
         $tanggal_akhir = $this->input->get('tanggal_akhir');
     
-        // Jika tidak ada filter tanggal, ambil semua surat
         if (empty($tanggal_awal) || empty($tanggal_akhir)) {
             $result = $this->Surat_Model->get_all_surat();
         } else {
             $result = $this->Surat_Model->get_filtered_surat($tanggal_awal, $tanggal_akhir);
         }
     
-        // Mengembalikan data dalam bentuk JSON
         echo json_encode($result);
     }
 
     public function detail_rekap($id) {
-        // Ambil data surat berdasarkan ID
         $data['surat'] = $this->Surat_Model->get_surat_by_id($id);
 
-        // Load views dengan data surat yang diambil
         $this->load->view('template_struk/header', $data);
         $this->load->view('struktural/detail_rekap', $data);
         $this->load->view('template_struk/footer');
@@ -297,28 +317,12 @@ class Struktural extends CI_Controller {
         $email = $this->session->userdata('email');
         $user = $this->db->get_where('users', ['email' => $email])->row_array();
         $user_id = $user['id_user']; 
+        $data['title'] = 'Kumpulan Surat';
     
-        // Retrieve data
         $data['surat'] = $this->Surat_Model->get_surat_by_user_id($user_id); 
-         // Load views dengan data surat yang diambil
          $this->load->view('template_struk/header', $data);
          $this->load->view('struktural/kumpulan_surat', $data);
          $this->load->view('template_struk/footer');
-    }
-
-    // Menangani tindak lanjut surat
-    public function surat_kepala() {
-        $id_user = $this->input->post('id_user');
-        $no_surat = $this->input->post('no_surat');
-        $tindak_lanjut = $this->input->post('tindak_lanjut');
-
-        if ($this->Surat_Model->update_tindak_lanjut($no_surat, $tindak_lanjut)) {
-            $this->session->set_flashdata('success', 'Tindak lanjut surat berhasil diperbarui.');
-        } else {
-            $this->session->set_flashdata('message', 'Terjadi kesalahan saat memperbarui tindak lanjut surat.');
-        }
-
-        redirect('struktural/kumpulan_surat');
     }
     
     

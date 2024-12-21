@@ -71,6 +71,12 @@ class Fungsional_Model extends CI_Model {
         
         return $query->result_array(); 
     }
+    public function get_surat_by_no_surat($no_surat) {
+        $this->db->select('*');
+        $this->db->from('surat');
+        $this->db->where('no_surat', $no_surat);
+        return $this->db->get()->row_array();
+    }
 
 
     

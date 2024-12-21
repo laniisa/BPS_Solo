@@ -151,11 +151,13 @@ public function get_surat_by_id($id) {
         return $this->db->get()->result_array();
     }
     
-
-    
     public function get_catatan_pegawai_by_surat($id_surat) {
+        if (empty($id_surat)) {
+            return []; // Kembalikan array kosong jika $id_surat tidak valid
+        }
         $this->db->select('
             pegawai.id_disposisi, 
+            pegawai.id_surat, 
             pegawai.id_user, 
             users.nama, 
             pegawai.catatan, 
@@ -164,10 +166,34 @@ public function get_surat_by_id($id) {
         ');
         $this->db->from('pegawai');
         $this->db->join('users', 'pegawai.id_user = users.id_user', 'left');
-        $this->db->where('pegawai.id_surat', $id_surat);
-        $this->db->order_by('pegawai.id_disposisi', 'ASC'); // Urutkan berdasarkan id_disposisi
+    
+        $this->db->where_in('pegawai.id_surat', $id_surat);
+    
+        $this->db->order_by('pegawai.id_disposisi', 'ASC'); 
         return $this->db->get()->result_array();
     }
+    public function get_tujuan_pegawai_by_surat($id_surat) {
+        if (empty($id_surat)) {
+            return []; // Kembalikan array kosong jika $id_surat tidak valid
+        }
+        $this->db->select('
+            pegawai.id_disposisi, 
+            disposisi.id_disposisi, 
+            disposisi.user_tujuan, 
+            users.nama, 
+            disposisi.status,
+            disposisi.id_ds_surat AS id_surat
+        ');
+        $this->db->from('pegawai');
+        $this->db->join('disposisi', 'pegawai.id_disposisi = disposisi.id_disposisi', 'left');
+        $this->db->join('users', 'disposisi.user_tujuan = users.id_user', 'left');
+        $this->db->where_in('disposisi.id_ds_surat', $id_surat);
+        $this->db->order_by('disposisi.no_disposisi', 'ASC'); 
+        return $this->db->get()->result_array();
+    }
+    
+    
+    
     
 }
 ?>

@@ -1,28 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title><?= $title; ?></title>
-    <link rel="stylesheet" href="<?= base_url('assets/admin/plugins/bootstrap/css/bootstrap.min.css'); ?>">
+    <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+    <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
     <style>
-        .table {
-            table-layout: fixed; /* Memastikan kolom tabel memiliki lebar tetap */
-        }
         .table th, .table td {
             vertical-align: middle;
-            word-wrap: break-word; /* Memungkinkan kata untuk membungkus ke baris berikutnya */
-            overflow-wrap: break-word; /* Menangani teks panjang yang meluas */
-            max-width: 200px; /* Menentukan lebar maksimum untuk sel */
         }
         .btn {
             margin-top: 10px;
         }
         .table th {
-            width: 20%; /* Menentukan lebar kolom header tabel */
+            width: 20%;
         }
-        .red-text {
-            color: red;
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+        .info-table th, .info-table td {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        .info-table th {
+            width: 30%;
+        }
+        .card-body > div {
+            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -86,34 +95,54 @@
                                             <td><?= isset($surat['jenis_surat']) ? $surat['jenis_surat'] : 'Tidak ada data'; ?></td>
                                         </tr>
                                         <tr>
+                                            <th>Status</th>
+                                            <td><?= $surat['status']; ?></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Detail Disposisi</th>
+                                            <td>
+                                                <?php if ($catatan_pegawai): ?>
+                                                    <?php foreach ($catatan_pegawai as $catatan): ?>
+                                                        <table class="info-table">
+                                                            <tr>
+                                                                <th>Nama:</th>
+                                                                <td><?= $catatan['nama']; ?></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>Catatan:</th>
+                                                                <td><?= $catatan['catatan'] ? $catatan['catatan'] : 'Tidak ada catatan'; ?></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>Tindak Lanjut:</th>
+                                                                <td><?= $catatan['tindak_lanjut'] ? $catatan['tindak_lanjut'] : 'Belum ada tindak lanjut'; ?></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>Tanggal:</th>
+                                                                <td><?= $catatan['tanggal'] ? $catatan['tanggal'] : 'Belum ada tanggal'; ?></td>
+                                                            </tr>
+                                                        </table>
+                                                        <hr>
+                                                    <?php endforeach; ?>
+                                                <?php else: ?>
+                                                    <p>Belum ada detail</p>
+                                                <?php endif; ?>
+                                            </td>
+                                        </tr>
+
+
+                                        <tr>
                                             <th>Berkas</th>
                                             <td>
-                                                <?php if (isset($surat['berkas']) && $surat['berkas']): ?>
+                                                <?php if ($surat['berkas']) : ?>
                                                     <a href="<?= base_url('uploads/' . $surat['berkas']); ?>" target="_blank" class="btn btn-primary">Lihat Berkas</a>
-                                                <?php else: ?>
+                                                <?php else : ?>
                                                     Tidak ada berkas
                                                 <?php endif; ?>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th>Catatan Kepala</th>
-                                            <td>
-                                                <?php if (isset($kepala['catatan_kepala']) && $kepala['catatan_kepala']): ?>
-                                                    <p><?= $kepala['catatan_kepala']; ?></p>
-                                                <?php else: ?>
-                                                    <p>Tidak ada catatan dari kepala.</p>
-                                                <?php endif; ?>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>Tindak Lanjut</th>
-                                            <td>
-                                                <?php if (isset($surat['status']) && $surat['status']): ?>
-                                                    <p><?= $surat['status']; ?></p>
-                                                <?php else: ?>
-                                                    <p>Belum ada tindak lanjut.</p>
-                                                <?php endif; ?>
-                                            </td>
+                                            <th>Berkas Tambahan</th>
+                                            <td>Tidak ada berkas tambahan</td>
                                         </tr>
                                     </tbody>
                                 </table>

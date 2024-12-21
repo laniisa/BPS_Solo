@@ -13,7 +13,6 @@ class Fungsional extends CI_Controller {
         $this->load->model('Fungsional_Model');
         $this->load->model('Struktural_Model');
 
-        // Cek login di konstruktor
         if (!$this->session->userdata('email')) {
             redirect('login');
         }
@@ -27,11 +26,29 @@ class Fungsional extends CI_Controller {
         $email = $this->session->userdata('email');
         $user = $this->db->get_where('users', ['email' => $email])->row_array();
         $user_id = $user['id_user'];
-    
-        // Fetch surat data based on user ID
         $this->load->model('Fungsional_Model');
         $data['surat'] = $this->Fungsional_Model->get_surat_by_user_id($user_id);
-    
+        $catatan_pegawai = $this->Surat_Model->get_catatan_pegawai_by_surat(array_column($data['surat'], 'id_ds_surat'));
+
+        $data['catatan_pegawai_grouped'] = [];
+        if (!empty($catatan_pegawai)) {
+            foreach ($catatan_pegawai as $catatan) {
+                if (isset($catatan['id_surat'])) {
+                    $data['catatan_pegawai_grouped'][$catatan['id_surat']][] = $catatan;
+                }
+            }
+        }
+
+        $tujuan_pegawai = $this->Surat_Model->get_tujuan_pegawai_by_surat(array_column($data['surat'], 'id_ds_surat'));
+
+        $data['tujuan_pegawai_grouped'] = [];
+        if (!empty($tujuan_pegawai)) {
+            foreach ($tujuan_pegawai as $tujuan) {
+                if (isset($tujuan['id_surat'])) {
+                    $data['tujuan_pegawai_grouped'][$tujuan['id_surat']][] = $tujuan;
+                }
+            }
+        }    
         error_log(print_r($data['surat'], true));
     
         $data['title'] = 'Daftar Surat';
@@ -46,24 +63,40 @@ class Fungsional extends CI_Controller {
             redirect('login');
         }
     
-        $email = $this->session->userdata('email');
-        $user = $this->db->get_where('users', ['email' => $email])->row_array();
-        $user_id = $user['id_user']; 
-        
+        $user_id = $this->input->get('user_id');
         $no_surat = $this->input->get('no_surat');
-        $tindak_lanjut = $this->input->get('tindak_lanjut'); 
-        
+    
+        if (empty($no_surat) || empty($user_id)) {
+            $this->session->set_flashdata('error', 'Missing required parameters.');
+            redirect('fungsional');
+            return;
+        }
+    
+        $tindak_lanjut = $this->input->get('tindak_lanjut');
+        $data['selected_tindak_lanjut'] = $tindak_lanjut;
+    
         $this->load->model('Struktural_Model');
+    
         $data['surat'] = $this->Struktural_Model->get_surat_by_no_surat($no_surat);
-        $data['users_fungsional'] = $this->User_Model->get_users_by_role(2);
-        
-        $data['selected_tindak_lanjut'] = $tindak_lanjut; 
-        
-        $data['title'] = 'Surat Page'; 
+        $users_fungsional = $this->User_Model->get_users_by_role(2);
+    
+        $existing_tujuan = array_column(
+            $this->Fungsional_Model->get_user_tujuan_by_surat($data['surat']['id_ds_surat']),
+            'user_tujuan'
+        );
+        $data['title'] = 'Surat Diteruskan';
+        $data['users_fungsional'] = array_filter($users_fungsional, function ($user) use ($existing_tujuan, $user_id) {
+            return $user['id_user'] != $user_id && !in_array($user['id_user'], $existing_tujuan);
+        });
+    
+        $data['title'] = 'Surat Page';
+    
         $this->load->view('template_fung/header', $data);
         $this->load->view('fungsional/diteruskan', $data);
         $this->load->view('template_fung/footer');
     }
+    
+    
     public function insert_pegawai() {
         $this->load->model('Fungsional_Model');
 
@@ -85,6 +118,7 @@ class Fungsional extends CI_Controller {
             return;
         }
         $id_surat = $surat_data['id_ds_surat'];
+        $action_click_count = $this->get_action_click_count($id_surat);
         
         if ($tindak_lanjut == 'dilaksanakan') {
             $pegawai_data = [
@@ -119,11 +153,11 @@ class Fungsional extends CI_Controller {
             redirect('fungsional');
             
         } elseif ($tindak_lanjut == 'diteruskan') {
-            $surat_update_data = [
-                'status' => 'diteruskan',
-            ];
+            // $surat_update_data = [
+            //     'status' => 'diteruskan',
+            // ];
             $this->db->where('no_surat', $no_surat);  
-            $this->db->update('surat', $surat_update_data);
+            // $this->db->update('surat', $surat_update_data);
             redirect('fungsional/diteruskan?no_surat=' . urlencode($no_surat) . '&user_id=' . urlencode($id_user));
         } else {
             $this->session->set_flashdata('error', 'Tindak lanjut tidak valid.');
@@ -132,24 +166,31 @@ class Fungsional extends CI_Controller {
     }
 
     private function get_action_click_count($id_surat) {
-        // Count the number of actions for this surat
         $this->db->from('pegawai');
         $this->db->where('id_surat', $id_surat);
-        return $this->db->count_all_results(); // This will return the count of rows
+        return $this->db->count_all_results(); 
     }
 
     public function proses_tujuan() {
-        $catatan = $this->input->post('catatan');
+        if (!$this->session->userdata('email')) {
+            redirect('login');
+        }
+
+        $email = $this->session->userdata('email');
+        $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
+
+        $data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
+        $catatan = $this->input->post('catatan_kepala');
         $no_surat = $this->input->post('no_surat');
         $tujuan = $this->input->post('tujuan'); 
-        
+    
         $this->db->trans_start();
     
         $surat = $this->Struktural_Model->get_surat_by_no_surat($no_surat);
         
         $id_ds_surat = $surat['id_ds_surat'];
-        $tindak_lanjut = $surat['status'];
-    
+        $tindak_lanjut = 'diteruskan';
+
         $this->db->where('id_ds_surat', $id_ds_surat);
         $this->db->update('surat', ['status' => $tindak_lanjut]);
         if (!empty($tujuan)) {
@@ -178,7 +219,11 @@ class Fungsional extends CI_Controller {
                 $this->db->insert('disposisi', $data_disposisi);
             }
         }
-
+        $surat_update_data = [
+                'status' => 'diteruskan',
+            ];
+            $this->db->where('no_surat', $no_surat);  
+            $this->db->update('surat', $surat_update_data);
         $this->db->trans_complete();
     
         if ($this->db->trans_status() === FALSE) {
@@ -186,6 +231,7 @@ class Fungsional extends CI_Controller {
         } else {
             $this->session->set_flashdata('success', 'Surat berhasil didisposisi');
         }
+
         $data['surat'] = $surat; 
         $this->load->view('fungsional/diteruskan', $data);
         redirect('fungsional');
@@ -198,7 +244,7 @@ class Fungsional extends CI_Controller {
 
         $this->db->where('role_id', 2);
         $data['users_fungsional'] = $this->db->get('users')->result_array();
-
+        $data['title'] = 'Detail Surat';
         $this->load->view('templates/header', $data);
         $this->load->view('fungsional/detail_surat', $data);
         $this->load->view('templates/footer');
@@ -209,16 +255,12 @@ class Fungsional extends CI_Controller {
             redirect('login');
         }
 
-        // Ambil email dari session
         $email = $this->session->userdata('email');
 
-        // Dapatkan informasi pengguna
         $data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
 
-        // Ambil daftar semua surat
         $data['surat'] = $this->Surat_Model->get_all_surat();
-
-        // Load views dengan data yang dikumpulkan
+        $data['title'] = 'Rekap Surat';
         $this->load->view('template_fung/header', $data);
         $this->load->view('fungsional/rekap', $data);
         $this->load->view('template_fung/footer');
@@ -228,22 +270,18 @@ class Fungsional extends CI_Controller {
         $tanggal_awal = $this->input->get('tanggal_awal');
         $tanggal_akhir = $this->input->get('tanggal_akhir');
     
-        // Jika tidak ada filter tanggal, ambil semua surat
         if (empty($tanggal_awal) || empty($tanggal_akhir)) {
             $result = $this->Surat_Model->get_all_surat();
         } else {
             $result = $this->Surat_Model->get_filtered_surat($tanggal_awal, $tanggal_akhir);
         }
     
-        // Mengembalikan data dalam bentuk JSON
         echo json_encode($result);
     }
 
     public function detail_rekap($id) {
-        // Ambil data surat berdasarkan ID
         $data['surat'] = $this->Surat_Model->get_surat_by_id($id);
 
-        // Load views dengan data surat yang diambil
         $this->load->view('template_fung/header', $data);
         $this->load->view('fungsional/detail_rekap', $data);
         $this->load->view('template_fung/footer');
@@ -253,32 +291,20 @@ class Fungsional extends CI_Controller {
         if (!$this->session->userdata('email')) {
             redirect('login');
         }
-    
+
+        $email = $this->session->userdata('email');
+
+        $data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
         $email = $this->session->userdata('email');
         $user = $this->db->get_where('users', ['email' => $email])->row_array();
         $user_id = $user['id_user']; 
-    
-        // Retrieve data
+
+        $data['title'] = 'Kumpulan Surat';
+
         $data['surat'] = $this->Fungsional_Model->get_surat_by_user_id($user_id); 
-         // Load views dengan data surat yang diambil
          $this->load->view('template_fung/header', $data);
          $this->load->view('fungsional/kumpulan_surat', $data);
          $this->load->view('template_fung/footer');
-    }
-
-    // Menangani tindak lanjut surat
-    public function surat_kepala() {
-        $user_id = $this->input->post('user_id');
-        $no_surat = $this->input->post('no_surat');
-        $tindak_lanjut = $this->input->post('tindak_lanjut');
-
-        if ($this->Surat_Model->update_tindak_lanjut($no_surat, $tindak_lanjut)) {
-            $this->session->set_flashdata('success', 'Tindak lanjut surat berhasil diperbarui.');
-        } else {
-            $this->session->set_flashdata('message', 'Terjadi kesalahan saat memperbarui tindak lanjut surat.');
-        }
-
-        redirect('fungsional/kumpulan_surat');
     }
 
     public function detail($id) {
@@ -290,18 +316,19 @@ class Fungsional extends CI_Controller {
         $user = $this->db->get_where('users', ['email' => $email])->row_array();
         $user_id = $user['id_user'];
     
-        // Ambil data surat berdasarkan ID surat yang dipilih
-        $this->load->model('Surat_Model');
+        $data['title'] = 'Detail Surat';
+        $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
+    
         $data['surat'] = $this->Surat_Model->get_surat_by_id($id);
     
-        // Ambil catatan kepala terkait user dari tabel kepala
-        // $this->load->model('Kepala_Model');
-        // $data['kepala'] = $this->Kepala_Model->get_kepala_by_user($user_id);
+        if (!$data['surat']) {
+            redirect('admin/surat');
+        }
     
-        // Set judul halaman
-        $data['title'] = 'Detail Surat';
+        $data['catatan_pegawai'] = $this->Surat_Model->get_catatan_pegawai_by_surat($id);
     
-        // Load view dengan data surat dan catatan kepala
+        $data['tgl_dilaksanakan'] = $data['surat']['tgl_dilaksanakan'];
+        $data['title'] = 'Kumpulan Surat';
         $this->load->view('template_fung/header', $data);
         $this->load->view('fungsional/detail', $data);
         $this->load->view('template_fung/footer');

@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title><?= $title; ?></title>
     <link rel="stylesheet" href="<?= base_url('assets/admin/plugins/bootstrap/css/bootstrap.min.css'); ?>">
     <link rel="stylesheet" href="<?= base_url('application\views\struktural\css\surat.css'); ?>">
@@ -76,31 +75,45 @@
                                             </tr>
                                             <tr>
                                                 <th>Catatan</th>
+                                                <?php
+                                                    $existing_tujuan = array_column($this->Fungsional_Model->get_user_tujuan_by_surat($surat['id_ds_surat']), 'user_tujuan');
+
+                                                    $user_id_url = $this->input->get('user_id');
+
+                                                    $remaining_users = [];
+                                                    foreach ($users_fungsional as $user) {
+                                                        if ($user['id_user'] != $user_id_url && !in_array($user['id_user'], $existing_tujuan)) {
+                                                            $remaining_users[] = $user;
+                                                        }
+                                                    }
+                                                    ?>
                                                 <td>
-                                                    <input type="text" name="catatan" id="catatan_kepala" class="form-control" placeholder="Tuliskan catatan Anda di sini..." required>
+                                                    <input type="text" name="catatan" id="catatan_kepala" 
+                                                        class="form-control" 
+                                                        placeholder="Tuliskan catatan Anda di sini..." 
+                                                <?= isset($remaining_users) && !empty($remaining_users) ? '' : 'readonly'; ?> 
+                                                required>
                                                 </td>
                                             </tr>
                                             <tr>
-                                            <th>Tujuan</th>
-                                            <td>
-                                                <?php 
-                                                $existing_tujuan = array_column($this->Fungsional_Model->get_user_tujuan_by_surat($surat['id_ds_surat']), 'user_tujuan');
-
-                                                $user_id_url = $this->input->get('user_id'); 
-                                                foreach ($users_fungsional as $user): 
-                                                    if ($user['id_user'] != $user_id_url && !in_array($user['id_user'], $existing_tujuan)): 
-                                                ?>
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" name="tujuan[]" value="<?= $user['id_user']; ?>" id="tujuan_<?= $user['id_user']; ?>">
-                                                            <label class="form-check-label" for="tujuan_<?= $user['id_user']; ?>"><?= $user['nama']; ?></label>
-                                                        </div>
-                                                <?php 
-                                                    endif; 
-                                                endforeach; 
-                                                ?>
-                                            </td>
-                                        </tr>
-
+                                                <th>Tujuan</th>
+                                                <td>
+                                                    <?php if (!empty($remaining_users)): ?>
+                                                        <?php foreach ($remaining_users as $user): ?>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox" name="tujuan[]" 
+                                                                    value="<?= $user['id_user']; ?>" 
+                                                                    id="tujuan_<?= $user['id_user']; ?>">
+                                                                <label class="form-check-label" for="tujuan_<?= $user['id_user']; ?>">
+                                                                    <?= $user['nama']; ?>
+                                                                </label>
+                                                            </div>
+                                                        <?php endforeach; ?>
+                                                    <?php else: ?>
+                                                        <p class="text-muted">Tidak ada pegawai tersisa untuk dapat meneruskan surat.</p>
+                                                    <?php endif; ?>
+                                                </td>
+                                            </tr>
                                         <?php else: ?>
                                             <tr>
                                                 <td colspan="2">Data tidak ditemukan</td>

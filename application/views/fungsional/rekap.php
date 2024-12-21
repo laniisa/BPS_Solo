@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title><?= $title; ?></title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
@@ -73,9 +72,6 @@
       <div class="row">
         <div class="col-12">
           <div class="card">
-            <div class="card-header">
-              <a href="<?= base_url('admin/insert_surat') ?>" class="btn btn-primary float-left"><i class="fas fa-plus"></i> Tambah Surat</a>
-            </div>
             <div class="card-body">
               <div class="row">
                 <div class="col-12" id="surat-table-container">
@@ -91,7 +87,6 @@
                       <th>Asal</th>
                       <th>Jenis Surat</th>
                       <th>Status</th>
-                      <th>Aksi</th>
                     </tr>
                     </thead>
                     <tbody style="text-align: center;">
@@ -99,7 +94,7 @@
                       <?php foreach ($surat as $item) : ?>
                         <tr>
                           <td><?= $i++; ?></td>
-                          <td><a href="<?= base_url('admin/detail_surat/') . $item['id_ds_surat'] ?>"><?= $item['no_surat']; ?></a></td>
+                          <td><?= $item['no_surat']; ?></td>
                           <td><?= $item['tgl_surat']; ?></td>
                           <td><?= $item['tgl_input']; ?></td>
                           <td><?= $item['tgl_dilaksanakan']; ?></td>
@@ -107,30 +102,9 @@
                           <td><?= $item['asal']; ?></td>
                           <td><?= $item['jenis_surat']; ?></td>
                           <td><?= $item['status']; ?></td>
-                          <td>
-                            <?php if ($item['berkas']) : ?>
-                                <a href="<?= base_url('uploads/' . $item['berkas']); ?>" class="btn btn-info btn-sm" download>Unduh</a>
-                            <?php else : ?>
-                                Tidak ada berkas
-                            <?php endif; ?>
-                          </td>
                         </tr>
                       <?php endforeach; ?>
                     </tbody>
-                    <tfoot style="text-align: center;">
-                      <tr>
-                        <th>No</th>
-                        <th>No Surat</th>
-                        <th>Tgl Surat</th>
-                        <th>Tgl Input</th>
-                        <th>Tgl Dilaksanakan</th>
-                        <th>Perihal</th>
-                        <th>Asal</th>
-                        <th>Jenis Surat</th>
-                        <th>Status</th>
-                        <th>Aksi</th>
-                      </tr>
-                    </tfoot>
                   </table>
                 </div>
               </div>
@@ -174,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const row = `
                 <tr>
                     <td>${index + 1}</td>
-                    <td><a href="<?= base_url('admin/detail_surat/') ?>${item.id_ds_surat}">${item.no_surat}</a></td>
+                    <td>${item.no_surat}</td>
                     <td>${item.tgl_surat}</td>
                     <td>${item.tgl_input}</td>
                     <td>${item.tgl_dilaksanakan}</td>
@@ -182,7 +156,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td>${item.asal}</td>
                     <td>${item.jenis_surat}</td>
                     <td>${item.status}</td>
-                    <td>${item.berkas ? `<a href="<?= base_url('uploads/') ?>${item.berkas}" class="btn btn-info btn-sm" download>Unduh</a>` : 'Tidak ada berkas'}
                     </td>
                 </tr>`;
             tableBody.insertAdjacentHTML('beforeend', row);
@@ -201,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function() {
   $(function () {
     $("#example1").DataTable({
       "responsive": true,
-      "lengthChange": true,
+      "lengthChange": false,
       "autoWidth": false,
       "ordering": false,
     });

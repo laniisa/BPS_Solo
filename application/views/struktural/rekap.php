@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title><?= $title; ?></title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
@@ -96,7 +95,7 @@
                       <?php foreach ($surat as $item) : ?>
                         <tr>
                           <td><?= $i++; ?></td>
-                          <td><a href="<?= base_url('admin/detail_surat/') . $item['id_ds_surat'] ?>"><?= $item['no_surat']; ?></a></td>
+                          <td><a href="<?= base_url('struktural/detail/') . $item['id_ds_surat'] ?>"><?= $item['no_surat']; ?></a></td>
                           <td><?= $item['tgl_surat']; ?></td>
                           <td><?= $item['tgl_input']; ?></td>
                           <td><?= $item['tgl_dilaksanakan']; ?></td>
@@ -105,11 +104,12 @@
                           <td><?= $item['jenis_surat']; ?></td>
                           <td><?= $item['status']; ?></td>
                           <td>
-                            <?php if ($item['berkas']) : ?>
-                                <a href="<?= base_url('uploads/' . $item['berkas']); ?>" class="btn btn-info btn-sm" download>Unduh</a>
-                            <?php else : ?>
-                                Tidak ada berkas
-                            <?php endif; ?>
+                          <?php if ($item['berkas']) : ?>
+                            <a href="<?= base_url('uploads/' . $item['berkas']) ?>" class="btn btn-warning btn-sm" target="_blank" style="color: white;">Lihat</a>
+                            <a href="<?= base_url('uploads/' . $item['berkas']) ?>" class="btn btn-danger btn-sm" download>Unduh</a>
+                          <?php else : ?>
+                              <span class="text-muted">Tidak ada berkas</span>
+                          <?php endif; ?>
                           </td>
                         </tr>
                       <?php endforeach; ?>
@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const row = `
                 <tr>
                     <td>${index + 1}</td>
-                    <td><a href="<?= base_url('admin/detail_surat/') ?>${item.id_ds_surat}">${item.no_surat}</a></td>
+                    <td><a href="<?= base_url('struktural/detail/') ?>${item.id_ds_surat}">${item.no_surat}</a></td>
                     <td>${item.tgl_surat}</td>
                     <td>${item.tgl_input}</td>
                     <td>${item.tgl_dilaksanakan}</td>
@@ -165,7 +165,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td>${item.asal}</td>
                     <td>${item.jenis_surat}</td>
                     <td>${item.status}</td>
-                    <td>${item.berkas ? `<a href="<?= base_url('uploads/') ?>${item.berkas}" class="btn btn-info btn-sm" download>Unduh</a>` : 'Tidak ada berkas'}
+                    <td>${item.berkas ? `<a href="<?= base_url('uploads/' . $item['berkas']) ?>" class="btn btn-warning btn-sm" target="_blank" style="color: white;">Lihat</a>
+                            <a href="<?= base_url('uploads/' . $item['berkas']) ?>" class="btn btn-danger btn-sm" download>Unduh</a>` : 'Tidak ada berkas'}
                     </td>
                 </tr>`;
             tableBody.insertAdjacentHTML('beforeend', row);
@@ -184,7 +185,7 @@ document.addEventListener('DOMContentLoaded', function() {
   $(function () {
     $("#example1").DataTable({
       "responsive": true,
-      "lengthChange": true,
+      "lengthChange": false,
       "autoWidth": false,
       "ordering": false,
     });

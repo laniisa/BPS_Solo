@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   
     <title><?= $title; ?></title>
     <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/dist/css/adminlte.min.css">
     <link rel="stylesheet" href="<?php echo base_url() ?>assets/admin/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
@@ -54,7 +53,7 @@
                     <div class="col-md-12">
                         <div class="card card-primary">
                             <div class="card-header">
-                                <h3 class="card-title">Detail Surat</h3>
+                            <h3 class="card-title">Detail Surat <?= isset($surat['no_surat']) ? $surat['no_surat'] : ''; ?></h3>
                             </div>
                             <div class="card-body">
                                 <table class="table table-bordered">
@@ -100,9 +99,8 @@
                                             <td><?= $surat['status']; ?></td>
                                         </tr>
                                         <tr>
-                                            <th>Catatan</th>
+                                            <th>Detail Disposisi</th>
                                             <td>
-                                                <h3>Catatan Pegawai</h3>
                                                 <?php if ($catatan_pegawai): ?>
                                                     <?php foreach ($catatan_pegawai as $catatan): ?>
                                                         <table class="info-table">
@@ -126,7 +124,7 @@
                                                         <hr>
                                                     <?php endforeach; ?>
                                                 <?php else: ?>
-                                                    <p>Tidak ada catatan dari pegawai.</p>
+                                                    <p>Belum ada detail</p>
                                                 <?php endif; ?>
                                             </td>
                                         </tr>

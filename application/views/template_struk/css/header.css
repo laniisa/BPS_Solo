@@ -33,9 +33,17 @@
     transition: background-color 1s, color 1s;
 }
 
+/* Navbar styles for light mode */
 .main-header.navbar {
+    background: linear-gradient(to top, #00497d, #0279C8); /* Light mode color */
     transition: background-color 1s, color 1s;
 }
+
+/* Dark mode navbar styling */
+.dark-mode .main-header.navbar {
+    background: linear-gradient(to top, #2c2c2c, #1e1e1e); /* Dark mode color */
+}
+
 .navbar-nav .dropdown-menu {
     display: none;
     position: absolute;
