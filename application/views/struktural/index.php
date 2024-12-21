@@ -133,7 +133,7 @@
                                         if (isset($row['status']) && $row['status'] == 'diteruskan') {
                                             echo '<span class="text-muted">Diteruskan</span>';
                                         } else {
-                                            echo '<span class="text-muted">Belum dilaksanakan</span>';
+                                            echo '<span class="text-muted">Belum ada tindakan</span>';
                                         }
                                         ?>
                                     </td>
