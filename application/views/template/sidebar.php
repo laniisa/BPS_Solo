@@ -1,4 +1,12 @@
 <!-- Main Sidebar Container -->
+<style>
+    .brand-link {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(to top, #00497d, #0279C8) !important;
+    }
+</style>
+
 <aside class="main-sidebar sidebar-light-primary elevation-4" >
     <!-- Brand Logo -->
     <a href="https://surakartakota.bps.go.id/" class="brand-link" style='background: linear-gradient(to top,#00497d,#0279C8)'>

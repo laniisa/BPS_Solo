@@ -5,18 +5,62 @@
   transition: background-color 1s, color 1s;
 }
 
+/* Navbar Custom Styling */
 .main-header.navbar {
-  max-width: 100%;
-  overflow: hidden; /* Mencegah elemen melebihi lebar */
+  margin-left: 250px; /* Sesuaikan dengan lebar Sidebar */
+  width: calc(100% - 250px); /* Lebar Navbar sisa layar */
+  background: linear-gradient(to top, #00497d, #0279C8) !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow opsional */
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  z-index: 1040;
+  transition: background 0.5s;
 }
+
+/* Navbar Responsiveness */
+@media (max-width: 768px) {
+  .main-header.navbar {
+      margin-left: 0;
+      width: 100%; /* Navbar penuh saat layar kecil */
+  }
+}
+
+/* Navbar Items Styling */
+.navbar-nav .nav-link {
+  color: white !important;
+  font-size: 18px;
+  padding: 8px 15px;
+  transition: color 0.3s;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #ffcc00 !important;
+}
+
+/* Center Alignment */
+.navbar-brand {
+  font-size: 20px;
+  font-weight: bold;
+  color: white !important;
+  text-align: center;
+}
+
 
 .main-sidebar {
   width: 250px; /* Tentukan lebar sidebar yang tetap */
 }
 
+
 .content-wrapper {
-  margin-left: 250px; /* Atur margin kiri konten untuk memberi ruang untuk sidebar */
+  margin-left: 250px; /* Sesuaikan dengan lebar sidebar */
+  transition: margin-left 0.3s ease;
 }
+
+@media (max-width: 768px) {
+  .content-wrapper {
+    margin-left: 0; /* Hilangkan margin untuk layar kecil */
+  }
+}
+
 
 
 /* Navbar untuk Mode Gelap */

@@ -7,11 +7,35 @@
     .sidebar {
         overflow: visible;
     }
+    
+    .brand-link {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(to top, #00497d, #0279C8) !important;
+    
+}
+.main-sidebar {
+  width: 250px; /* Lebar default sidebar */
+  transition: all 0.3s ease; /* Transisi halus untuk animasi */
+}
+
+.main-sidebar.sidebar-collapse {
+  width: 80px; /* Lebar sidebar saat collapse */
+}
+
+.content-wrapper {
+  transition: margin-left 0.3s ease;
+}
+
+.content-wrapper.sidebar-collapse {
+  margin-left: 80px; /* Sesuaikan margin kiri untuk konten */
+}
+
 </style>
 
 <aside class="main-sidebar sidebar-light-primary elevation-4">
     <!-- Brand Logo -->
-    <a href="https://surakartakota.bps.go.id/" class="brand-link" style="background: linear-gradient(to top,#00497d,#0279C8);">
+    <a href="https://surakartakota.bps.go.id/" class="brand-link" >
         <img src="<?= base_url('assets/admin/img/BPS.png') ?>" alt="bps" class="brand-image img-circle" style="opacity: .9;">
         <span class="brand-text font-weight-dark" style="color: white; padding-left: 10px;">BPS Surakarta</span>
     </a>

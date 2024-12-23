@@ -15,7 +15,7 @@
     <style>
         /* Prevent body from horizontal scrolling */
         html, body {
-            width: 100%;
+            width: 100%-250px;
             overflow-x: hidden;
         }
 
@@ -26,9 +26,20 @@
         }
 
         /* Ensure no overflow in navbar */
-        .navbar-nav {
-            margin-left: 0;
-        }
+       
+
+.navbar-nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+@media (max-width: 768px) {
+  .navbar-nav {
+    flex-wrap: wrap; /* Navbar item akan wrap di layar kecil */
+  }
+}
+
 
         /* Fix navbar items in mobile view */
         .navbar-nav.ml-auto {
@@ -36,14 +47,7 @@
         }
 
         /* Fix navbar button colors */
-        .navbar-nav .nav-link {
-            color: white;
-            font-size: 18px; /* Adjust font size for better visibility */
-        }
-
-        .navbar-nav .nav-link:hover {
-            color: #ffcc00; /* Optional: Set hover color */
-        }
+       
 
         /* Fix button size and ensure they fit */
         .nav-link i {

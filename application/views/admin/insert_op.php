@@ -104,7 +104,7 @@
                       <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
                       <?= form_error('password_confirm', '<small class="text-danger">', '</small>'); ?>
                   </div>
-
+                  <a href="<?= site_url('admin/operator'); ?>" class="btn btn-secondary">Batal</a>
                   <button type="submit" class="btn btn-primary">Add User</button>
               </form>
           </div>

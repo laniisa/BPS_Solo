@@ -1,63 +1,36 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $title; ?></title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        /* Mengatur layout agar konten tidak tertutup sidebar */
-        .container {
-            margin-top: 20px;
-        }
+<div class="content-wrapper">
+    <!-- Notifikasi pesan -->
+    <?php if ($this->session->flashdata('message')) : ?>
+        <?= $this->session->flashdata('message'); ?>
+    <?php endif; ?>
 
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        /* Menyesuaikan lebar konten agar tidak tertutup oleh sidebar */
-        .content-wrapper {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-            margin-left: 250px; /* Menyesuaikan dengan lebar sidebar */
-            padding: 20px;
-        }
-
-        /* Mengatur layout form agar responsif */
-        form {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        /* Menambahkan ruang di bawah form */
-        .form-group label {
-            font-weight: bold;
-        }
-
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 10px;
-        }
-
-        .form-group input[type="file"] {
-            padding: 10px 0;
-        }
-
-        /* Styling tombol */
-        .btn-primary,
-        .btn-secondary {
-            padding: 10px 20px;
-            font-size: 16px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h2 class="mb-4"><?= $title; ?></h2>
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Edit Surat</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="<?= site_url('index') ?>">Dashboard</a></li>
+                        <li class="breadcrumb-item active" style="color: lightgrey;"><a href="<?= site_url('operator/surat') ?>">Daftar Surat</a></li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+<section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Insert Surat</h3>
+                        </div>
+        
         <form action="<?= site_url('operator/save_surat'); ?>" method="post" enctype="multipart/form-data">
+        <div class="card-body">
             <div class="form-group">
                 <label for="no_surat">No Surat:</label>
                 <input type="text" class="form-control" id="no_surat" name="no_surat" required>
@@ -97,7 +70,12 @@
             <input type="hidden" name="status" value="masuk">
             <a href="<?= site_url('operator/index'); ?>" class="btn btn-secondary">Batal</a>
             <button type="submit" class="btn btn-primary">Tambah Surat</button>
-        </form>
-    </div>
-</body>
-</html>
+                    </div>
+                </form>
+        </div>
+                    <!-- /.card -->
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+</div>
