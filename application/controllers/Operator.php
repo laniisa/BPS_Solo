@@ -84,12 +84,12 @@ class Operator extends CI_Controller {
     
         // Mengambil tanggal surat dari inputan form
         $tgl_surat = $this->input->post('tgl_surat');
-        $tahun = date('Y', strtotime($tgl_surat));
-        $tanggal = date('Y-m-d', strtotime($tgl_surat));
+        $no_surat = $this->input->post('no_surat');
     
         // Mengambil ekstensi file asli
         $file_ext = pathinfo($_FILES['berkas']['name'], PATHINFO_EXTENSION);
-        $new_file_name = $tahun . '-' . $tanggal . '.' . $file_ext;
+        $new_file_name = $no_surat . ' - ' . $tgl_surat . '.' . $file_ext;
+
     
         // Set nama file yang akan diupload
         $config['file_name'] = $new_file_name;

@@ -27,7 +27,7 @@
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="<?= site_url('operator') ?>">Dashboard</a></li>
-                            <li class="breadcrumb-item active" style="color: lightgrey;"><a href="<?= site_url('operator') ?>">Tambah Surat</a></li>
+                            <li class="breadcrumb-item active" style="color: lightgrey;"><a href="<?= site_url('operator') ?>"> Surat</a></li>
                         </ol>
                     </div>
                 </div>
@@ -99,10 +99,7 @@
                                         <h1>Tambah Surat</h1> <!-- Ganti warna teks menjadi hitam -->
                                     </div>
                                     <div class="col-sm-6">
-                                        <ol class="breadcrumb float-sm-right">
-                                            <li class="breadcrumb-item"><a href="<?= site_url('operator/index') ?>">Dashboard</a></li>
-                                            <li class="breadcrumb-item active"><a href="<?= site_url('operator') ?>">Tambah Surat</a></li> <!-- Hilangkan style color dari breadcrumb -->
-                                        </ol>
+                                        
                                     </div>
                                 </div>
                             </div>

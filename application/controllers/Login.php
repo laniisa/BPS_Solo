@@ -28,65 +28,67 @@ class Login extends CI_Controller {
     }
     
     private function _login()
-    {
-        // Aturan validasi formulir
-        $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email');
-        $this->form_validation->set_rules('password', 'Password', 'trim|required');
-    
-        if ($this->form_validation->run() == FALSE) {
-            // Validasi gagal
-            $this->session->set_flashdata('pesan', '<div class="alert alert-danger" role="alert">Email dan Password harus diisi dengan benar.</div>');
-            redirect('login');
-        } else {
-            // Validasi berhasil, coba login
-            $email = $this->input->post('email');
-            $password = $this->input->post('password');
-    
-            // Ambil data pengguna dari database
-            $user = $this->User_Model->get_user_by_email($email);
-    
-            if ($user) {
-                // Pengguna ditemukan, verifikasi password
-                if (password_verify($password, $user['password'])) {
-                    // Password benar, buat data sesi
-                    $data = [
-                        'id_user' => $user['id_user'],
-                        'email' => $user['email'],
-                        'id_role' => $user['role']
-                    ];
-                    $this->session->set_userdata($data);
-    
-                    // Redirect berdasarkan peran pengguna
-                    switch ($user['role']) {
-                        case 0:
-                            redirect('admin'); // Admin
-                            break;
-                        case 1:
-                            redirect('struktural'); // Struktural
-                            break;
-                        case 2:
-                            redirect('fungsional'); // Fungsional
-                            break;
-                        case 3:
-                            redirect('operator'); // Operator
-                            break;
-                        default:
-                            redirect('login'); // Redirect default ke halaman login
-                            break;
-                    }
-                } else {
-                    // Password salah
-                    $this->session->set_flashdata('pesan', '<div class="alert alert-danger" role="alert">Password salah!</div>');
-                    redirect('login');
+{
+    // Aturan validasi formulir
+    $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email');
+    $this->form_validation->set_rules('password', 'Password', 'trim|required');
+
+    if ($this->form_validation->run() == FALSE) {
+        // Validasi gagal
+        $this->session->set_flashdata('pesan', '<div class="alert alert-danger" role="alert">Email dan Password harus diisi dengan benar.</div>');
+        redirect('login');
+    } else {
+        // Validasi berhasil, coba login
+        $email = $this->input->post('email');
+        $password = $this->input->post('password');
+
+        // Ambil data pengguna dari database
+        $user = $this->User_Model->get_user_by_email($email);
+
+        if ($user) {
+            // Pengguna ditemukan, verifikasi password
+            if (password_verify($password, $user['password'])) {
+                // Password benar, buat data sesi
+                $data = [
+                    'id_user' => $user['id_user'],
+                    'email' => $user['email'],
+                    'id_role' => $user['role']
+                ];
+                $this->session->set_userdata($data);
+
+                // Set flash message berhasil login
+                $this->session->set_flashdata('pesan', '<div class="alert alert-success" role="alert">Login berhasil! Selamat datang.</div>');
+
+                // Redirect berdasarkan peran pengguna
+                switch ($user['role']) {
+                    case 0:
+                        redirect('admin'); // Admin
+                        break;
+                    case 1:
+                        redirect('struktural'); // Struktural
+                        break;
+                    case 2:
+                        redirect('fungsional'); // Fungsional
+                        break;
+                    case 3:
+                        redirect('operator'); // Operator
+                        break;
+                    default:
+                        redirect('login'); // Redirect default ke halaman login
+                        break;
                 }
             } else {
-                // Email tidak ditemukan
-                $this->session->set_flashdata('pesan', '<div class="alert alert-danger" role="alert">Email tidak ditemukan.</div>');
+                // Password salah
+                $this->session->set_flashdata('pesan', '<div class="alert alert-danger" role="alert">Password salah! Silahkan coba lagi!!</div>');
                 redirect('login');
             }
+        } else {
+            // Email tidak ditemukan
+            $this->session->set_flashdata('pesan', '<div class="alert alert-danger" role="alert">Email tidak ditemukan. Silahkan coba lagi!!</div>');
+            redirect('login');
         }
     }
-    
+}
 
     public function regis()
     {

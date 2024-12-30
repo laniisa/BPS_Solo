@@ -13,6 +13,20 @@
   <link rel="stylesheet" href="<?= base_url('assets/admin/plugins/icheck-bootstrap/icheck-bootstrap.min.css'); ?>">
   <!-- Theme style -->
   <link rel="stylesheet" href="<?= base_url('assets/admin/dist/css/adminlte.min.css'); ?>" />
+  <style>
+    .position-fixed {
+        position: fixed !important;
+    }
+    .top-0 {
+        top: 0 !important;
+    }
+    .start-50 {
+        left: 50% !important;
+    }
+    .translate-middle-x {
+        transform: translateX(-50%) !important;
+    }
+  </style>
 </head>
 <body class="hold-transition login-page">
 <div class="login-box">
@@ -25,6 +39,15 @@
       <div class="d-flex justify-content-center mb-4">
         <img src="<?= base_url('assets/img/BPS.png'); ?>" alt="bps" class="brand-image img-circle" style="opacity: .9; background-color: white; height: 100px">
       </div>
+
+      <!-- Alert Section -->
+      <?php if ($this->session->flashdata('pesan')): ?>
+          <div class="alert alert-dismissible fade show text-center position-fixed top-0 start-50 translate-middle-x" 
+               style="z-index: 1050; width: 100%; max-width: 400px; margin-top: 10px;">
+              <?= $this->session->flashdata('pesan'); ?>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+      <?php endif; ?>
 
       <form action="<?= base_url('login'); ?>" method="post">
         <div class="input-group mb-3">
@@ -43,12 +66,9 @@
             </div>
           </div>
         </div>
-        <!-- /.col -->
         <div class="text-center nt-3">
           <button type="submit" class="btn btn-block" style="background-color: #0279C8; color: #ffffff;">Login</button>
         </div>
-        <!-- <a href="<?= base_url('login/regis'); ?>" class="text-center" style="color: #0279C8;">Register</a> -->
-        <!-- /.col -->
       </form>
     </div>
     <!-- /.login-card-body -->
@@ -62,5 +82,17 @@
 <script src="<?= base_url('assets/admin/plugins/bootstrap/js/bootstrap.bundle.min.js'); ?>"></script>
 <!-- AdminLTE App -->
 <script src="<?= base_url('assets/admin/dist/js/adminlte.min.js'); ?>"></script>
+
+<!-- JavaScript for Auto-Dismiss Alert -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const alertBox = document.querySelector('.alert-dismissible');
+        if (alertBox) {
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, 5000); // Alert disappears after 5 seconds
+        }
+    });
+</script>
 </body>
 </html>

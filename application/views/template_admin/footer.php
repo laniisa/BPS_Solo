@@ -81,10 +81,7 @@
           targets: [0], // Misalnya, sembunyikan kolom pertama
           visible: true // Kolom pertama selalu terlihat
         },
-        {
-          targets: [1], // Misalnya, sembunyikan kolom kedua
-          visible: false // Kolom kedua disembunyikan
-        }
+        
       ]
     }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
 

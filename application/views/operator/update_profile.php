@@ -1,8 +1,36 @@
-<div class="container-fluid">
-    <h2 class="text-center mb-4"><?= $title; ?></h2>
-    <div class="row justify-content-center">
-        <div class="col-md-8">
+<div class="content-wrapper">
+    <!-- Notifikasi pesan -->
+    <?php if ($this->session->flashdata('message')) : ?>
+        <?= $this->session->flashdata('message'); ?>
+    <?php endif; ?>
+
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Edit Profil</h1>
+                </div>
+                <div class="col-sm-6">
+                    
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Edit profile</h3>
+                        </div>
+
+
+
             <form action="<?= base_url('operator/update'); ?>" method="post" enctype="multipart/form-data">
+            <div class="card-body">
                 <div class="form-group">
                     <label for="nama">Nama</label>
                     <input type="text" name="nama" class="form-control" value="<?= $user['nama']; ?>" required>
@@ -34,7 +62,11 @@
                 <input type="hidden" name="old_foto" value="<?= $user['foto']; ?>">
                 <button type="submit" class="btn btn-success">Simpan</button>
                 <a href="<?= base_url('operator/profile'); ?>" class="btn btn-secondary">Batal</a>
-            </form>
+            </div>
+        </form>
         </div>
     </div>
+    </div>
+    </div>
+    </section>
 </div>
