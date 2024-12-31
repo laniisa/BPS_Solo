@@ -65,79 +65,77 @@ class Admin extends CI_Controller {
 
 
 
-    public function insert_surat() {
-        if (!$this->session->userdata('email')) {
-            redirect('login'); 
-        }
+public function insert_surat() {
+    if (!$this->session->userdata('email')) {
+        redirect('login');
+    }
+
+    $data['title'] = 'Insert Surat';
+    $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
+
+
         $data['title'] = 'Tambah Surat';
-            $data['surat'] = $this->Surat_Model->get_all_surat();
-            $data['kepala'] = $this->User_Model->get_users_by_role(1);
-            $this->load->model('Surat_Model');
-        
-        $data['title'] = 'Tambah Surat';
-        $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
+        $data['surat'] = $this->Surat_Model->get_all_surat();
+        $data['kepala'] = $this->User_Model->get_users_by_role(1);
+        $this->load->model('Surat_Model');
     
-        
         $this->load->view('template_admin/navbar', $data);
         $this->load->view('template_admin/sidebar', $data);
-        $this->load->view('admin/insert_surat', $data);
+        $this->load->view('admin/insert_surat', $data); // Ensure this view exists
         $this->load->view('template_admin/footer');
-    }
-    
+}
+
+public function save_surat() {
+    $this->load->library('upload');
+
+    // Konfigurasi upload file
+    $config['upload_path'] = './uploads/';
+    $config['allowed_types'] = 'pdf';
+    $config['max_size'] = 2048;
+
+    // Mengambil tanggal surat dari inputan form
+    $tgl_surat = $this->input->post('tgl_surat');
+    $no_surat = $this->input->post('no_surat');
+
+    // Mengambil ekstensi file asli
+    $file_ext = pathinfo($_FILES['berkas']['name'], PATHINFO_EXTENSION);
+    $new_file_name = $no_surat . ' - ' . $tgl_surat . '.' . $file_ext;
 
 
-    public function save_surat() {
-        $this->form_validation->set_rules('no_surat', 'No Surat', 'required');
-        $this->form_validation->set_rules('tgl_surat', 'Tanggal Surat', 'required');
-        $this->form_validation->set_rules('perihal', 'Perihal', 'required');
-        $this->form_validation->set_rules('asal', 'Asal', 'required');
-        $this->form_validation->set_rules('jenis_surat', 'Jenis Surat', 'required');
-    
-        if ($this->form_validation->run() == FALSE) {
-            $data['title'] = 'Tambah Surat - Admin';
-            $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
-    
-            $this->load->view('template_admin/navbar', $data);
-            $this->load->view('template_admin/sidebar', $data);
-            $this->load->view('admin/insert_surat', $data);
-            $this->load->view('template_admin/footer');
-        } else {
-            $config['upload_path'] = './uploads/';
-            $config['allowed_types'] = 'pdf';
-            $config['max_size'] = 2048; // 2MB
-    
-            $this->load->library('upload', $config);
-    
-            if (!$this->upload->do_upload('berkas')) {
-                $data['error'] = $this->upload->display_errors();
-                $data['title'] = 'Tambah Surat - Admin';
-                $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
-    
-                $this->load->view('template_admin/navbar', $data);
-                $this->load->view('template_admin/sidebar', $data);
-                $this->load->view('admin/insert_surat', $data);
-                $this->load->view('template_admin/footer');
-            } else {
-                $file_data = $this->upload->data();
-                $data = [
-                    'no_surat' => $this->input->post('no_surat'),
-                    'tgl_surat' => $this->input->post('tgl_surat'),
-                    'tgl_input' => date('Y-m-d H:i:s'),
-                    'perihal' => $this->input->post('perihal'),
-                    'asal' => $this->input->post('asal'),
-                    'jenis_surat' => $this->input->post('jenis_surat'),
-                    'berkas' => $file_data['file_name'],
-                    'user_id' => $this->input->post('user_id'),
-                    'status' => $this->input->post('status') // Jika status dibutuhkan
-                ];
-    
-                $this->load->model('Surat_Model');
-                $this->Surat_Model->insert_surat($data);
-                $this->session->set_flashdata('message', '<div class="alert alert-success">Surat berhasil ditambahkan</div>');
-                redirect('admin/surat');
-            }
-        }
+    // Set nama file yang akan diupload
+    $config['file_name'] = $new_file_name;
+
+    $this->upload->initialize($config);
+
+    if (!$this->upload->do_upload('berkas')) {
+        // Menampilkan error upload
+        echo $this->upload->display_errors();
+    } else {
+        // Mengambil data file yang diupload
+        $file_data = $this->upload->data();
+
+        // Data surat yang akan disimpan
+        $data = array(
+            'no_surat' => $this->input->post('no_surat'),
+            'tgl_surat' => $this->input->post('tgl_surat'),
+            'tgl_input' => $this->input->post('tgl_input'),
+            'perihal' => $this->input->post('perihal'),
+            'asal' => $this->input->post('asal'),
+            'jenis_surat' => $this->input->post('jenis_surat'),
+            'berkas' => $file_data['file_name'],
+            'user_id' => $this->input->post('user_id'),
+            'status' => $this->input->post('status') // Ambil status surat dari form
+
+            
+        );
+
+        // Menyimpan data ke database
+        $this->Surat_Model->insert_surat($data);
+
+        // Redirect ke halaman daftar surat
+        redirect('admin/surat');
     }
+}
     
     public function update_surat($id) {
         if (!$this->session->userdata('email')) {
@@ -308,22 +306,21 @@ public function operator() {
     $email = $this->session->userdata('email');
     $data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
 
-    // Load library pagination
+
     $this->load->library('pagination');
 
-    // Konfigurasi pagination
     $config['base_url'] = site_url('admin/operator');
-    $config['total_rows'] = $this->db->count_all('users'); // Jumlah total data
-    $config['per_page'] = 10; // Jumlah data per halaman
-    $config['uri_segment'] = 3; // Uri segment untuk pagination
+    $config['total_rows'] = $this->db->count_all('users'); 
+    $config['per_page'] = 10; 
+    $config['uri_segment'] = 3; 
     $this->pagination->initialize($config);
 
-    // Mengambil data pengguna untuk halaman saat ini
+    
     $page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
     $this->db->limit($config['per_page'], $page);
-    $data['users'] = $this->db->get('users')->result_array(); // Data users sesuai halaman
+    $data['users'] = $this->db->get('users')->result_array(); 
 
-    // Load view dengan data users
+   
     $this->load->view('template_admin/navbar', $data);
     $this->load->view('template_admin/sidebar', $data);
     $this->load->view('admin/operator', $data);
@@ -333,12 +330,12 @@ public function operator() {
 public function filter_user() {
     $role = $this->input->get('role');
     if ($role == 'all') {
-        $users = $this->db->get('users')->result_array(); // Semua user
+        $users = $this->db->get('users')->result_array(); 
     } else {
         $this->db->where('role', $role);
-        $users = $this->db->get('users')->result_array(); // User sesuai role
+        $users = $this->db->get('users')->result_array(); 
     }
-    echo json_encode($users); // Kirim data ke view dalam format JSON
+    echo json_encode($users); 
 }
 
     
@@ -350,8 +347,7 @@ public function insert_op() {
     $data['title'] = 'Update Surat';
     $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
 
-    $data['roles'] = $this->User_Model->get_roles();  // Fetch roles from user_role table
-    
+    $data['roles'] = $this->User_Model->get_roles();  
     $this->load->view('template_admin/navbar', $data);
     $this->load->view('template_admin/sidebar', $data);
     $this->load->view('admin/insert_op', $data);
@@ -359,7 +355,6 @@ public function insert_op() {
     
 }
 
-// Function to handle form submission
 public function insert_user() {
     $this->form_validation->set_rules('nama', 'Nama', 'required');
     $this->form_validation->set_rules('usr', 'Username', 'required|is_unique[users.usr]');
@@ -378,25 +373,22 @@ public function insert_user() {
         // Handle file upload for Foto
         $foto = '';
         if (!empty($_FILES['foto']['name'])) {
-            $config['upload_path'] = './assets/img/foto-users/'; // Folder tempat menyimpan foto
-            $config['allowed_types'] = 'jpg|jpeg|png'; // Jenis file yang diizinkan
-            $config['max_size'] = 2048; // Ukuran maksimal file (2 MB)
+            $config['upload_path'] = './assets/img/foto-users/'; 
+            $config['allowed_types'] = 'jpg|jpeg|png';
+            $config['max_size'] = 2048; 
             $this->load->library('upload', $config);
 
             if ($this->upload->do_upload('foto')) {
-                // Ambil nama file yang di-upload
                 $foto = $this->upload->data('file_name');
             } else {
-                // Jika gagal upload, tampilkan pesan error
                 $this->session->set_flashdata('message', $this->upload->display_errors());
                 redirect('admin/insert_op');
                 return;
             }
         }
-        $status = $this->input->post('status');  // Pastikan ini menerima nilai yang benar ('active' atau 'inactive')
+        $status = $this->input->post('status');  
 
-
-        // Prepare data for insertion
+        
         $data_user = [
             'nama' => $this->input->post('nama'),
             'usr' => $this->input->post('usr'),
@@ -418,39 +410,32 @@ public function insert_user() {
             redirect('admin/insert_op');
         }
     }
-}
+    }
 
 
-// Display users list
+
     public function users_list() {
         $data['users'] = $this->User_Model->get_all_users();
         $this->load->view('admin/users_list', $data);
     }
 
     public function update_op($id_user)
-{
-    // Pastikan user sudah login
+    {
     if (!$this->session->userdata('email')) {
         redirect('login');
     }
 
-    // Judul halaman
     $data['title'] = 'Update User';
-
-    // **Ambil data user yang sedang login** untuk sidebar
     $data['current_user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
 
-    // **Ambil data user yang akan di-update** berdasarkan ID
     $data['user'] = $this->User_Model->get_user_by_id($id_user);
     if (!$data['user']) {
         show_404();
         return;
     }
-
-    // Ambil daftar roles untuk dropdown role
     $data['roles'] = $this->User_Model->get_roles();
 
-    // Validasi input form
+
     $this->form_validation->set_rules('nama', 'Nama', 'required|trim');
     $this->form_validation->set_rules('usr', 'Username', 'required|trim');
     $this->form_validation->set_rules('email', 'Email', 'required|valid_email|trim');

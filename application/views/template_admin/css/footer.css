@@ -1,54 +1,112 @@
-html, body {
-  height: 100%;
-  margin: 0;
-}
-
-body {
+/* Wrapper Utama untuk Sidebar dan Konten */
+.wrapper {
   display: flex;
-  flex-direction: column;
-}
-.content {
-  flex: 1; /* Membuat bagian ini mengisi seluruh ruang kosong */
-}
-
-.main-footer {
-  position: relative;
-  height: 50px; /* Adjust height as needed */
+  height: 100vh;
   width: 100%;
-  background-color: #fff; /* Ensure background for text visibility */
+  box-sizing: border-box;
 }
 
-.main-footer::before,
-.main-footer::after,
-.footer-middle {
-  content: "";
-  position: absolute;
-  top: 0;
-  height: 2px; /* Border height */
-}
-
-.main-footer::before {
+/* Sidebar */
+.sidebar {
+  width: 250px; /* Lebar sidebar */
+  height: 100%;
+  position: fixed;
   left: 0;
-  width: 33.33%; /* First section width */
-  background-color: #0F64A4; /* First color */
+  top: 0;
+  background-color: #222d32;
+  box-sizing: border-box;
+  padding-top: 10px; /* Tambahkan padding jika diperlukan */
 }
 
-.footer-middle {
-  left: 33.33%;
-  width: 33.33%; /* Middle section width */
-  background-color: #7DBD1A; /* Second color */
+/* Konten Utama */
+.content-wrapper {
+  flex: 1;
+  margin-left: 250px; /* Konten utama tidak tertutup sidebar */
+  margin-right: 20px;
+  box-sizing: border-box;
+  padding-bottom: 50px; /* Menambahkan padding bawah agar footer tidak tertutup */
+  padding-top: 20px; /* Sesuaikan dengan kebutuhan */
 }
 
-.main-footer::after {
-  right: 0;
-  width: 33.33%; /* Third section width */
-  background-color: #E4891B; /* Third color */
-}
-
-.footer-content {
+/* Footer */
+/* Styling untuk footer */
+.main-footer {
+  width: 100%;
+  background-color: #f8f9fa;
+  padding: 10px 20px;
   position: relative;
-  text-align: center;
-  line-height: 50px; /* Match height for vertical centering */
-  z-index: 1;
-  background-color: #fff; /* Ensure text visibility */
+  bottom: 0;
+  box-sizing: border-box;
+  border-top: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between; /* Untuk meratakan kiri dan kanan */
+  align-items: center; /* Vertikal sejajar tengah */
+}
+
+.main-footer a {
+  text-decoration: none;
+  color: #0279C8;
+}
+
+.main-footer .float-left,
+.main-footer .float-right {
+  flex: 1; /* Membuat elemen fleksibel agar pas di dalam kontainer */
+  text-align: left; /* Default kiri */
+}
+
+.main-footer .float-right {
+  text-align: right; /* Konten kanan */
+}
+
+
+/* Bagian Kiri Footer */
+.footer-left {
+  flex: 1;
+  background-color: #0F64A4;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  color: white;
+  justify-content: center;
+}
+
+/* Bagian Tengah Footer */
+.footer-middle {
+  flex: 1;
+  background-color: #7DBD1A;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  color: white;
+}
+
+/* Bagian Kanan Footer */
+.footer-right {
+  flex: 1;
+  background-color: #E4891B;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  color: white;
+  justify-content: center;
+}
+
+/* Responsif pada Layar Kecil */
+@media (max-width: 768px) {
+  .content-wrapper {
+    margin-left: 0;
+  }
+
+  .main-footer {
+    flex-direction: column; /* Menumpuk bagian footer */
+  }
+
+  .footer-left, .footer-middle, .footer-right {
+    width: 100%;
+    text-align: center;
+  }
 }

@@ -30,7 +30,7 @@
         <div class="container-fluid">
             <div class="card">
                 <div class="card-header">
-                    <h2>REKAP DISPOSISI</h2>
+                    <h4>REKAP DISPOSISI</h4>
                 </div>
                 <div class="card-body">
                     <form method="get" action="<?= base_url('admin/berkas') ?>">

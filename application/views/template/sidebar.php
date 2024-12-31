@@ -7,7 +7,7 @@
     }
 </style>
 
-<aside class="main-sidebar sidebar-light-primary elevation-4" >
+<aside class="main-sidebar sidebar-light-primary elevation-4" style="position:fixed;">
     <!-- Brand Logo -->
     <a href="https://surakartakota.bps.go.id/" class="brand-link" style='background: linear-gradient(to top,#00497d,#0279C8)'>
         <img src="<?= base_url('assets/admin/img/BPS.png') ?>" alt="bps" class="brand-image img-circle" style="opacity: .9;">
@@ -38,17 +38,6 @@
             </div>
         </div>
 
-        <!-- SidebarSearch Form -->
-        <div class="form-inline">
-            <div class="input-group" data-widget="sidebar-search">
-                <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
-                <div class="input-group-append">
-                    <button class="btn btn-sidebar">
-                        <i class="fas fa-search fa-fw"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
 
         <!-- Sidebar Menu -->
         <nav class="mt-2">
@@ -77,16 +66,11 @@
                         <p>Profile</p>
                     </a>
                 </li>
-                <!-- Logout Menu -->
-                <li class="nav-item">
-                    <a href="<?= base_url('login/logout'); ?>" class="nav-link">
-                        <i class="nav-icon fas fa-sign-out-alt"></i>
-                        <p>Logout</p>
-                    </a>
-                </li>
+                
             </ul>
         </nav>
         <!-- /.sidebar-menu -->
     </div>
     <!-- /.sidebar -->
+   
 </aside>
