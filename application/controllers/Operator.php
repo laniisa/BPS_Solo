@@ -146,52 +146,96 @@ class Operator extends CI_Controller {
     }
 
     public function update_surat_action() {
+        // Validasi form
         $this->form_validation->set_rules('no_surat', 'No Surat', 'required');
         $this->form_validation->set_rules('tgl_surat', 'Tanggal Surat', 'required');
         $this->form_validation->set_rules('perihal', 'Perihal', 'required');
         $this->form_validation->set_rules('asal', 'Asal', 'required');
         $this->form_validation->set_rules('jenis_surat', 'Jenis Surat', 'required');
-        $this->form_validation->set_rules('user_id', 'Tujuan', 'required');
-
+        $this->form_validation->set_rules('status', 'Status', 'required');
+    
+        // Validasi file upload
+        if ($_FILES['berkas']['name'] != '') {
+            $this->form_validation->set_rules('berkas', 'Berkas', 'callback_check_berkas');
+        }
+    
         if ($this->form_validation->run() == FALSE) {
+            // Jika validasi gagal, set flash message dan redirect
             $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Data tidak lengkap!</div>');
-            redirect('operator/update_surat/' . $this->input->post('id'));
+            redirect('admin/update_surat/' . $this->input->post('id_ds_surat'));
         } else {
-            $id = $this->input->post('id');
+            // Ambil ID dan file baru jika ada
+            $id = $this->input->post('id_ds_surat');
+            $berkas_baru = $this->upload_berkas();
+            
             $data = [
                 'no_surat' => $this->input->post('no_surat'),
                 'tgl_surat' => $this->input->post('tgl_surat'),
-                'tgl_input' => $this->input->post('tgl_input'),
+                'tgl_input' => date('Y-m-d'), // Sesuaikan jika perlu
+                'tgl_dilaksanakan' => $this->input->post('tgl_dilaksanakan'),
                 'perihal' => $this->input->post('perihal'),
                 'asal' => $this->input->post('asal'),
                 'jenis_surat' => $this->input->post('jenis_surat'),
-                'user_id' => $this->input->post('user_id'),
-                'berkas' => $this->upload_berkas()
+                'status' => $this->input->post('status'),
+                'user_id' => $this->input->post('user_id')
             ];
-
-            if (empty($data['berkas'])) {
-                unset($data['berkas']);
+    
+            // Tambahkan file baru jika di-upload
+            if ($berkas_baru) {
+                $data['berkas'] = $berkas_baru;
             }
-
+    
+            // Update surat
             $this->Surat_Model->update_surat($id, $data);
+    
+            // Set pesan sukses dan redirect
             $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Surat berhasil diperbarui!</div>');
-            redirect('operator/index');
+            redirect('operator/surat');
         }
     }
-
+    
+    // Callback validasi untuk file berkas
+    public function check_berkas() {
+        $config['upload_path'] = './uploads/';
+        $config['allowed_types'] = 'pdf';
+        $config['max_size'] = 2048;
+    
+        $this->load->library('upload', $config);
+    
+        if (!$this->upload->do_upload('berkas')) {
+            $this->form_validation->set_message('check_berkas', $this->upload->display_errors());
+            return false;
+        }
+        return true;
+    }
+    
+    
     private function upload_berkas() {
         $config['upload_path'] = './uploads/';
         $config['allowed_types'] = 'pdf';
         $config['max_size'] = 2048;
-
+        
+        // Memuat library upload
         $this->load->library('upload', $config);
-
+    
+        // Menentukan nama file baru berdasarkan 'no_surat' dan 'tgl_surat'
+        $no_surat = $this->input->post('no_surat');
+        $tgl_surat = $this->input->post('tgl_surat');
+        $file_ext = pathinfo($_FILES['berkas']['name'], PATHINFO_EXTENSION);
+        $new_file_name = $no_surat . ' - ' . $tgl_surat . '.' . $file_ext;
+    
+        // Mengubah nama file yang diupload
+        $config['file_name'] = $new_file_name;
+    
+        // Cek jika upload berhasil
         if ($this->upload->do_upload('berkas')) {
             return $this->upload->data('file_name');
         } else {
+            // Mengambil file lama jika tidak ada upload baru
             return $this->input->post('berkas_lama');
         }
     }
+    
     
 
     public function delete_surat($id) {

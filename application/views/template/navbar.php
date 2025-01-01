@@ -36,6 +36,13 @@
       color: white !important;
     }
 
+    .navbar-nav .nav-link {
+  color: white !important;
+  font-size: 18px;
+  padding: 8px 15px;
+  transition: color 0.3s;
+}
+
     .dark-mode .nav-link:hover {
       color: #ffc107;
     }

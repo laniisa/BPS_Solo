@@ -1,39 +1,9 @@
-
-<style>
-    .info-box {
-        background-color: #ffffff; /* Mengubah background color info-box menjadi putih */
-        box-shadow: 0px 0px 30px rgba(127, 137, 161, 0.25);
-        color: #333; /* Mengubah warna teks menjadi lebih gelap agar kontras dengan latar belakang putih */
-        border-radius: 10px;
-        padding: 15px;
-    }
-
-    .content-wrapper {
-        background-color: #ffffff; /* Mengubah background color content-wrapper menjadi putih */
-    }
-
-    h1 {
-        color: #333; /* Mengubah warna teks heading menjadi lebih gelap */
-    }
-
-    .breadcrumb-item a {
-        color: #007bff; /* Warna link breadcrumb */
-    }
-
-    .breadcrumb-item.active {
-        color: #6c757d; /* Warna breadcrumb aktif */
-    }
-</style>
-
-    
-  <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>DISPOSISI | Dashboard</h1>
+                    <h2>DISPOSISI | Dashboard</h2>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -41,45 +11,87 @@
                     </ol>
                 </div>
             </div>
-        </div><!-- /.container-fluid -->
+        </div>
     </section>
 
-    <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
-            <!-- Info boxes -->
             <div class="row">
-                <div class="col-12 col-sm-6 col-md-3">
-                    <div class="info-box">
-                        <span class="info-box-icon bg-secondary elevation-1"><i class="fas fa-user-friends"></i></span>
-                        <div class="info-box-content">
-                            <span class="info-box-text">Jumlah Surat</span>
-                            <span class="info-box-number">
-                                <?= $jumlah_surat ?> <small>surat</small>
-                            </span>
+                <div class="col-lg-3 col-6">
+                    <a href="<?= base_url('admin/surat'); ?>" class="text-decoration-none">
+                        <div class="info-box shadow-lg" style="background-color: #6C63FF; color: white;">
+                            <span class="info-box-icon elevation-1"><i class="fas fa-envelope"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Jumlah Surat</span>
+                                <span class="info-box-number" style="font-size: 2rem;"><?= $jumlah_surat ?> Surat</span>
+                            </div>
                         </div>
-                        <!-- /.info-box-content -->
-                    </div>
-                    <!-- /.info-box -->
+                    </a>
                 </div>
-                <!-- /.col -->
-                <div class="col-12 col-sm-6 col-md-3">
-                    <div class="info-box mb-3">
-                        <span class="info-box-icon bg-secondary elevation-1"><i class="fas fa-cheese"></i></span>
-                        <div class="info-box-content">
-                            <span class="info-box-text">Jumlah User</span>
-                            <span class="info-box-number">
-                                <?= $total_users; ?>
-                            </span>
+                <div class="col-lg-3 col-6">
+                    <a href="<?= base_url('admin/operator'); ?>" class="text-decoration-none">
+                        <div class="info-box shadow-lg" style="background-color: #FF6F61; color: white;">
+                            <span class="info-box-icon elevation-1"><i class="fas fa-users"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Jumlah User</span>
+                                <span class="info-box-number" style="font-size: 2rem;"><?= $total_users ?></span>
+                            </div>
                         </div>
-                        <!-- /.info-box-content -->
-                    </div>
-                    <!-- /.info-box -->
+                    </a>
                 </div>
-                <!-- /.col -->
             </div>
-        </div><!--/. container-fluid -->
+
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Pengguna Berdasarkan Role</h3>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartUserRole" height="150"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
-    <!-- /.content -->
 </div>
-<!-- /.content-wrapper -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctxUserRole = document.getElementById('chartUserRole').getContext('2d');
+    new Chart(ctxUserRole, {
+        type: 'bar',
+        data: {
+            labels: ['Admin', 'Operator', 'Struktural', 'Fungsional'],
+            datasets: [{
+                label: 'Jumlah Pengguna',
+                data: <?= json_encode($data_user_roles) ?>,
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(153, 102, 255, 0.6)',
+                    'rgba(255, 159, 64, 0.6)',
+                    'rgba(255, 99, 132, 0.6)'
+                ],
+                borderColor: [
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(255, 99, 132, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: true },
+                tooltip: { enabled: true }
+            },
+            scales: {
+                x: { beginAtZero: true },
+                y: { beginAtZero: true }
+            }
+        }
+    });
+</script>

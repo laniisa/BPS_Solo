@@ -19,6 +19,19 @@ class User_Model extends CI_Model {
         return $this->db->get('users')->result_array();
     }
 
+    public function get_user_roles_count()
+{
+    $roles = ['0', '3', '1', '2'];
+    $counts = [];
+    foreach ($roles as $role) {
+        $this->db->where('role', $role);
+        $counts[] = $this->db->count_all_results('users');
+    }
+    return $counts;
+}
+
+
+
     public function get_user($email) {
         $this->db->where('email', $email);
         return $this->db->get('users')->row_array();

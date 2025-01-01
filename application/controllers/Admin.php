@@ -18,26 +18,41 @@ class Admin extends CI_Controller {
 
     }
 
-    public function index()
-    {
+    public function index() {
         if (!$this->session->userdata('email')) {
-			redirect('login'); 
-		}
-
+            redirect('login');
+        }
+    
         $email = $this->session->userdata('email');
-		$data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
+        $data['user'] = $this->db->get_where('users', ['email' => $email])->row_array();
         $data['title'] = 'Dashboard';
-        
+    
+        // Data Info Box
         $data['jumlah_surat'] = $this->Surat_Model->get_jumlah_surat();
         $data['total_users'] = $this->User_Model->get_jumlah_user();
-       
+    
+        $tahun = $this->input->get('tahun') ?: date('Y'); // Default tahun sekarang
+
+        $data['tahun'] = $tahun;
+        $data['tahun_surat'] = $this->Surat_Model->get_tahun_surat(); // Daftar tahun untuk dropdown
+        $status_data = $this->Surat_Model->get_status_data($tahun); // Data surat berdasarkan status
+
+        // Ekstraksi data untuk grafik
+        $data['bulan'] = array_keys($status_data);
+        $data['masuk'] = array_column($status_data, 'masuk');
+        $data['dilaksanakan'] = array_column($status_data, 'dilaksanakan');
+        $data['diteruskan'] = array_column($status_data, 'diteruskan');
+
+        // Data User Roles Chart
+        $data['data_user_roles'] = $this->User_Model->get_user_roles_count();
+    
+        // Load views
         $this->load->view('template_admin/navbar', $data);
         $this->load->view('template_admin/sidebar', $data);
         $this->load->view('admin/index', $data);
         $this->load->view('template_admin/footer');
     }
-
-
+    
     public function surat()
 {
     if (!$this->session->userdata('email')) {
@@ -99,7 +114,7 @@ public function save_surat() {
 
     // Mengambil ekstensi file asli
     $file_ext = pathinfo($_FILES['berkas']['name'], PATHINFO_EXTENSION);
-    $new_file_name = $no_surat . ' - ' . $tgl_surat . '.' . $file_ext;
+    $new_file_name = $no_surat.'-' . $tgl_surat . '.' . $file_ext;
 
 
     // Set nama file yang akan diupload
@@ -131,7 +146,8 @@ public function save_surat() {
 
         // Menyimpan data ke database
         $this->Surat_Model->insert_surat($data);
-
+        $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Surat berhasil ditambahkan!</div>');
+            
         // Redirect ke halaman daftar surat
         redirect('admin/surat');
     }
@@ -162,24 +178,32 @@ public function save_surat() {
     }
     
     public function update_surat_action() {
+        // Validasi form
         $this->form_validation->set_rules('no_surat', 'No Surat', 'required');
         $this->form_validation->set_rules('tgl_surat', 'Tanggal Surat', 'required');
         $this->form_validation->set_rules('perihal', 'Perihal', 'required');
         $this->form_validation->set_rules('asal', 'Asal', 'required');
         $this->form_validation->set_rules('jenis_surat', 'Jenis Surat', 'required');
-        
-        $this->form_validation->set_rules('user_id', 'Tujuan', 'required');
+        $this->form_validation->set_rules('status', 'Status', 'required');
+    
+        // Validasi file upload
+        if ($_FILES['berkas']['name'] != '') {
+            $this->form_validation->set_rules('berkas', 'Berkas', 'callback_check_berkas');
+        }
     
         if ($this->form_validation->run() == FALSE) {
+            // Jika validasi gagal, set flash message dan redirect
             $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Data tidak lengkap!</div>');
             redirect('admin/update_surat/' . $this->input->post('id_ds_surat'));
         } else {
+            // Ambil ID dan file baru jika ada
             $id = $this->input->post('id_ds_surat');
             $berkas_baru = $this->upload_berkas();
+            
             $data = [
                 'no_surat' => $this->input->post('no_surat'),
                 'tgl_surat' => $this->input->post('tgl_surat'),
-                'tgl_input' => $this->input->post('tgl_input'),
+                'tgl_input' => date('Y-m-d'), // Sesuaikan jika perlu
                 'tgl_dilaksanakan' => $this->input->post('tgl_dilaksanakan'),
                 'perihal' => $this->input->post('perihal'),
                 'asal' => $this->input->post('asal'),
@@ -188,25 +212,54 @@ public function save_surat() {
                 'user_id' => $this->input->post('user_id')
             ];
     
-            // Tambahkan data berkas jika ada berkas baru
+            // Tambahkan file baru jika di-upload
             if ($berkas_baru) {
                 $data['berkas'] = $berkas_baru;
             }
     
-            // Update data surat
+            // Update surat
             $this->Surat_Model->update_surat($id, $data);
+    
+            // Set pesan sukses dan redirect
             $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Surat berhasil diperbarui!</div>');
             redirect('admin/surat');
         }
     }
     
-    private function upload_berkas() {
+    // Callback validasi untuk file berkas
+    public function check_berkas() {
         $config['upload_path'] = './uploads/';
         $config['allowed_types'] = 'pdf';
         $config['max_size'] = 2048;
     
         $this->load->library('upload', $config);
     
+        if (!$this->upload->do_upload('berkas')) {
+            $this->form_validation->set_message('check_berkas', $this->upload->display_errors());
+            return false;
+        }
+        return true;
+    }
+    
+    
+    private function upload_berkas() {
+        $config['upload_path'] = './uploads/';
+        $config['allowed_types'] = 'pdf';
+        $config['max_size'] = 2048;
+        
+        // Memuat library upload
+        $this->load->library('upload', $config);
+    
+        // Menentukan nama file baru berdasarkan 'no_surat' dan 'tgl_surat'
+        $no_surat = $this->input->post('no_surat');
+        $tgl_surat = $this->input->post('tgl_surat');
+        $file_ext = pathinfo($_FILES['berkas']['name'], PATHINFO_EXTENSION);
+        $new_file_name = $no_surat . ' - ' . $tgl_surat . '.' . $file_ext;
+    
+        // Mengubah nama file yang diupload
+        $config['file_name'] = $new_file_name;
+    
+        // Cek jika upload berhasil
         if ($this->upload->do_upload('berkas')) {
             return $this->upload->data('file_name');
         } else {
@@ -214,6 +267,7 @@ public function save_surat() {
             return $this->input->post('berkas_lama');
         }
     }
+    
     
     
         public function delete_surat($id) {
@@ -403,7 +457,7 @@ public function insert_user() {
 
         // Insert user data into database
         if ($this->User_Model->insert_user($data_user)) {
-            $this->session->set_flashdata('message', 'User successfully added.');
+            $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Users berhasil ditambahkan!</div>');
             redirect('admin/operator');
         } else {
             $this->session->set_flashdata('message', 'Failed to add user.');

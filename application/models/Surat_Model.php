@@ -6,11 +6,21 @@ class Surat_Model extends CI_Model {
         return $this->db->get()->result_array();
     }
 
-    // Fungsi untuk memasukkan data surat ke database
-    public function insert_surat($data) {
+        public function insert_surat($data) {
         return $this->db->insert('surat', $data);
     }
     
+    public function get_surat_per_bulan()
+{
+    $query = $this->db->query("
+        SELECT MONTH(tgl_input) as bulan, COUNT(*) as jumlah
+        FROM surat
+        GROUP BY MONTH(tgl_input)
+        ORDER BY MONTH(tgl_input)
+    ");
+    return $query->result_array();
+}
+
     
 
 public function get_surat_by_id($id) {
@@ -192,8 +202,53 @@ public function get_surat_by_id($id) {
         return $this->db->get()->result_array();
     }
     
-    
-    
+    public function get_tahun_surat() {
+        // Mendapatkan daftar tahun yang ada di tabel surat
+        $this->db->select('YEAR(tgl_surat) as tahun');
+        $this->db->group_by('tahun');
+        $this->db->order_by('tahun', 'DESC');
+        return $this->db->get('surat')->result_array();
+    }
+
+    public function get_status_data($tahun) {
+        // Mendapatkan jumlah surat berdasarkan status dan bulan dalam tahun tertentu
+        $this->db->select("
+            MONTH(tgl_surat) as bulan,
+            SUM(CASE WHEN status = 'masuk' THEN 1 ELSE 0 END) as masuk,
+            SUM(CASE WHEN status = 'dilaksanakan' THEN 1 ELSE 0 END) as dilaksanakan,
+            SUM(CASE WHEN status = 'diteruskan' THEN 1 ELSE 0 END) as diteruskan
+        ");
+        $this->db->where('YEAR(tgl_surat)', $tahun);
+        $this->db->group_by('bulan');
+        $this->db->order_by('bulan', 'ASC');
+        $result = $this->db->get('surat')->result_array();
+
+        // Pastikan data lengkap untuk 12 bulan
+        $data = array_fill(1, 12, ['masuk' => 0, 'dilaksanakan' => 0, 'diteruskan' => 0]);
+        foreach ($result as $row) {
+            $data[$row['bulan']] = [
+                'masuk' => (int) $row['masuk'],
+                'dilaksanakan' => (int) $row['dilaksanakan'],
+                'diteruskan' => (int) $row['diteruskan']
+            ];
+        }
+
+        return $data;
+    }
+
+    public function get_bulan_surat($tahun) {
+        // Mendapatkan nama bulan dalam tahun tertentu
+        $this->db->select('MONTH(tgl_surat) as bulan');
+        $this->db->where('YEAR(tgl_surat)', $tahun);
+        $this->db->group_by('bulan');
+        $this->db->order_by('bulan', 'ASC');
+        $result = $this->db->get('surat')->result_array();
+        $bulan = [];
+        foreach ($result as $row) {
+            $bulan[] = date('F', mktime(0, 0, 0, $row['bulan'], 10)); // Mengubah bulan angka menjadi nama
+        }
+        return $bulan;
+    }
     
 }
 ?>
